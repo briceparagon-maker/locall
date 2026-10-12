@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'b72bf7ff80004c153bbace4af735af59ebb817bba5185f83ef960126d384463c'>;
+  StorageHashBase<'67d6db7b228fc72ae004c772b96f27d4bf654e76e9636dc4c3e0bc31d8a9ffa0'>;
 export type ExecutionHash =
   ExecutionHashBase<'2046b9d7f16a7106ed3c5927fb0a859fff391d0a89d6457dbfef0d79818965bb'>;
 export type ProfileHash =
@@ -242,19 +242,25 @@ export type FieldOutputTypes = {
       readonly googleReviewUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
+      readonly ownerEmail: CodecTypes['pg/text@1']['output'] | null;
       readonly slug: CodecTypes['pg/text@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Review: {
       readonly ambianceRating: CodecTypes['pg/int4@1']['output'] | null;
       readonly authorName: CodecTypes['pg/text@1']['output'] | null;
+      readonly autoReplyText: CodecTypes['pg/text@1']['output'] | null;
+      readonly clientEmailed: CodecTypes['pg/bool@1']['output'];
       readonly comment: CodecTypes['pg/text@1']['output'] | null;
+      readonly contact: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly cuisineRating: CodecTypes['pg/int4@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly ownerNotified: CodecTypes['pg/bool@1']['output'];
       readonly rating: CodecTypes['pg/int4@1']['output'];
       readonly restaurantId: CodecTypes['pg/int4@1']['output'];
       readonly serviceRating: CodecTypes['pg/int4@1']['output'] | null;
+      readonly status: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly visitMonth: CodecTypes['pg/int4@1']['output'] | null;
       readonly visitYear: CodecTypes['pg/int4@1']['output'] | null;
@@ -271,19 +277,25 @@ export type FieldInputTypes = {
       readonly googleReviewUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
+      readonly ownerEmail: CodecTypes['pg/text@1']['input'] | null;
       readonly slug: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Review: {
       readonly ambianceRating: CodecTypes['pg/int4@1']['input'] | null;
       readonly authorName: CodecTypes['pg/text@1']['input'] | null;
+      readonly autoReplyText: CodecTypes['pg/text@1']['input'] | null;
+      readonly clientEmailed: CodecTypes['pg/bool@1']['input'];
       readonly comment: CodecTypes['pg/text@1']['input'] | null;
+      readonly contact: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly cuisineRating: CodecTypes['pg/int4@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly ownerNotified: CodecTypes['pg/bool@1']['input'];
       readonly rating: CodecTypes['pg/int4@1']['input'];
       readonly restaurantId: CodecTypes['pg/int4@1']['input'];
       readonly serviceRating: CodecTypes['pg/int4@1']['input'] | null;
+      readonly status: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly visitMonth: CodecTypes['pg/int4@1']['input'] | null;
       readonly visitYear: CodecTypes['pg/int4@1']['input'] | null;
@@ -300,19 +312,25 @@ export type StorageColumnTypes = {
       readonly googleReviewUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
+      readonly ownerEmail: CodecTypes['pg/text@1']['output'] | null;
       readonly slug: CodecTypes['pg/text@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Review: {
       readonly ambianceRating: CodecTypes['pg/int4@1']['output'] | null;
       readonly authorName: CodecTypes['pg/text@1']['output'] | null;
+      readonly autoReplyText: CodecTypes['pg/text@1']['output'] | null;
+      readonly clientEmailed: CodecTypes['pg/bool@1']['output'];
       readonly comment: CodecTypes['pg/text@1']['output'] | null;
+      readonly contact: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly cuisineRating: CodecTypes['pg/int4@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
+      readonly ownerNotified: CodecTypes['pg/bool@1']['output'];
       readonly rating: CodecTypes['pg/int4@1']['output'];
       readonly restaurantId: CodecTypes['pg/int4@1']['output'];
       readonly serviceRating: CodecTypes['pg/int4@1']['output'] | null;
+      readonly status: CodecTypes['pg/text@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly visitMonth: CodecTypes['pg/int4@1']['output'] | null;
       readonly visitYear: CodecTypes['pg/int4@1']['output'] | null;
@@ -329,19 +347,25 @@ export type StorageColumnInputTypes = {
       readonly googleReviewUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
+      readonly ownerEmail: CodecTypes['pg/text@1']['input'] | null;
       readonly slug: CodecTypes['pg/text@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Review: {
       readonly ambianceRating: CodecTypes['pg/int4@1']['input'] | null;
       readonly authorName: CodecTypes['pg/text@1']['input'] | null;
+      readonly autoReplyText: CodecTypes['pg/text@1']['input'] | null;
+      readonly clientEmailed: CodecTypes['pg/bool@1']['input'];
       readonly comment: CodecTypes['pg/text@1']['input'] | null;
+      readonly contact: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly cuisineRating: CodecTypes['pg/int4@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
+      readonly ownerNotified: CodecTypes['pg/bool@1']['input'];
       readonly rating: CodecTypes['pg/int4@1']['input'];
       readonly restaurantId: CodecTypes['pg/int4@1']['input'];
       readonly serviceRating: CodecTypes['pg/int4@1']['input'] | null;
+      readonly status: CodecTypes['pg/text@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly visitMonth: CodecTypes['pg/int4@1']['input'] | null;
       readonly visitYear: CodecTypes['pg/int4@1']['input'] | null;
@@ -358,6 +382,7 @@ export namespace Models {
     googleReviewUrl: CodecTypes['pg/text@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
+    ownerEmail: CodecTypes['pg/text@1']['output'] | null;
     slug: CodecTypes['pg/text@1']['output'] | null;
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     reviews: public_Review[];
@@ -366,13 +391,18 @@ export namespace Models {
   export type public_Review = {
     ambianceRating: CodecTypes['pg/int4@1']['output'] | null;
     authorName: CodecTypes['pg/text@1']['output'] | null;
+    autoReplyText: CodecTypes['pg/text@1']['output'] | null;
+    clientEmailed: CodecTypes['pg/bool@1']['output'];
     comment: CodecTypes['pg/text@1']['output'] | null;
+    contact: CodecTypes['pg/text@1']['output'] | null;
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     cuisineRating: CodecTypes['pg/int4@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
+    ownerNotified: CodecTypes['pg/bool@1']['output'];
     rating: CodecTypes['pg/int4@1']['output'];
     restaurantId: CodecTypes['pg/int4@1']['output'];
     serviceRating: CodecTypes['pg/int4@1']['output'] | null;
+    status: CodecTypes['pg/text@1']['output'];
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     visitMonth: CodecTypes['pg/int4@1']['output'] | null;
     visitYear: CodecTypes['pg/int4@1']['output'] | null;
@@ -459,6 +489,12 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly ownerEmail: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly slug: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -494,7 +530,29 @@ type ContractBase = Omit<
                   readonly nullable: true;
                   readonly many: false;
                 };
+                readonly autoReplyText: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly clientEmailed: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                  readonly many: false;
+                };
                 readonly comment: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly contact: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: true;
@@ -523,6 +581,16 @@ type ContractBase = Omit<
                   };
                   readonly many: false;
                 };
+                readonly ownerNotified: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                  readonly many: false;
+                };
                 readonly rating: {
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
@@ -539,6 +607,16 @@ type ContractBase = Omit<
                   readonly dataType: 'pg/int4';
                   readonly codecId: 'pg/int4@1';
                   readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly status: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'INTERCEPTED'>;
+                  };
                   readonly many: false;
                 };
                 readonly updatedAt: {
@@ -639,6 +717,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly ownerEmail: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly slug: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -675,6 +757,7 @@ type ContractBase = Omit<
                 readonly googleReviewUrl: { readonly column: 'googleReviewUrl' };
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };
+                readonly ownerEmail: { readonly column: 'ownerEmail' };
                 readonly slug: { readonly column: 'slug' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
@@ -690,7 +773,19 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly autoReplyText: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly clientEmailed: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
               readonly comment: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly contact: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
@@ -709,6 +804,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly ownerNotified: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
               readonly rating: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
@@ -720,6 +819,10 @@ type ContractBase = Omit<
               readonly serviceRating: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly updatedAt: {
                 readonly nullable: false;
@@ -757,13 +860,18 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly ambianceRating: { readonly column: 'ambianceRating' };
                 readonly authorName: { readonly column: 'authorName' };
+                readonly autoReplyText: { readonly column: 'autoReplyText' };
+                readonly clientEmailed: { readonly column: 'clientEmailed' };
                 readonly comment: { readonly column: 'comment' };
+                readonly contact: { readonly column: 'contact' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly cuisineRating: { readonly column: 'cuisineRating' };
                 readonly id: { readonly column: 'id' };
+                readonly ownerNotified: { readonly column: 'ownerNotified' };
                 readonly rating: { readonly column: 'rating' };
                 readonly restaurantId: { readonly column: 'restaurantId' };
                 readonly serviceRating: { readonly column: 'serviceRating' };
+                readonly status: { readonly column: 'status' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly visitMonth: { readonly column: 'visitMonth' };
                 readonly visitYear: { readonly column: 'visitYear' };

@@ -5,6 +5,7 @@ model Restaurant {
   name            String
   address         String?
   category        String   @default("restaurant")
+  ownerEmail      String?
   googlePlaceId   String?  @unique
   googleReviewUrl String?
   slug            String?  @unique
@@ -14,16 +15,21 @@ model Restaurant {
 }
 
 model Review {
-  id             Int         @id @default(autoincrement())
+  id             Int        @id @default(autoincrement())
   rating         Int
   comment        String?
   authorName     String?
+  contact        String?
   cuisineRating  Int?
   serviceRating  Int?
   ambianceRating Int?
   visitMonth     Int?
   visitYear      Int?
-  restaurant     Restaurant  @relation(fields: [restaurantId], references: [id])
+  status         String     @default("INTERCEPTED")
+  autoReplyText  String?
+  clientEmailed  Boolean    @default(false)
+  ownerNotified  Boolean    @default(false)
+  restaurant     Restaurant @relation(fields: [restaurantId], references: [id])
   restaurantId   Int
   createdAt      TimestamptzString @default(now())
   updatedAt      temporal.updatedAtString()

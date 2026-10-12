@@ -1,7 +1,7 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
-import { submitManagerFeedback } from "./actions";
+import { useMemo, useState, useTransition } from "react";
+import { submitManagerFeedback, trackGooglePublish } from "./actions";
 import { reviewerInitials, showsDetailRatings } from "./reviewer";
 
 type ReviewFormProps = {
@@ -138,12 +138,10 @@ export function ReviewForm({
   const [ambianceRating, setAmbianceRating] = useState(0);
   const [visitMonth, setVisitMonth] = useState(currentMonth);
   const [visitYear, setVisitYear] = useState(currentYear);
-  const [state, formAction, pending] = useActionState(
-    async (_prev: { ok: boolean; error?: string } | null, formData: FormData) => {
-      return submitManagerFeedback(formData);
-    },
+  const [state, setState] = useState<{ ok: boolean; error?: string } | null>(
     null,
   );
+  const [pending, startTransition] = useTransition();
 
   const isPositive = rating >= 4;
   const isNegative = rating >= 1 && rating <= 3;
@@ -232,7 +230,15 @@ export function ReviewForm({
           </p>
         ) : null}
 
-        <form action={formAction} className="mt-6 flex flex-1 flex-col">
+        <form
+          action={(formData) => {
+            startTransition(async () => {
+              const result = await submitManagerFeedback(formData);
+              setState(result);
+            });
+          }}
+          className="mt-6 flex flex-1 flex-col"
+        >
             <input type="hidden" name="restaurantId" value={restaurant.id} />
             <input type="hidden" name="rating" value={rating} />
             <input type="hidden" name="authorName" value={reviewerName} />
@@ -249,6 +255,26 @@ export function ReviewForm({
                 className="w-full resize-none rounded-lg border border-[#dadce0] bg-white px-4 py-3 text-base outline-none placeholder:text-[#80868b] focus:border-[#1a73e8]"
               />
             </label>
+
+            {isNegative ? (
+              <label className="mt-3 block">
+                <span className="mb-1.5 block text-sm text-[#3c4043]">
+                  E-mail ou téléphone{" "}
+                  <span className={CHARTER_HINT}>
+                    (optionnel — pour recevoir un retour privilégié de la
+                    direction sous 1h)
+                  </span>
+                </span>
+                <input
+                  type="text"
+                  name="contact"
+                  autoComplete="email"
+                  inputMode="email"
+                  placeholder="ex. 06 12 34 56 78 ou vous@email.fr"
+                  className="min-h-12 w-full rounded-lg border border-[#dadce0] bg-white px-4 text-base outline-none placeholder:text-[#80868b] focus:border-[#1a73e8]"
+                />
+              </label>
+            ) : null}
 
             {showDetails ? (
               <div className="mt-6 space-y-4">
@@ -341,6 +367,9 @@ export function ReviewForm({
                 target="_blank"
                 rel="noopener noreferrer"
                 className={publishButtonClass}
+                onClick={() => {
+                  void trackGooglePublish(restaurant.id, rating);
+                }}
               >
                 Publier
               </a>

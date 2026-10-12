@@ -68,6 +68,13 @@
                   "kind": "scalar"
                 }
               },
+              "ownerEmail": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "slug": {
                 "nullable": true,
                 "type": {
@@ -123,6 +130,9 @@
                 "name": {
                   "column": "name"
                 },
+                "ownerEmail": {
+                  "column": "ownerEmail"
+                },
                 "slug": {
                   "column": "slug"
                 },
@@ -150,7 +160,28 @@
                   "kind": "scalar"
                 }
               },
+              "autoReplyText": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "clientEmailed": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "comment": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "contact": {
                 "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
@@ -178,6 +209,13 @@
                   "kind": "scalar"
                 }
               },
+              "ownerNotified": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "rating": {
                 "nullable": false,
                 "type": {
@@ -196,6 +234,13 @@
                 "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -247,8 +292,17 @@
                 "authorName": {
                   "column": "authorName"
                 },
+                "autoReplyText": {
+                  "column": "autoReplyText"
+                },
+                "clientEmailed": {
+                  "column": "clientEmailed"
+                },
                 "comment": {
                   "column": "comment"
+                },
+                "contact": {
+                  "column": "contact"
                 },
                 "createdAt": {
                   "column": "createdAt"
@@ -259,6 +313,9 @@
                 "id": {
                   "column": "id"
                 },
+                "ownerNotified": {
+                  "column": "ownerNotified"
+                },
                 "rating": {
                   "column": "rating"
                 },
@@ -267,6 +324,9 @@
                 },
                 "serviceRating": {
                   "column": "serviceRating"
+                },
+                "status": {
+                  "column": "status"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -340,6 +400,11 @@
                   "dataType": "pg/text",
                   "nullable": false
                 },
+                "ownerEmail": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
                 "slug": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -383,7 +448,26 @@
                   "dataType": "pg/text",
                   "nullable": true
                 },
+                "autoReplyText": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "clientEmailed": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nullable": false
+                },
                 "comment": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "contact": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": true
@@ -411,6 +495,15 @@
                   },
                   "nullable": false
                 },
+                "ownerNotified": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nullable": false
+                },
                 "rating": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
@@ -425,6 +518,15 @@
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
                   "nullable": true
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "INTERCEPTED"
+                  },
+                  "nullable": false
                 },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -486,7 +588,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "b72bf7ff80004c153bbace4af735af59ebb817bba5185f83ef960126d384463c"
+    "storageHash": "67d6db7b228fc72ae004c772b96f27d4bf654e76e9636dc4c3e0bc31d8a9ffa0"
   },
   "execution": {
     "executionHash": "2046b9d7f16a7106ed3c5927fb0a859fff391d0a89d6457dbfef0d79818965bb",
