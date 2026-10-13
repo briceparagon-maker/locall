@@ -185,6 +185,11 @@ function clientMailHtml(body: string) {
   return `<div style="font-family:Arial,sans-serif;color:#111;line-height:1.6;white-space:pre-wrap;max-width:560px">${escapeHtml(body)}</div>`;
 }
 
+function clientEmailScheduledAt() {
+  const delayInMinutes = 40 + Math.floor(Math.random() * 16);
+  return new Date(Date.now() + delayInMinutes * 60 * 1000).toISOString();
+}
+
 export async function autoRespondToReview(
   reviewId: number,
 ): Promise<AutoRespondResult> {
@@ -266,6 +271,7 @@ export async function autoRespondToReview(
         replyTo: ownerEmail || undefined,
         subject: `Un mot de ${restaurant.name}`,
         html: clientMailHtml(autoReplyText),
+        scheduledAt: clientEmailScheduledAt(),
       });
       clientEmailed = !sent.error;
     }
