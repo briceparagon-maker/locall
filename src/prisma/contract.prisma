@@ -4,7 +4,9 @@ model Restaurant {
   id              Int      @id @default(autoincrement())
   name            String
   address         String?
+  city            String?
   category        String   @default("restaurant")
+  activity        String   @default("commerce")
   ownerEmail      String?
   googlePlaceId   String?  @unique
   googleReviewUrl String?

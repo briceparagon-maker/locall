@@ -11,31 +11,70 @@ export type AutoRespondResult = {
   autoReplyText: string | null;
 };
 
-function activityLabel(category: string) {
-  if (category === "restaurant") return "restaurant";
-  return category || "commerce";
-}
-
 function starsLine(rating: number) {
   return `${rating}/5 ★`;
 }
 
+function activityLabel(activity: string | null | undefined, category: string | null | undefined) {
+  const act = activity?.trim();
+  if (act && act.toLowerCase() !== "commerce") return act;
+  return category?.trim() || act || "commerce";
+}
+
+function cityLabel(city: string | null | undefined, address: string | null | undefined) {
+  if (city?.trim()) return city.trim();
+  const parts = (address ?? "")
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
+  return parts.at(-1) || "";
+}
+
+function isHospitalityActivity(activity: string) {
+  const value = activity.toLowerCase();
+  return [
+    "restaurant",
+    "brasserie",
+    "café",
+    "cafe",
+    "bar",
+    "boulangerie",
+    "pâtisserie",
+    "patisserie",
+    "hôtel",
+    "hotel",
+  ].some((token) => value.includes(token));
+}
+
 function fallbackReply(input: {
-  restaurantName: string;
+  establishmentName: string;
+  activity: string;
+  city: string;
   rating: number;
   comment: string | null;
   authorName: string | null;
 }) {
   const firstName = input.authorName?.split(" ")[0] ?? "bonjour";
+  const location = input.city ? ` à ${input.city}` : "";
   const comment = input.comment?.trim()
     ? ` Nous avons bien pris en compte votre message : « ${input.comment.trim()} ».`
     : "";
-  return `Bonjour ${firstName},\n\nMerci d’avoir pris le temps de nous écrire après votre visite chez ${input.restaurantName} (${starsLine(input.rating)}).${comment}\n\nNous sommes sincèrement désolés que l’expérience n’ait pas été à la hauteur. La direction va regarder cela de très près et vous recontactera en priorité. En attendant, nous vous proposons un geste commercial dès votre prochaine visite — il vous suffit de vous présenter à l’accueil.\n\nAvec nos excuses,\nL’équipe ${input.restaurantName}`;
+  const hospitality = isHospitalityActivity(input.activity);
+  const place = input.city || "votre quartier";
+  const opening = hospitality
+    ? `Toute l’équipe de ${input.establishmentName}, votre ${input.activity}${location}, prend votre remarque très au sérieux.`
+    : `La direction de ${input.establishmentName}, votre ${input.activity} basé à ${place}, vous remercie pour votre retour.`;
+  const nextStep = hospitality
+    ? "Nous vous proposons un geste commercial dès votre prochaine visite — il vous suffit de vous présenter à l’accueil."
+    : "Nous vous recontacterons en priorité pour trouver une solution concrète, adaptée à votre situation.";
+
+  return `Bonjour ${firstName},\n\n${opening} (${starsLine(input.rating)}).${comment}\n\nNous sommes sincèrement désolés que l’expérience n’ait pas été à la hauteur. ${nextStep}\n\nAvec nos excuses,\nL’équipe ${input.establishmentName}${location}`;
 }
 
-async function generateCalmingReply(input: {
-  restaurantName: string;
-  category: string;
+function buildGeminiPrompt(input: {
+  establishmentName: string;
+  activity: string;
+  city: string;
   rating: number;
   comment: string | null;
   authorName: string | null;
@@ -43,14 +82,55 @@ async function generateCalmingReply(input: {
   serviceRating: number | null;
   ambianceRating: number | null;
 }) {
+  const location = input.city || "non précisée";
   const details = [
     input.cuisineRating ? `Cuisine ${input.cuisineRating}/5` : null,
-    input.serviceRating ? `Service ${input.serviceRating}/5` : null,
-    input.ambianceRating ? `Ambiance ${input.ambianceRating}/5` : null,
+    input.serviceRating ? `Prestation / service ${input.serviceRating}/5` : null,
+    input.ambianceRating ? `Accueil / cadre ${input.ambianceRating}/5` : null,
   ]
     .filter(Boolean)
     .join(", ");
 
+  return `Tu rédiges un e-mail d'apaisement, en français, au nom d'un établissement local. Il doit s'appliquer à TOUT type de commerce ou de service (restaurant, commerce de détail, artisan, garage, salon, profession libérale, santé, etc.) — jamais un ton uniquement « restaurant ».
+
+Variables à exploiter (obligatoires, à insérer naturellement dans le corps du texte, sans crochets) :
+- Nom de l'établissement : ${input.establishmentName}
+- Type d'activité / métier : ${input.activity}
+- Ville ou quartier : ${location}
+
+SEO local :
+- Rédige une réponse ultra-bienveillante, empathique et professionnelle, adaptée au secteur « ${input.activity} ».
+- Glisse naturellement le nom, le métier et la localisation (ex. « ${input.establishmentName}, votre ${input.activity} à ${location} ») pour renforcer le référencement local, sans stuffing ni liste de mots-clés.
+
+Ton selon le secteur (choisis le plus proche, sans copier mot pour mot) :
+- Commerce / artisanat / hospitalité : « Toute l'équipe de ${input.establishmentName}, votre ${input.activity} à ${location}, prend votre remarque très au sérieux... »
+- Service / santé / automobile / profession libérale : « La direction de ${input.establishmentName}, votre ${input.activity} basé à ${location}, vous remercie pour votre retour... »
+
+Consignes :
+- Ton sincère, jamais défensif, jamais infantilisant.
+- Pas de markdown, pas de sujet, uniquement le corps du mail. Vouvoie par défaut.
+- 120 à 180 mots.
+- Reconnaître la note et le commentaire (s'il y en a un) avec le vocabulaire du métier, pas celui d'un restaurant si ce n'en est pas un (évite « plat », « cuisine », « visite à table » hors restauration).
+- Proposer un geste concret adapté au secteur (rappel sous 1h, nouveau rendez-vous, geste commercial, reprise du dossier, etc.).
+- Signer au nom de l'équipe de ${input.establishmentName}.
+
+Note globale : ${starsLine(input.rating)}
+Détails de notation : ${details || "non précisés"}
+Prénom / nom du client : ${input.authorName || "non communiqué"}
+Commentaire : ${input.comment || "(aucun commentaire)"}`;
+}
+
+async function generateCalmingReply(input: {
+  establishmentName: string;
+  activity: string;
+  city: string;
+  rating: number;
+  comment: string | null;
+  authorName: string | null;
+  cuisineRating: number | null;
+  serviceRating: number | null;
+  ambianceRating: number | null;
+}) {
   const fallback = fallbackReply(input);
   const apiKey = process.env.GEMINI_API_KEY?.trim();
   if (!apiKey) return fallback;
@@ -58,22 +138,7 @@ async function generateCalmingReply(input: {
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-    const result = await model.generateContent(`Tu rédiges un e-mail d'apaisement, en français, au nom d'un établissement local.
-
-Consignes :
-- Ton bienveillant, sincère, jamais défensif.
-- Pas de markdown, pas de sujet, uniquement le corps du mail (tutoiement ou vouvoiement selon le prénom s'il est formel : vouvoie par défaut).
-- 120 à 180 mots.
-- Reconnaître la note et le commentaire.
-- Proposer un geste concret (recontact sous 1h / invitation à revenir).
-- Signer au nom de l'équipe de l'établissement.
-
-Établissement : ${input.restaurantName}
-Type d'activité : ${activityLabel(input.category)}
-Note globale : ${starsLine(input.rating)}
-Détails : ${details || "non précisés"}
-Prénom / nom du client : ${input.authorName || "non communiqué"}
-Commentaire : ${input.comment || "(aucun commentaire)"}`);
+    const result = await model.generateContent(buildGeminiPrompt(input));
     const text = result.response.text().trim();
     return text || fallback;
   } catch {
@@ -168,8 +233,9 @@ export async function autoRespondToReview(
     };
   }
   const autoReplyText = await generateCalmingReply({
-    restaurantName: restaurant.name,
-    category: restaurant.category,
+    establishmentName: restaurant.name,
+    activity: activityLabel(restaurant.activity, restaurant.category),
+    city: cityLabel(restaurant.city, restaurant.address),
     rating: review.rating,
     comment: review.comment,
     authorName: review.authorName,

@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'67d6db7b228fc72ae004c772b96f27d4bf654e76e9636dc4c3e0bc31d8a9ffa0'>;
+  StorageHashBase<'f61bfa7ba980e5b60c0dcc9580a645275af7c809c349d8c8c87cec28833a5736'>;
 export type ExecutionHash =
   ExecutionHashBase<'2046b9d7f16a7106ed3c5927fb0a859fff391d0a89d6457dbfef0d79818965bb'>;
 export type ProfileHash =
@@ -235,8 +235,10 @@ type DefaultLiteralValue<CodecId extends string, Encoded> = CodecId extends keyo
 export type FieldOutputTypes = {
   readonly public: {
     readonly Restaurant: {
+      readonly activity: CodecTypes['pg/text@1']['output'];
       readonly address: CodecTypes['pg/text@1']['output'] | null;
       readonly category: CodecTypes['pg/text@1']['output'];
+      readonly city: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly googlePlaceId: CodecTypes['pg/text@1']['output'] | null;
       readonly googleReviewUrl: CodecTypes['pg/text@1']['output'] | null;
@@ -270,8 +272,10 @@ export type FieldOutputTypes = {
 export type FieldInputTypes = {
   readonly public: {
     readonly Restaurant: {
+      readonly activity: CodecTypes['pg/text@1']['input'];
       readonly address: CodecTypes['pg/text@1']['input'] | null;
       readonly category: CodecTypes['pg/text@1']['input'];
+      readonly city: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly googlePlaceId: CodecTypes['pg/text@1']['input'] | null;
       readonly googleReviewUrl: CodecTypes['pg/text@1']['input'] | null;
@@ -305,8 +309,10 @@ export type FieldInputTypes = {
 export type StorageColumnTypes = {
   readonly public: {
     readonly Restaurant: {
+      readonly activity: CodecTypes['pg/text@1']['output'];
       readonly address: CodecTypes['pg/text@1']['output'] | null;
       readonly category: CodecTypes['pg/text@1']['output'];
+      readonly city: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly googlePlaceId: CodecTypes['pg/text@1']['output'] | null;
       readonly googleReviewUrl: CodecTypes['pg/text@1']['output'] | null;
@@ -340,8 +346,10 @@ export type StorageColumnTypes = {
 export type StorageColumnInputTypes = {
   readonly public: {
     readonly Restaurant: {
+      readonly activity: CodecTypes['pg/text@1']['input'];
       readonly address: CodecTypes['pg/text@1']['input'] | null;
       readonly category: CodecTypes['pg/text@1']['input'];
+      readonly city: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly googlePlaceId: CodecTypes['pg/text@1']['input'] | null;
       readonly googleReviewUrl: CodecTypes['pg/text@1']['input'] | null;
@@ -375,8 +383,10 @@ export type StorageColumnInputTypes = {
 
 export namespace Models {
   export type public_Restaurant = {
+    activity: CodecTypes['pg/text@1']['output'];
     address: CodecTypes['pg/text@1']['output'] | null;
     category: CodecTypes['pg/text@1']['output'];
+    city: CodecTypes['pg/text@1']['output'] | null;
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     googlePlaceId: CodecTypes['pg/text@1']['output'] | null;
     googleReviewUrl: CodecTypes['pg/text@1']['output'] | null;
@@ -438,6 +448,16 @@ type ContractBase = Omit<
           readonly table: {
             readonly Restaurant: {
               columns: {
+                readonly activity: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'commerce'>;
+                  };
+                  readonly many: false;
+                };
                 readonly address: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -452,6 +472,12 @@ type ContractBase = Omit<
                     readonly kind: 'literal';
                     readonly value: DefaultLiteralValue<'pg/text@1', 'restaurant'>;
                   };
+                  readonly many: false;
+                };
+                readonly city: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly createdAt: {
@@ -686,12 +712,20 @@ type ContractBase = Omit<
         readonly models: {
           readonly Restaurant: {
             readonly fields: {
+              readonly activity: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly address: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly category: {
                 readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly city: {
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly createdAt: {
@@ -750,8 +784,10 @@ type ContractBase = Omit<
               readonly table: 'Restaurant';
               readonly namespaceId: 'public';
               readonly fields: {
+                readonly activity: { readonly column: 'activity' };
                 readonly address: { readonly column: 'address' };
                 readonly category: { readonly column: 'category' };
+                readonly city: { readonly column: 'city' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly googlePlaceId: { readonly column: 'googlePlaceId' };
                 readonly googleReviewUrl: { readonly column: 'googleReviewUrl' };

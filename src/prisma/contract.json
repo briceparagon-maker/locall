@@ -19,6 +19,13 @@
         "models": {
           "Restaurant": {
             "fields": {
+              "activity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "address": {
                 "nullable": true,
                 "type": {
@@ -28,6 +35,13 @@
               },
               "category": {
                 "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "city": {
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -109,11 +123,17 @@
             },
             "storage": {
               "fields": {
+                "activity": {
+                  "column": "activity"
+                },
                 "address": {
                   "column": "address"
                 },
                 "category": {
                   "column": "category"
+                },
+                "city": {
+                  "column": "city"
                 },
                 "createdAt": {
                   "column": "createdAt"
@@ -353,6 +373,15 @@
           "table": {
             "Restaurant": {
               "columns": {
+                "activity": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "commerce"
+                  },
+                  "nullable": false
+                },
                 "address": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -366,6 +395,11 @@
                     "value": "restaurant"
                   },
                   "nullable": false
+                },
+                "city": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
                 },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
@@ -588,7 +622,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "67d6db7b228fc72ae004c772b96f27d4bf654e76e9636dc4c3e0bc31d8a9ffa0"
+    "storageHash": "f61bfa7ba980e5b60c0dcc9580a645275af7c809c349d8c8c87cec28833a5736"
   },
   "execution": {
     "executionHash": "2046b9d7f16a7106ed3c5927fb0a859fff391d0a89d6457dbfef0d79818965bb",

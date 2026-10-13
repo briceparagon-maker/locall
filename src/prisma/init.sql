@@ -14,6 +14,8 @@ CREATE TABLE IF NOT EXISTS "Restaurant" (
 
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS "googleReviewUrl" TEXT;
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS category TEXT NOT NULL DEFAULT 'restaurant';
+ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS activity TEXT NOT NULL DEFAULT 'commerce';
+ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS city TEXT;
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS "ownerEmail" TEXT;
 
 CREATE TABLE IF NOT EXISTS "Review" (
@@ -45,10 +47,12 @@ ALTER TABLE "Review" ADD COLUMN IF NOT EXISTS "ownerNotified" BOOLEAN NOT NULL D
 
 CREATE INDEX IF NOT EXISTS "Review_restaurantId_idx" ON "Review" ("restaurantId");
 
-INSERT INTO "Restaurant" (name, address, category, slug, "googlePlaceId", "googleReviewUrl")
+INSERT INTO "Restaurant" (name, address, city, category, activity, slug, "googlePlaceId", "googleReviewUrl")
 SELECT
   'Le Petit Comptoir',
   '12 rue de la République, Lyon',
+  'Lyon',
+  'restaurant',
   'restaurant',
   'le-petit-comptoir',
   'ChIJD7fiBh9u5kcRYJSMaMOCCwQ',
@@ -58,5 +62,8 @@ WHERE NOT EXISTS (
 );
 
 UPDATE "Restaurant"
-SET category = COALESCE(NULLIF(category, ''), 'restaurant')
+SET
+  category = COALESCE(NULLIF(category, ''), 'restaurant'),
+  activity = 'restaurant',
+  city = COALESCE(NULLIF(city, ''), 'Lyon')
 WHERE slug = 'le-petit-comptoir';
