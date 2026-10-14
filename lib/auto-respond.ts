@@ -15,6 +15,49 @@ function starsLine(rating: number) {
   return `${rating}/5 ★`;
 }
 
+function scoreLine(rating: number) {
+  return `${rating}/5`;
+}
+
+function isPresentRating(value: number | null | undefined): value is number {
+  return typeof value === "number" && Number.isInteger(value) && value >= 1 && value <= 5;
+}
+
+function isFoodAndBeverage(activity: string | null | undefined, category: string | null | undefined) {
+  const haystack = `${activity ?? ""} ${category ?? ""}`.toLowerCase();
+  if (haystack.includes("fast food") || haystack.includes("métier de bouche") || haystack.includes("metier de bouche")) {
+    return true;
+  }
+  const tokens = haystack.split(/[^a-zàâäéèêëïîôùûüçœ-]+/).filter(Boolean);
+  const foodTokens = new Set([
+    "restaurant",
+    "restauration",
+    "brasserie",
+    "bistro",
+    "bistrot",
+    "café",
+    "cafe",
+    "bar",
+    "boulangerie",
+    "pâtisserie",
+    "patisserie",
+    "traiteur",
+    "pizzeria",
+    "pizza",
+    "fast-food",
+    "fastfood",
+    "snack",
+    "kebab",
+    "burger",
+    "glacier",
+    "chocolaterie",
+    "crêperie",
+    "creperie",
+    "bakery",
+  ]);
+  return tokens.some((token) => foodTokens.has(token));
+}
+
 function activityLabel(activity: string | null | undefined, category: string | null | undefined) {
   const act = activity?.trim();
   if (act && act.toLowerCase() !== "commerce") return act;
@@ -129,6 +172,8 @@ async function generateCalmingReply(input: {
 
 function ownerAlertHtml(input: {
   restaurantName: string;
+  activity: string;
+  category: string | null;
   rating: number;
   comment: string | null;
   cuisineRating: number | null;
@@ -137,13 +182,22 @@ function ownerAlertHtml(input: {
   clientEmailed: boolean;
   dashboardUrl: string;
 }) {
-  const details = [
-    input.cuisineRating ? `Cuisine : ${input.cuisineRating}/5` : null,
-    input.serviceRating ? `Service : ${input.serviceRating}/5` : null,
-    input.ambianceRating ? `Ambiance : ${input.ambianceRating}/5` : null,
-  ]
-    .filter(Boolean)
-    .join(", ");
+  const detailRows = isFoodAndBeverage(input.activity, input.category)
+    ? [
+        isPresentRating(input.cuisineRating)
+          ? `• Cuisine : ${scoreLine(input.cuisineRating)}`
+          : null,
+        isPresentRating(input.serviceRating)
+          ? `• Service : ${scoreLine(input.serviceRating)}`
+          : null,
+        isPresentRating(input.ambianceRating)
+          ? `• Ambiance : ${scoreLine(input.ambianceRating)}`
+          : null,
+      ].filter((row): row is string => Boolean(row))
+    : [];
+  const detailsBlock = detailRows.length
+    ? `<li><strong>Notes détaillées :</strong><br>${detailRows.map((row) => escapeHtml(row)).join("<br>")}</li>`
+    : "";
   const excerpt = (input.comment ?? "").trim() || "Aucun commentaire.";
   const action = input.clientEmailed
     ? "L'avis N'A PAS été publié sur Google. Une réponse d'apaisement ultra-bienveillante a été générée et sera envoyée automatiquement au client dans 40 à 55 minutes."
@@ -153,7 +207,8 @@ function ownerAlertHtml(input: {
 <p style="font-size:18px;font-weight:700;margin:0 0 12px">Excellente nouvelle : Votre réputation sur Google reste intacte !</p>
 <p>Un client mécontent vient de déposer un avis de ${escapeHtml(starsLine(input.rating))} sur votre Smart QR Code.</p>
 <ul>
-<li><strong>Note interceptée :</strong> ${escapeHtml(starsLine(input.rating))}${details ? ` (${escapeHtml(details)})` : ""}</li>
+<li><strong>Note interceptée :</strong> ${escapeHtml(starsLine(input.rating))}</li>
+${detailsBlock}
 <li><strong>Commentaire client :</strong> "${escapeHtml(excerpt)}"</li>
 <li><strong>Action LOCALL :</strong> ${escapeHtml(action)}</li>
 </ul>
@@ -264,6 +319,8 @@ export async function autoRespondToReview(
         subject: `🛡️ [LOCALL Protection] Mauvais avis intercepté pour ${restaurant.name} !`,
         html: ownerAlertHtml({
           restaurantName: restaurant.name,
+          activity: activityLabel(restaurant.activity, restaurant.category),
+          category: restaurant.category,
           rating: review.rating,
           comment: review.comment,
           cuisineRating: review.cuisineRating,
