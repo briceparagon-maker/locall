@@ -85,7 +85,7 @@ export async function trackGooglePublish(restaurantId: number, rating: number) {
     restaurantId,
     rating,
     comment: null,
-    authorName: "Visiteur",
+    authorName: "Client",
     contact: null,
     cuisineRating: null,
     serviceRating: null,

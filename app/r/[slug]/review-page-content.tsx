@@ -28,7 +28,7 @@ export async function ReviewPageContent({
         googleReviewUrl: restaurant.googleReviewUrl,
         googlePlaceId: restaurant.googlePlaceId,
       }}
-      reviewerName="Visiteur"
+      reviewerName="Client"
       currentMonth={now.getMonth() + 1}
       currentYear={now.getFullYear()}
     />
