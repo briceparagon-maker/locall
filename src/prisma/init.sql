@@ -47,6 +47,33 @@ ALTER TABLE "Review" ADD COLUMN IF NOT EXISTS "ownerNotified" BOOLEAN NOT NULL D
 
 CREATE INDEX IF NOT EXISTS "Review_restaurantId_idx" ON "Review" ("restaurantId");
 
+-- RLS Review : l'anon peut insérer (formulaire public). SELECT/UPDATE
+-- réservés à authenticated. service_role et le rôle table owner (Prisma
+-- via DIRECT_URL) contournent la RLS — pas de FORCE ROW LEVEL SECURITY.
+ALTER TABLE public."Review" ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Autoriser l'insertion anonyme d'avis" ON public."Review";
+CREATE POLICY "Autoriser l'insertion anonyme d'avis"
+  ON public."Review"
+  FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Lecture des avis pour les utilisateurs connectés" ON public."Review";
+CREATE POLICY "Lecture des avis pour les utilisateurs connectés"
+  ON public."Review"
+  FOR SELECT
+  TO authenticated
+  USING (true);
+
+DROP POLICY IF EXISTS "Modification des avis pour les utilisateurs connectés" ON public."Review";
+CREATE POLICY "Modification des avis pour les utilisateurs connectés"
+  ON public."Review"
+  FOR UPDATE
+  TO authenticated
+  USING (true)
+  WITH CHECK (true);
+
 INSERT INTO "Restaurant" (name, address, city, category, activity, slug, "googlePlaceId", "googleReviewUrl")
 SELECT
   'Le Petit Comptoir',
