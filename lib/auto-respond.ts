@@ -30,22 +30,6 @@ function cityLabel(city: string | null | undefined, address: string | null | und
   return parts.at(-1) || "";
 }
 
-function isHospitalityActivity(activity: string) {
-  const value = activity.toLowerCase();
-  return [
-    "restaurant",
-    "brasserie",
-    "café",
-    "cafe",
-    "bar",
-    "boulangerie",
-    "pâtisserie",
-    "patisserie",
-    "hôtel",
-    "hotel",
-  ].some((token) => value.includes(token));
-}
-
 function fallbackReply(input: {
   establishmentName: string;
   activity: string;
@@ -54,21 +38,17 @@ function fallbackReply(input: {
   comment: string | null;
   authorName: string | null;
 }) {
-  const firstName = input.authorName?.split(" ")[0] ?? "bonjour";
   const location = input.city ? ` à ${input.city}` : "";
-  const comment = input.comment?.trim()
-    ? ` Nous avons bien pris en compte votre message : « ${input.comment.trim()} ».`
+  const commentLine = input.comment?.trim()
+    ? `Nous avons bien pris en compte votre message : « ${input.comment.trim()} ».\n`
     : "";
-  const hospitality = isHospitalityActivity(input.activity);
-  const place = input.city || "votre quartier";
-  const opening = hospitality
-    ? `Toute l’équipe de ${input.establishmentName}, votre ${input.activity}${location}, prend votre remarque très au sérieux.`
-    : `La direction de ${input.establishmentName}, votre ${input.activity} basé à ${place}, vous remercie pour votre retour.`;
-  const nextStep = hospitality
-    ? "Nous vous proposons un geste commercial dès votre prochaine visite — il vous suffit de vous présenter à l’accueil."
-    : "Nous vous recontacterons en priorité pour trouver une solution concrète, adaptée à votre situation.";
 
-  return `Bonjour ${firstName},\n\n${opening} (${starsLine(input.rating)}).${comment}\n\nNous sommes sincèrement désolés que l’expérience n’ait pas été à la hauteur. ${nextStep}\n\nAvec nos excuses,\nL’équipe ${input.establishmentName}${location}`;
+  return `Toute l’équipe de ${input.establishmentName}, votre ${input.activity}${location}, prend votre remarque très au sérieux. (${starsLine(input.rating)}).
+${commentLine}Nous sommes sincèrement désolés que votre expérience n’ait pas été à la hauteur de vos attentes.
+La satisfaction de nos clients est essentielle pour nous. Vos remarques nous permettent de continuer à nous améliorer et à offrir à chacun la qualité d’accueil et de service que nous souhaitons.
+Nous espérons avoir le plaisir de vous accueillir à nouveau dans de meilleures conditions.
+Avec toutes nos excuses,
+L’équipe ${input.establishmentName}${location}`;
 }
 
 function buildGeminiPrompt(input: {
@@ -91,33 +71,34 @@ function buildGeminiPrompt(input: {
     .filter(Boolean)
     .join(", ");
 
-  return `Tu rédiges un e-mail d'apaisement, en français, au nom d'un établissement local. Il doit s'appliquer à TOUT type de commerce ou de service (restaurant, commerce de détail, artisan, garage, salon, profession libérale, santé, etc.) — jamais un ton uniquement « restaurant ».
+  return `Tu rédiges un e-mail d'apaisement, en français, au nom d'un établissement local.
+Conserve impérativement la trame et le ton ci-dessous : chaleureux, humble, axé sur l'amélioration continue.
+Tu peux adapter légèrement les tournures selon l'activité « ${input.activity} » et le commentaire, tout en respectant strictement ce modèle (mêmes paragraphes, même ordre, même signature).
+Ne propose AUCUN geste commercial, avantage, remboursement, réduction, cadeau ou rendez-vous de rattrapage — ni systématique, ni automatique, ni « si besoin ».
+Pas de markdown, pas de sujet, uniquement le corps du mail. Vouvoie. Pas d'ajout hors modèle (pas de « Bonjour », pas de post-scriptum).
 
-Variables à exploiter (obligatoires, à insérer naturellement dans le corps du texte, sans crochets) :
-- Nom de l'établissement : ${input.establishmentName}
-- Type d'activité / métier : ${input.activity}
-- Ville ou quartier : ${location}
+Variables (à insérer telles quelles, sans crochets) :
+- Nom : ${input.establishmentName}
+- Activité : ${input.activity}
+- Ville : ${location}
+- Note : ${starsLine(input.rating)}
+- Commentaire : ${input.comment?.trim() || ""}
 
-SEO local :
-- Rédige une réponse ultra-bienveillante, empathique et professionnelle, adaptée au secteur « ${input.activity} ».
-- Glisse naturellement le nom, le métier et la localisation (ex. « ${input.establishmentName}, votre ${input.activity} à ${location} ») pour renforcer le référencement local, sans stuffing ni liste de mots-clés.
+Modèle à suivre exactement :
 
-Ton selon le secteur (choisis le plus proche, sans copier mot pour mot) :
-- Commerce / artisanat / hospitalité : « Toute l'équipe de ${input.establishmentName}, votre ${input.activity} à ${location}, prend votre remarque très au sérieux... »
-- Service / santé / automobile / profession libérale : « La direction de ${input.establishmentName}, votre ${input.activity} basé à ${location}, vous remercie pour votre retour... »
+Toute l’équipe de ${input.establishmentName}, votre ${input.activity} à ${location}, prend votre remarque très au sérieux. (${starsLine(input.rating)}).
+Nous avons bien pris en compte votre message : « ${input.comment?.trim() || "votre retour"} ».
+Nous sommes sincèrement désolés que votre expérience n’ait pas été à la hauteur de vos attentes.
+La satisfaction de nos clients est essentielle pour nous. Vos remarques nous permettent de continuer à nous améliorer et à offrir à chacun la qualité d’accueil et de service que nous souhaitons.
+Nous espérons avoir le plaisir de vous accueillir à nouveau dans de meilleures conditions.
+Avec toutes nos excuses,
+L’équipe ${input.establishmentName} à ${location}
 
-Consignes :
-- Ton sincère, jamais défensif, jamais infantilisant.
-- Pas de markdown, pas de sujet, uniquement le corps du mail. Vouvoie par défaut.
-- 120 à 180 mots.
-- Reconnaître la note et le commentaire (s'il y en a un) avec le vocabulaire du métier, pas celui d'un restaurant si ce n'en est pas un (évite « plat », « cuisine », « visite à table » hors restauration).
-- Proposer un geste concret adapté au secteur (rappel sous 1h, nouveau rendez-vous, geste commercial, reprise du dossier, etc.).
-- Signer au nom de l'équipe de ${input.establishmentName}.
+Si le client n'a laissé aucun commentaire, omets uniquement la phrase « Nous avons bien pris en compte votre message… ».
+Si un commentaire est présent, cite-le fidèlement entre « ».
 
-Note globale : ${starsLine(input.rating)}
-Détails de notation : ${details || "non précisés"}
-Prénom / nom du client : ${input.authorName || "non communiqué"}
-Commentaire : ${input.comment || "(aucun commentaire)"}`;
+Détails de notation (contexte, ne pas les lister dans le mail) : ${details || "non précisés"}
+Prénom / nom du client (ne pas saluer par le prénom) : ${input.authorName || "non communiqué"}`;
 }
 
 async function generateCalmingReply(input: {
