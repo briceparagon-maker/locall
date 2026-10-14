@@ -165,7 +165,7 @@ function ownerAlertHtml(input: {
     .join(", ");
   const excerpt = (input.comment ?? "").trim() || "Aucun commentaire.";
   const action = input.clientEmailed
-    ? "L'avis N'A PAS été publié sur Google. Une réponse d'apaisement ultra-bienveillante a été rédigée par Gemini et envoyée automatiquement au client."
+    ? "L'avis N'A PAS été publié sur Google. Une réponse d'apaisement ultra-bienveillante a été générée et sera envoyée automatiquement au client dans 40 à 55 minutes."
     : "L'avis N'A PAS été publié sur Google. Le client n'a pas laissé d'e-mail : la réponse d'apaisement est prête dans votre dashboard.";
 
   return `<div style="font-family:Arial,sans-serif;color:#111;line-height:1.5;max-width:560px">
