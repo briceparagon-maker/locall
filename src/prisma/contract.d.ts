@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'d33ff0329aab2126b9fb81e440604eb4347008aabe0f2f823f0960837962e27b'>;
+  StorageHashBase<'268b7c87020eebe3fc85812ee20c0f271fa9660dc94eb6faef2232b9bd5e7d29'>;
 export type ExecutionHash =
   ExecutionHashBase<'2046b9d7f16a7106ed3c5927fb0a859fff391d0a89d6457dbfef0d79818965bb'>;
 export type ProfileHash =
@@ -243,6 +243,7 @@ export type FieldOutputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly department: CodecTypes['pg/text@1']['output'] | null;
       readonly googlePlaceId: CodecTypes['pg/text@1']['output'] | null;
+      readonly googlePlaceUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly googleReviewUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
@@ -289,6 +290,7 @@ export type FieldInputTypes = {
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly department: CodecTypes['pg/text@1']['input'] | null;
       readonly googlePlaceId: CodecTypes['pg/text@1']['input'] | null;
+      readonly googlePlaceUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly googleReviewUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
@@ -334,6 +336,7 @@ export type StorageColumnTypes = {
       readonly city: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly department: CodecTypes['pg/text@1']['output'] | null;
+      readonly google_place_url: CodecTypes['pg/text@1']['output'] | null;
       readonly googlePlaceId: CodecTypes['pg/text@1']['output'] | null;
       readonly googleReviewUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
@@ -380,6 +383,7 @@ export type StorageColumnInputTypes = {
       readonly city: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly department: CodecTypes['pg/text@1']['input'] | null;
+      readonly google_place_url: CodecTypes['pg/text@1']['input'] | null;
       readonly googlePlaceId: CodecTypes['pg/text@1']['input'] | null;
       readonly googleReviewUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
@@ -427,6 +431,7 @@ export namespace Models {
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     department: CodecTypes['pg/text@1']['output'] | null;
     googlePlaceId: CodecTypes['pg/text@1']['output'] | null;
+    googlePlaceUrl: CodecTypes['pg/text@1']['output'] | null;
     googleReviewUrl: CodecTypes['pg/text@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
@@ -555,6 +560,12 @@ type ContractBase = Omit<
                   readonly many: false;
                 };
                 readonly googleReviewUrl: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly google_place_url: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: true;
@@ -850,6 +861,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly googlePlaceUrl: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly googleReviewUrl: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -936,6 +951,7 @@ type ContractBase = Omit<
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly department: { readonly column: 'department' };
                 readonly googlePlaceId: { readonly column: 'googlePlaceId' };
+                readonly googlePlaceUrl: { readonly column: 'google_place_url' };
                 readonly googleReviewUrl: { readonly column: 'googleReviewUrl' };
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };

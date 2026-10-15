@@ -10,6 +10,7 @@ model Restaurant {
   ownerEmail      String?
   googlePlaceId   String?  @unique
   googleReviewUrl String?
+  googlePlaceUrl  String?  @map("google_place_url")
   slug            String?  @unique
   autoRespondGooglePositive Boolean @default(false) @map("auto_respond_google_positive")
   ownerStatus     String?

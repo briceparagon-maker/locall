@@ -147,26 +147,72 @@ export function InscriptionForm() {
           </label>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-          <label className="flex items-start gap-3 text-sm text-locall-navy">
-            <input
-              type="checkbox"
-              checked={seoEnabled}
-              onChange={(event) => setSeoEnabled(event.target.checked)}
-              className="mt-1 accent-locall-orange"
-            />
-            <span>
-              Activer la réponse automatique SEO pour vos avis 4/5 et 5/5 Google
-              (Option offerte).{" "}
-              <button
-                type="button"
-                onClick={() => setShowSeoModal(true)}
-                className="link-locall"
-              >
-                En savoir plus
-              </button>
-            </span>
-          </label>
+        <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+          <div className="flex flex-wrap items-start gap-x-4 gap-y-2">
+            <label className="flex min-w-0 flex-1 cursor-pointer items-start gap-3 text-sm text-locall-navy">
+              <input
+                type="checkbox"
+                checked={seoEnabled}
+                onChange={(event) => setSeoEnabled(event.target.checked)}
+                className="mt-1 accent-locall-orange"
+              />
+              <span>
+                Activer la réponse automatique SEO pour vos avis 4/5 et 5/5
+                Google (Option offerte)
+              </span>
+            </label>
+            <button
+              type="button"
+              onClick={() => setShowSeoModal(true)}
+              className="link-locall shrink-0 text-sm underline"
+            >
+              En savoir plus
+            </button>
+          </div>
+          {seoEnabled ? (
+            <label className="label-locall">
+              URL de votre fiche Google Business / Google Maps (ou Lien d’avis
+              Google)
+              <input
+                name="googlePlaceUrl"
+                type="url"
+                required
+                placeholder="https://g.page/r/... ou https://maps.google.com/..."
+                className="input-locall"
+              />
+            </label>
+          ) : null}
+        </div>
+
+        <div className="flex items-start gap-3 text-sm text-locall-navy">
+          <input
+            id="acceptTerms"
+            type="checkbox"
+            name="acceptTerms"
+            required
+            className="mt-1 accent-locall-orange"
+          />
+          <span>
+            <label htmlFor="acceptTerms">J’accepte les </label>
+            <Link
+              href="/cgu"
+              className="link-locall"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              CGU
+            </Link>
+            <label htmlFor="acceptTerms"> et la </label>
+            <Link
+              href="/confidentialite"
+              className="link-locall"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Politique de confidentialité
+            </Link>
+            .
+          </span>
         </div>
 
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
@@ -175,13 +221,13 @@ export function InscriptionForm() {
           {pending ? "Activation…" : "Activer mes 14 jours gratuits →"}
         </button>
         <p className="text-center text-sm text-slate-500">
-          Sans engagement | Activation instantanée
-        </p>
-        <p className="text-center text-sm text-slate-500">
-          Vous avez déjà un compte ?{" "}
+          Déjà inscrit ?{" "}
           <Link href="/connexion" className="link-locall">
             Se connecter
           </Link>
+        </p>
+        <p className="text-center text-sm text-slate-500">
+          Sans engagement | Activation instantanée
         </p>
       </form>
 

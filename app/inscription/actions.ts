@@ -13,6 +13,15 @@ function text(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
 }
 
+function isHttpUrl(value: string) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 async function uniqueSlug(name: string) {
   const base = slugifyName(name);
   for (let i = 0; i < 20; i += 1) {
@@ -38,6 +47,8 @@ export async function registerTrial(formData: FormData) {
   const password = String(formData.get("password") ?? "");
   const passwordConfirm = String(formData.get("passwordConfirm") ?? "");
   const autoRespondGooglePositive = formData.get("autoRespondGooglePositive") === "on";
+  const googlePlaceUrl = text(formData, "googlePlaceUrl");
+  const acceptTerms = formData.get("acceptTerms") === "on";
 
   if (!name) return { ok: false as const, error: "Indiquez le nom de l’établissement." };
   if (!STATUSES.has(ownerStatus)) {
@@ -58,6 +69,19 @@ export async function registerTrial(formData: FormData) {
   if (password !== passwordConfirm) {
     return { ok: false as const, error: "Les mots de passe ne correspondent pas." };
   }
+  if (!acceptTerms) {
+    return {
+      ok: false as const,
+      error: "Veuillez accepter les CGU et la Politique de confidentialité.",
+    };
+  }
+  if (autoRespondGooglePositive && !isHttpUrl(googlePlaceUrl)) {
+    return {
+      ok: false as const,
+      error:
+        "Indiquez l’URL de votre fiche Google Business, Google Maps ou lien d’avis.",
+    };
+  }
 
   const existing = await db.orm.public.Restaurant.where({ ownerEmail: email }).first();
   if (existing) {
@@ -75,6 +99,8 @@ export async function registerTrial(formData: FormData) {
     ownerEmail: email,
     slug,
     autoRespondGooglePositive,
+    googlePlaceUrl: autoRespondGooglePositive ? googlePlaceUrl : null,
+    googleReviewUrl: autoRespondGooglePositive ? googlePlaceUrl : null,
     ownerStatus,
     ownerFirstName,
     ownerLastName,

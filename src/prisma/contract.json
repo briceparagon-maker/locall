@@ -75,6 +75,13 @@
                   "kind": "scalar"
                 }
               },
+              "googlePlaceUrl": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "googleReviewUrl": {
                 "nullable": true,
                 "type": {
@@ -209,6 +216,9 @@
                 },
                 "googlePlaceId": {
                   "column": "googlePlaceId"
+                },
+                "googlePlaceUrl": {
+                  "column": "google_place_url"
                 },
                 "googleReviewUrl": {
                   "column": "googleReviewUrl"
@@ -524,6 +534,11 @@
                   "dataType": "pg/text",
                   "nullable": true
                 },
+                "google_place_url": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
                 "id": {
                   "codecId": "pg/int4@1",
                   "dataType": "pg/int4",
@@ -761,7 +776,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "d33ff0329aab2126b9fb81e440604eb4347008aabe0f2f823f0960837962e27b"
+    "storageHash": "268b7c87020eebe3fc85812ee20c0f271fa9660dc94eb6faef2232b9bd5e7d29"
   },
   "execution": {
     "executionHash": "2046b9d7f16a7106ed3c5927fb0a859fff391d0a89d6457dbfef0d79818965bb",
