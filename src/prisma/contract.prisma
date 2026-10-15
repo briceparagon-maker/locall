@@ -11,6 +11,7 @@ model Restaurant {
   googlePlaceId   String?  @unique
   googleReviewUrl String?
   slug            String?  @unique
+  autoRespondGooglePositive Boolean @default(false) @map("auto_respond_google_positive")
   reviews         Review[]
   createdAt       TimestamptzString @default(now())
   updatedAt       temporal.updatedAtString()

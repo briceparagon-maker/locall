@@ -33,6 +33,13 @@
                   "kind": "scalar"
                 }
               },
+              "autoRespondGooglePositive": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "category": {
                 "nullable": false,
                 "type": {
@@ -128,6 +135,9 @@
                 },
                 "address": {
                   "column": "address"
+                },
+                "autoRespondGooglePositive": {
+                  "column": "auto_respond_google_positive"
                 },
                 "category": {
                   "column": "category"
@@ -387,6 +397,15 @@
                   "dataType": "pg/text",
                   "nullable": true
                 },
+                "auto_respond_google_positive": {
+                  "codecId": "pg/bool@1",
+                  "dataType": "pg/bool",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nullable": false
+                },
                 "category": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -622,7 +641,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "f61bfa7ba980e5b60c0dcc9580a645275af7c809c349d8c8c87cec28833a5736"
+    "storageHash": "efdf697f3bbfb569705af3ac0a4aabd25c749a46630d014d7d787cfd14b92a54"
   },
   "execution": {
     "executionHash": "2046b9d7f16a7106ed3c5927fb0a859fff391d0a89d6457dbfef0d79818965bb",

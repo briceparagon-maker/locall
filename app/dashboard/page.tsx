@@ -14,7 +14,7 @@ export default async function DashboardPage() {
 
   if (!restaurant) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-[#f4f6f8] p-6 text-slate-700">
+      <div className="flex min-h-dvh items-center justify-center bg-background p-6 text-locall-navy">
         Aucun établissement n’est encore enregistré.
       </div>
     );
@@ -31,13 +31,16 @@ export default async function DashboardPage() {
   const googlePushed = reviews.filter(
     (row) => row.status === "GOOGLE_PUSHED" || row.rating >= 4,
   ).length;
-  const intercepted = reviews.filter((row) => row.rating <= 3).length;
-  const rated = reviews.filter((row) => row.rating >= 1);
+  const interceptedReviews = reviews.filter(
+    (row) => row.rating >= 1 && row.rating <= 3,
+  );
+  const intercepted = interceptedReviews.length;
   const overall =
-    rated.length === 0
+    intercepted === 0
       ? "—"
       : (
-          rated.reduce((sum, row) => sum + row.rating, 0) / rated.length
+          interceptedReviews.reduce((sum, row) => sum + row.rating, 0) /
+          intercepted
         ).toFixed(1);
   const protectionRate = intercepted === 0 ? 0 : 100;
 
@@ -46,7 +49,7 @@ export default async function DashboardPage() {
   const qrDataUrl = await QRCode.toDataURL(reviewUrl, {
     width: 640,
     margin: 2,
-    color: { dark: "#0f766e", light: "#ffffff" },
+    color: { dark: "#0A192F", light: "#ffffff" },
   });
 
   const complaints: ComplaintRow[] = reviews
@@ -69,10 +72,12 @@ export default async function DashboardPage() {
 
   return (
     <DashboardClient
+      restaurantId={restaurant.id}
       restaurantName={restaurant.name}
       slug={slug}
       qrDataUrl={qrDataUrl}
       reviewUrl={reviewUrl}
+      autoRespondGooglePositive={Boolean(restaurant.autoRespondGooglePositive)}
       kpis={{
         overall,
         googlePushed,

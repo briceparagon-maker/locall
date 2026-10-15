@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'f61bfa7ba980e5b60c0dcc9580a645275af7c809c349d8c8c87cec28833a5736'>;
+  StorageHashBase<'efdf697f3bbfb569705af3ac0a4aabd25c749a46630d014d7d787cfd14b92a54'>;
 export type ExecutionHash =
   ExecutionHashBase<'2046b9d7f16a7106ed3c5927fb0a859fff391d0a89d6457dbfef0d79818965bb'>;
 export type ProfileHash =
@@ -237,6 +237,7 @@ export type FieldOutputTypes = {
     readonly Restaurant: {
       readonly activity: CodecTypes['pg/text@1']['output'];
       readonly address: CodecTypes['pg/text@1']['output'] | null;
+      readonly autoRespondGooglePositive: CodecTypes['pg/bool@1']['output'];
       readonly category: CodecTypes['pg/text@1']['output'];
       readonly city: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -274,6 +275,7 @@ export type FieldInputTypes = {
     readonly Restaurant: {
       readonly activity: CodecTypes['pg/text@1']['input'];
       readonly address: CodecTypes['pg/text@1']['input'] | null;
+      readonly autoRespondGooglePositive: CodecTypes['pg/bool@1']['input'];
       readonly category: CodecTypes['pg/text@1']['input'];
       readonly city: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -311,6 +313,7 @@ export type StorageColumnTypes = {
     readonly Restaurant: {
       readonly activity: CodecTypes['pg/text@1']['output'];
       readonly address: CodecTypes['pg/text@1']['output'] | null;
+      readonly auto_respond_google_positive: CodecTypes['pg/bool@1']['output'];
       readonly category: CodecTypes['pg/text@1']['output'];
       readonly city: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -348,6 +351,7 @@ export type StorageColumnInputTypes = {
     readonly Restaurant: {
       readonly activity: CodecTypes['pg/text@1']['input'];
       readonly address: CodecTypes['pg/text@1']['input'] | null;
+      readonly auto_respond_google_positive: CodecTypes['pg/bool@1']['input'];
       readonly category: CodecTypes['pg/text@1']['input'];
       readonly city: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -385,6 +389,7 @@ export namespace Models {
   export type public_Restaurant = {
     activity: CodecTypes['pg/text@1']['output'];
     address: CodecTypes['pg/text@1']['output'] | null;
+    autoRespondGooglePositive: CodecTypes['pg/bool@1']['output'];
     category: CodecTypes['pg/text@1']['output'];
     city: CodecTypes['pg/text@1']['output'] | null;
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -462,6 +467,16 @@ type ContractBase = Omit<
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly auto_respond_google_positive: {
+                  readonly dataType: 'pg/bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
                   readonly many: false;
                 };
                 readonly category: {
@@ -720,6 +735,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly autoRespondGooglePositive: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
               readonly category: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -786,6 +805,9 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly activity: { readonly column: 'activity' };
                 readonly address: { readonly column: 'address' };
+                readonly autoRespondGooglePositive: {
+                  readonly column: 'auto_respond_google_positive';
+                };
                 readonly category: { readonly column: 'category' };
                 readonly city: { readonly column: 'city' };
                 readonly createdAt: { readonly column: 'createdAt' };

@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
+import { setAutoRespondGooglePositive } from "./actions";
 
 export type ComplaintRow = {
   id: number;
@@ -39,18 +40,25 @@ function StarPips({ rating }: { rating: number }) {
   );
 }
 
+const OPTION_TITLE =
+  "Réponse automatique SEO pour vos avis Google 4/5 et 5/5 (Option offerte)";
+
 export function DashboardClient({
+  restaurantId,
   restaurantName,
   slug,
   qrDataUrl,
   reviewUrl,
+  autoRespondGooglePositive,
   kpis,
   complaints,
 }: {
+  restaurantId: number;
   restaurantName: string;
   slug: string;
   qrDataUrl: string;
   reviewUrl: string;
+  autoRespondGooglePositive: boolean;
   kpis: {
     overall: string;
     googlePushed: number;
@@ -60,10 +68,36 @@ export function DashboardClient({
   complaints: ComplaintRow[];
 }) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [optionEnabled, setOptionEnabled] = useState(autoRespondGooglePositive);
+  const [showOptionModal, setShowOptionModal] = useState(false);
+  const [optionError, setOptionError] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
   const selected = useMemo(
     () => complaints.find((row) => row.id === selectedId) ?? null,
     [complaints, selectedId],
   );
+
+  function persistOption(enabled: boolean, closeModal = false) {
+    setOptionError(null);
+    startTransition(async () => {
+      const result = await setAutoRespondGooglePositive(restaurantId, enabled);
+      if (!result.ok) {
+        setOptionError(result.error);
+        return;
+      }
+      setOptionEnabled(enabled);
+      if (closeModal) setShowOptionModal(false);
+    });
+  }
+
+  function onToggleOption() {
+    if (pending) return;
+    if (optionEnabled) {
+      persistOption(false);
+      return;
+    }
+    setShowOptionModal(true);
+  }
 
   function downloadQr() {
     const link = document.createElement("a");
@@ -73,19 +107,19 @@ export function DashboardClient({
   }
 
   return (
-    <div className="min-h-dvh bg-[#f4f6f8] text-slate-900">
-      <header className="border-b border-slate-200 bg-white">
+    <div className="min-h-dvh bg-background text-foreground">
+      <header className="bg-locall-navy text-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
           <div>
-            <p className="text-xs font-semibold tracking-[0.2em] text-teal-700">
+            <p className="text-xs font-semibold tracking-[0.2em] text-locall-orange">
               LOCALL
             </p>
             <h1 className="text-xl font-semibold">Dashboard commerçant</h1>
-            <p className="text-sm text-slate-500">{restaurantName}</p>
+            <p className="text-sm text-white/70">{restaurantName}</p>
           </div>
           <a
             href={reviewUrl}
-            className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
           >
             Voir /r/{slug}
           </a>
@@ -94,7 +128,11 @@ export function DashboardClient({
 
       <main className="mx-auto max-w-6xl space-y-8 px-4 py-8">
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <KpiCard label="Note globale" value={kpis.overall} hint="Moyenne des retours captés" />
+          <KpiCard
+            label="Note globale"
+            value={kpis.overall}
+            hint="Moyenne des avis sensibles interceptés (1-3★)"
+          />
           <KpiCard
             label="Avis Google propulsés"
             value={String(kpis.googlePushed)}
@@ -112,8 +150,56 @@ export function DashboardClient({
           />
         </section>
 
+        <section className="card-locall p-5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Paramètres Google
+          </p>
+          <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="max-w-xl">
+              <p className="font-medium text-slate-900">
+                Réponse automatique SEO pour vos avis 4/5 et 5/5 Google (Option
+                offerte)
+              </p>
+              <p className="mt-1 text-sm text-slate-500">
+                {optionEnabled
+                  ? "LOCALL publiera des remerciements SEO sur vos avis Google 4★ et 5★."
+                  : "Option désactivée. Activez-la pour laisser l’IA répondre à vos avis positifs."}
+              </p>
+              {optionError ? (
+                <p className="mt-2 text-sm text-red-600">{optionError}</p>
+              ) : null}
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setShowOptionModal(true)}
+                className="link-locall text-sm"
+              >
+                En savoir plus
+              </button>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={optionEnabled}
+                aria-label="Réponse automatique SEO pour vos avis 4/5 et 5/5 Google"
+                disabled={pending}
+                onClick={onToggleOption}
+                className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
+                  optionEnabled ? "bg-locall-success" : "bg-slate-300"
+                } ${pending ? "opacity-60" : ""}`}
+              >
+                <span
+                  className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform ${
+                    optionEnabled ? "translate-x-5" : "translate-x-0.5"
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+        </section>
+
         <section className="grid gap-6 lg:grid-cols-[280px_1fr]">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div className="card-locall p-5">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
               Smart QR Code
             </h2>
@@ -128,13 +214,13 @@ export function DashboardClient({
             <button
               type="button"
               onClick={downloadQr}
-              className="mt-4 w-full rounded-full bg-teal-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-teal-800"
+              className="btn-locall-cta mt-4 w-full"
             >
               Télécharger le PNG
             </button>
           </div>
 
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="card-locall overflow-hidden">
             <div className="border-b border-slate-100 px-5 py-4">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
                 Flux de réclamations
@@ -166,7 +252,7 @@ export function DashboardClient({
                         key={row.id}
                         role="button"
                         tabIndex={0}
-                        className="cursor-pointer border-t border-slate-100 hover:bg-teal-50/40"
+                        className="cursor-pointer border-t border-slate-100 hover:bg-orange-50"
                         onClick={() => setSelectedId(row.id)}
                         onKeyDown={(event) => {
                           if (event.key === "Enter" || event.key === " ") {
@@ -187,11 +273,11 @@ export function DashboardClient({
                         <td className="px-4 py-3">
                           <div className="flex flex-wrap gap-1.5">
                             {row.clientEmailed ? (
-                              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-800">
+                              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-locall-success">
                                 🟢 Réponse client envoyée
                               </span>
                             ) : row.status === "RESOLVED_AUTO" ? (
-                              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-800">
+                              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-locall-success">
                                 🟢 Réponse automatique envoyée par LOCALL
                               </span>
                             ) : (
@@ -200,7 +286,7 @@ export function DashboardClient({
                               </span>
                             )}
                             {row.ownerNotified ? (
-                              <span className="rounded-full bg-sky-50 px-2 py-0.5 text-xs font-medium text-sky-800">
+                              <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-locall-link">
                                 📧 Patron notifié
                               </span>
                             ) : null}
@@ -216,6 +302,78 @@ export function DashboardClient({
         </section>
       </main>
 
+      {showOptionModal ? (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center"
+          onClick={() => !pending && setShowOptionModal(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="google-seo-option-title"
+            className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h3
+              id="google-seo-option-title"
+              className="text-lg font-semibold leading-snug text-slate-900"
+            >
+              {OPTION_TITLE}
+            </h3>
+            <div className="mt-4 space-y-4 text-sm leading-6 text-slate-700">
+              <p>
+                Autorisez LOCALL à publier des réponses de remerciement
+                personnalisées et optimisées pour votre SEO directement pour vos
+                avis 4/5 et 5/5 sur Google. Aucune action manuelle requise :
+                l&apos;IA s&apos;en occupe 24h/24.
+              </p>
+              <hr className="border-slate-200" />
+              <p className="font-medium text-slate-900">💡 Important à savoir :</p>
+              <ul className="list-disc space-y-2 pl-5">
+                <li>
+                  <strong>Protection à 100 % :</strong> Notre application gère
+                  les avis sensibles (1/5, 2/5 et 3/5) directement en interne.
+                  Tant que le client scanne votre QR code en établissement, son
+                  avis négatif est intercepté à 100 % avant d&apos;atteindre
+                  votre fiche Google.
+                </li>
+                <li>
+                  <strong>Maximisez vos résultats :</strong> Plus vous disposez
+                  de présentoirs et de stickers QR codes (sur vos tables, au
+                  comptoir ou en vitrine), plus vos clients seront incités à
+                  vous donner leur avis dans votre établissement.
+                </li>
+                <li>
+                  <strong>Un cercle vertueux :</strong> Vous récoltez un maximum
+                  d&apos;avis positifs sur Google, tout en protégeant votre note
+                  et votre réputation des mauvaises surprises !
+                </li>
+              </ul>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-3">
+              {!optionEnabled ? (
+                <button
+                  type="button"
+                  disabled={pending}
+                  onClick={() => persistOption(true, true)}
+                  className="btn-locall-cta"
+                >
+                  {pending ? "Activation…" : "Activer l'option"}
+                </button>
+              ) : null}
+              <button
+                type="button"
+                disabled={pending}
+                onClick={() => setShowOptionModal(false)}
+                className="btn-locall-ghost"
+              >
+                {optionEnabled ? "Fermer" : "Annuler"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       {selected ? (
         <div
           className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center"
@@ -225,7 +383,7 @@ export function DashboardClient({
             className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl"
             onClick={(event) => event.stopPropagation()}
           >
-            <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">
+            <p className="text-xs font-semibold uppercase tracking-wide text-locall-orange">
               Message envoyé au client
             </p>
             <h3 className="mt-1 text-lg font-semibold">
@@ -241,7 +399,7 @@ export function DashboardClient({
             <button
               type="button"
               onClick={() => setSelectedId(null)}
-              className="mt-5 rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white"
+              className="btn-locall-ghost mt-5"
             >
               Fermer
             </button>
@@ -262,11 +420,11 @@ function KpiCard({
   hint: string;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="card-locall p-5">
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
         {label}
       </p>
-      <p className="mt-2 text-3xl font-semibold tracking-tight">{value}</p>
+      <p className="mt-2 text-3xl font-semibold tracking-tight text-locall-navy">{value}</p>
       <p className="mt-1 text-sm text-slate-500">{hint}</p>
     </div>
   );

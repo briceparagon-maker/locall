@@ -212,7 +212,7 @@ ${detailsBlock}
 <li><strong>Commentaire client :</strong> "${escapeHtml(excerpt)}"</li>
 <li><strong>Action LOCALL :</strong> ${escapeHtml(action)}</li>
 </ul>
-<p><a href="${escapeHtml(input.dashboardUrl)}" style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 18px;border-radius:999px;font-weight:600">👉 Consulter les détails sur votre Dashboard LOCALL</a></p>
+<p><a href="${escapeHtml(input.dashboardUrl)}" style="display:inline-block;background:linear-gradient(90deg,#FF5500,#FF2200);color:#fff;text-decoration:none;padding:12px 18px;border-radius:999px;font-weight:700">👉 Consulter les détails sur votre Dashboard LOCALL</a></p>
 <p style="color:#555">Votre réputation est entre de bonnes mains.</p>
 </div>`;
 }
