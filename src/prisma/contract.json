@@ -61,6 +61,13 @@
                   "kind": "scalar"
                 }
               },
+              "department": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "googlePlaceId": {
                 "nullable": true,
                 "type": {
@@ -96,10 +103,59 @@
                   "kind": "scalar"
                 }
               },
+              "ownerFirstName": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "ownerLastName": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "ownerStatus": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "passwordHash": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "phone": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "postalCode": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "slug": {
                 "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "trialEndsAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
               },
@@ -148,6 +204,9 @@
                 "createdAt": {
                   "column": "createdAt"
                 },
+                "department": {
+                  "column": "department"
+                },
                 "googlePlaceId": {
                   "column": "googlePlaceId"
                 },
@@ -163,8 +222,29 @@
                 "ownerEmail": {
                   "column": "ownerEmail"
                 },
+                "ownerFirstName": {
+                  "column": "ownerFirstName"
+                },
+                "ownerLastName": {
+                  "column": "ownerLastName"
+                },
+                "ownerStatus": {
+                  "column": "ownerStatus"
+                },
+                "passwordHash": {
+                  "column": "passwordHash"
+                },
+                "phone": {
+                  "column": "phone"
+                },
+                "postalCode": {
+                  "column": "postalCode"
+                },
                 "slug": {
                   "column": "slug"
+                },
+                "trialEndsAt": {
+                  "column": "trialEndsAt"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -429,6 +509,11 @@
                   },
                   "nullable": false
                 },
+                "department": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
                 "googlePlaceId": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -458,9 +543,44 @@
                   "dataType": "pg/text",
                   "nullable": true
                 },
+                "ownerFirstName": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "ownerLastName": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "ownerStatus": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "passwordHash": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "phone": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "postalCode": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
                 "slug": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
+                  "nullable": true
+                },
+                "trialEndsAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
                   "nullable": true
                 },
                 "updatedAt": {
@@ -641,7 +761,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "efdf697f3bbfb569705af3ac0a4aabd25c749a46630d014d7d787cfd14b92a54"
+    "storageHash": "d33ff0329aab2126b9fb81e440604eb4347008aabe0f2f823f0960837962e27b"
   },
   "execution": {
     "executionHash": "2046b9d7f16a7106ed3c5927fb0a859fff391d0a89d6457dbfef0d79818965bb",

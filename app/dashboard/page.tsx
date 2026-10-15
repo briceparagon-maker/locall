@@ -1,6 +1,7 @@
 import { connection } from "next/server";
 import QRCode from "qrcode";
 import { appUrl } from "@/lib/app-url";
+import { getOwnerRestaurantId } from "@/lib/session";
 import { db } from "@/src/prisma/db";
 import { DashboardClient, type ComplaintRow } from "./dashboard-client";
 
@@ -8,7 +9,9 @@ export default async function DashboardPage() {
   await connection();
 
   const restaurants = await db.orm.public.Restaurant.all();
+  const sessionRestaurantId = await getOwnerRestaurantId();
   const restaurant =
+    restaurants.find((row) => row.id === sessionRestaurantId) ??
     restaurants.find((row) => row.slug === "le-petit-comptoir") ??
     restaurants[0];
 

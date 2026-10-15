@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'efdf697f3bbfb569705af3ac0a4aabd25c749a46630d014d7d787cfd14b92a54'>;
+  StorageHashBase<'d33ff0329aab2126b9fb81e440604eb4347008aabe0f2f823f0960837962e27b'>;
 export type ExecutionHash =
   ExecutionHashBase<'2046b9d7f16a7106ed3c5927fb0a859fff391d0a89d6457dbfef0d79818965bb'>;
 export type ProfileHash =
@@ -241,12 +241,20 @@ export type FieldOutputTypes = {
       readonly category: CodecTypes['pg/text@1']['output'];
       readonly city: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly department: CodecTypes['pg/text@1']['output'] | null;
       readonly googlePlaceId: CodecTypes['pg/text@1']['output'] | null;
       readonly googleReviewUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly ownerEmail: CodecTypes['pg/text@1']['output'] | null;
+      readonly ownerFirstName: CodecTypes['pg/text@1']['output'] | null;
+      readonly ownerLastName: CodecTypes['pg/text@1']['output'] | null;
+      readonly ownerStatus: CodecTypes['pg/text@1']['output'] | null;
+      readonly passwordHash: CodecTypes['pg/text@1']['output'] | null;
+      readonly phone: CodecTypes['pg/text@1']['output'] | null;
+      readonly postalCode: CodecTypes['pg/text@1']['output'] | null;
       readonly slug: CodecTypes['pg/text@1']['output'] | null;
+      readonly trialEndsAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Review: {
@@ -279,12 +287,20 @@ export type FieldInputTypes = {
       readonly category: CodecTypes['pg/text@1']['input'];
       readonly city: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly department: CodecTypes['pg/text@1']['input'] | null;
       readonly googlePlaceId: CodecTypes['pg/text@1']['input'] | null;
       readonly googleReviewUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly ownerEmail: CodecTypes['pg/text@1']['input'] | null;
+      readonly ownerFirstName: CodecTypes['pg/text@1']['input'] | null;
+      readonly ownerLastName: CodecTypes['pg/text@1']['input'] | null;
+      readonly ownerStatus: CodecTypes['pg/text@1']['input'] | null;
+      readonly passwordHash: CodecTypes['pg/text@1']['input'] | null;
+      readonly phone: CodecTypes['pg/text@1']['input'] | null;
+      readonly postalCode: CodecTypes['pg/text@1']['input'] | null;
       readonly slug: CodecTypes['pg/text@1']['input'] | null;
+      readonly trialEndsAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Review: {
@@ -317,12 +333,20 @@ export type StorageColumnTypes = {
       readonly category: CodecTypes['pg/text@1']['output'];
       readonly city: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly department: CodecTypes['pg/text@1']['output'] | null;
       readonly googlePlaceId: CodecTypes['pg/text@1']['output'] | null;
       readonly googleReviewUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly ownerEmail: CodecTypes['pg/text@1']['output'] | null;
+      readonly ownerFirstName: CodecTypes['pg/text@1']['output'] | null;
+      readonly ownerLastName: CodecTypes['pg/text@1']['output'] | null;
+      readonly ownerStatus: CodecTypes['pg/text@1']['output'] | null;
+      readonly passwordHash: CodecTypes['pg/text@1']['output'] | null;
+      readonly phone: CodecTypes['pg/text@1']['output'] | null;
+      readonly postalCode: CodecTypes['pg/text@1']['output'] | null;
       readonly slug: CodecTypes['pg/text@1']['output'] | null;
+      readonly trialEndsAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Review: {
@@ -355,12 +379,20 @@ export type StorageColumnInputTypes = {
       readonly category: CodecTypes['pg/text@1']['input'];
       readonly city: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly department: CodecTypes['pg/text@1']['input'] | null;
       readonly googlePlaceId: CodecTypes['pg/text@1']['input'] | null;
       readonly googleReviewUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly ownerEmail: CodecTypes['pg/text@1']['input'] | null;
+      readonly ownerFirstName: CodecTypes['pg/text@1']['input'] | null;
+      readonly ownerLastName: CodecTypes['pg/text@1']['input'] | null;
+      readonly ownerStatus: CodecTypes['pg/text@1']['input'] | null;
+      readonly passwordHash: CodecTypes['pg/text@1']['input'] | null;
+      readonly phone: CodecTypes['pg/text@1']['input'] | null;
+      readonly postalCode: CodecTypes['pg/text@1']['input'] | null;
       readonly slug: CodecTypes['pg/text@1']['input'] | null;
+      readonly trialEndsAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Review: {
@@ -393,12 +425,20 @@ export namespace Models {
     category: CodecTypes['pg/text@1']['output'];
     city: CodecTypes['pg/text@1']['output'] | null;
     createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    department: CodecTypes['pg/text@1']['output'] | null;
     googlePlaceId: CodecTypes['pg/text@1']['output'] | null;
     googleReviewUrl: CodecTypes['pg/text@1']['output'] | null;
     id: CodecTypes['pg/int4@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
     ownerEmail: CodecTypes['pg/text@1']['output'] | null;
+    ownerFirstName: CodecTypes['pg/text@1']['output'] | null;
+    ownerLastName: CodecTypes['pg/text@1']['output'] | null;
+    ownerStatus: CodecTypes['pg/text@1']['output'] | null;
+    passwordHash: CodecTypes['pg/text@1']['output'] | null;
+    phone: CodecTypes['pg/text@1']['output'] | null;
+    postalCode: CodecTypes['pg/text@1']['output'] | null;
     slug: CodecTypes['pg/text@1']['output'] | null;
+    trialEndsAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     reviews: public_Review[];
     readonly [RelationKeys]?: 'reviews';
@@ -502,6 +542,12 @@ type ContractBase = Omit<
                   readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
                   readonly many: false;
                 };
+                readonly department: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly googlePlaceId: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -536,9 +582,51 @@ type ContractBase = Omit<
                   readonly nullable: true;
                   readonly many: false;
                 };
+                readonly ownerFirstName: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly ownerLastName: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly ownerStatus: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly passwordHash: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly phone: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly postalCode: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly slug: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly trialEndsAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: true;
                   readonly many: false;
                 };
@@ -754,6 +842,10 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/timestamptz-string@1';
                 };
               };
+              readonly department: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly googlePlaceId: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -774,9 +866,40 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly ownerFirstName: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly ownerLastName: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly ownerStatus: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly passwordHash: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly phone: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly postalCode: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly slug: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly trialEndsAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
               };
               readonly updatedAt: {
                 readonly nullable: false;
@@ -811,12 +934,20 @@ type ContractBase = Omit<
                 readonly category: { readonly column: 'category' };
                 readonly city: { readonly column: 'city' };
                 readonly createdAt: { readonly column: 'createdAt' };
+                readonly department: { readonly column: 'department' };
                 readonly googlePlaceId: { readonly column: 'googlePlaceId' };
                 readonly googleReviewUrl: { readonly column: 'googleReviewUrl' };
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };
                 readonly ownerEmail: { readonly column: 'ownerEmail' };
+                readonly ownerFirstName: { readonly column: 'ownerFirstName' };
+                readonly ownerLastName: { readonly column: 'ownerLastName' };
+                readonly ownerStatus: { readonly column: 'ownerStatus' };
+                readonly passwordHash: { readonly column: 'passwordHash' };
+                readonly phone: { readonly column: 'phone' };
+                readonly postalCode: { readonly column: 'postalCode' };
                 readonly slug: { readonly column: 'slug' };
+                readonly trialEndsAt: { readonly column: 'trialEndsAt' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
             };

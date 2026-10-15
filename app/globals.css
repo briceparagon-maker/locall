@@ -66,4 +66,12 @@ body {
   .card-locall {
     @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
   }
+
+  .input-locall {
+    @apply mt-1 w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-locall-navy outline-none transition-colors focus:border-locall-orange;
+  }
+
+  .label-locall {
+    @apply block text-sm font-medium text-locall-navy;
+  }
 }
