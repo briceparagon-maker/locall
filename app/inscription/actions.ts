@@ -5,6 +5,7 @@ import { hashPassword } from "@/lib/password";
 import { setOwnerSession } from "@/lib/session";
 import { slugifyName } from "@/lib/slug";
 import { isEmail } from "@/lib/app-url";
+import { sendWelcomeEmail } from "@/lib/welcome-email";
 import { db } from "@/src/prisma/db";
 
 const STATUSES = new Set(["Franchiseur", "Franchisé", "Indépendant"]);
@@ -113,6 +114,16 @@ export async function registerTrial(formData: FormData) {
 
   if (!created?.id) {
     return { ok: false as const, error: "Impossible de créer le compte. Réessayez." };
+  }
+
+  try {
+    await sendWelcomeEmail({
+      to: email,
+      firstName: ownerFirstName,
+      establishmentName: name,
+    });
+  } catch (error) {
+    console.error("welcome email:", error);
   }
 
   await setOwnerSession(created.id, email);

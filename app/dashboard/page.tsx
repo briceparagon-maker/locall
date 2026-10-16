@@ -1,6 +1,7 @@
 import { connection } from "next/server";
-import QRCode from "qrcode";
+import { redirect } from "next/navigation";
 import { appUrl } from "@/lib/app-url";
+import { qrPngDataUrl } from "@/lib/qr";
 import { getOwnerRestaurantId } from "@/lib/session";
 import { db } from "@/src/prisma/db";
 import { DashboardClient, type ComplaintRow } from "./dashboard-client";
@@ -8,12 +9,12 @@ import { DashboardClient, type ComplaintRow } from "./dashboard-client";
 export default async function DashboardPage() {
   await connection();
 
-  const restaurants = await db.orm.public.Restaurant.all();
   const sessionRestaurantId = await getOwnerRestaurantId();
-  const restaurant =
-    restaurants.find((row) => row.id === sessionRestaurantId) ??
-    restaurants.find((row) => row.slug === "le-petit-comptoir") ??
-    restaurants[0];
+  if (!sessionRestaurantId) redirect("/connexion");
+
+  const restaurant = await db.orm.public.Restaurant.where({
+    id: sessionRestaurantId,
+  }).first();
 
   if (!restaurant) {
     return (
@@ -49,11 +50,7 @@ export default async function DashboardPage() {
 
   const slug = restaurant.slug ?? String(restaurant.id);
   const reviewUrl = `${appUrl()}/r/${slug}`;
-  const qrDataUrl = await QRCode.toDataURL(reviewUrl, {
-    width: 640,
-    margin: 2,
-    color: { dark: "#0A192F", light: "#ffffff" },
-  });
+  const qrDataUrl = await qrPngDataUrl(reviewUrl, 2048);
 
   const complaints: ComplaintRow[] = reviews
     .filter((row) => row.rating <= 3)

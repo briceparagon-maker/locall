@@ -70,6 +70,7 @@ export function DashboardClient({
   const [showOptionModal, setShowOptionModal] = useState(false);
   const [optionError, setOptionError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const [copied, setCopied] = useState(false);
   const selected = useMemo(
     () => complaints.find((row) => row.id === selectedId) ?? null,
     [complaints, selectedId],
@@ -100,8 +101,23 @@ export function DashboardClient({
   function downloadQr() {
     const link = document.createElement("a");
     link.href = qrDataUrl;
-    link.download = `locall-qr-${slug}.png`;
+    link.download = `locall-qr-${slug}-hd.png`;
     link.click();
+  }
+
+  async function copyReviewUrl() {
+    try {
+      await navigator.clipboard.writeText(reviewUrl);
+    } catch {
+      const field = document.createElement("textarea");
+      field.value = reviewUrl;
+      document.body.appendChild(field);
+      field.select();
+      document.execCommand("copy");
+      field.remove();
+    }
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 2000);
   }
 
   return (
@@ -196,28 +212,94 @@ export function DashboardClient({
           </div>
         </section>
 
-        <section className="grid gap-6 lg:grid-cols-[280px_1fr]">
-          <div className="card-locall p-5">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-              Smart QR Code
+        <section className="space-y-5">
+          <div>
+            <h2 className="text-lg font-semibold text-locall-navy">
+              Votre Smart QR Code &amp; Supports PLV
             </h2>
             <p className="mt-1 text-sm text-slate-600">
-              Pointe vers votre page de capture /r/{slug}
+              Affichez-le sur place : chaque scan ouvre votre page publique{" "}
+              <span className="font-medium">/r/{slug}</span>.
             </p>
-            <img
-              src={qrDataUrl}
-              alt={`QR code vers ${reviewUrl}`}
-              className="mx-auto mt-4 h-48 w-48"
-            />
-            <button
-              type="button"
-              onClick={downloadQr}
-              className="btn-locall-cta mt-4 w-full"
-            >
-              Télécharger le PNG
-            </button>
           </div>
 
+          <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+            <div className="card-locall p-5">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                QR code
+              </p>
+              <img
+                src={qrDataUrl}
+                alt={`QR code vers ${reviewUrl}`}
+                className="mx-auto mt-4 h-52 w-52 bg-white p-2"
+              />
+            </div>
+
+            <div className="card-locall flex flex-col justify-center gap-4 p-5">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  Lien public
+                </p>
+                <p className="mt-2 break-all rounded-xl bg-slate-50 px-3 py-2 text-sm text-locall-navy">
+                  {reviewUrl}
+                </p>
+                <button
+                  type="button"
+                  onClick={copyReviewUrl}
+                  className="btn-locall-ghost mt-3"
+                >
+                  {copied ? "Lien copié" : "Copier le lien"}
+                </button>
+              </div>
+              <button
+                type="button"
+                onClick={downloadQr}
+                className="btn-locall-cta w-full sm:w-auto"
+              >
+                Télécharger mon QR Code (HD)
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+              Impression &amp; supports physiques
+            </h3>
+            <p className="mt-1 text-sm text-slate-600">
+              Templates PDF prêts à imprimer, avec votre QR déjà intégré.
+            </p>
+            <div className="mt-4 grid gap-4 md:grid-cols-3">
+              <PlvCard
+                title="Chevalet de table"
+                description="Format A6 / A5 — à poser sur vos tables."
+                links={[
+                  { href: "/api/plv/chevalet-a6", label: "PDF A6" },
+                  { href: "/api/plv/chevalet-a5", label: "PDF A5" },
+                ]}
+              />
+              <PlvCard
+                title="Autocollant / sticker comptoir"
+                description="Format carré ou rond, pour le comptoir."
+                links={[
+                  { href: "/api/plv/sticker-carre", label: "PDF carré" },
+                  { href: "/api/plv/sticker-rond", label: "PDF rond" },
+                ]}
+              />
+              <PlvCard
+                title="Affiche A4"
+                description="Pour la vitrine ou l’accueil."
+                links={[{ href: "/api/plv/affiche-a4", label: "PDF A4" }]}
+              />
+            </div>
+          </div>
+
+          <p className="rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-700">
+            🔒 Vos supports imprimés et ce QR code restent actifs à vie, sans
+            aucun frais supplémentaire.
+          </p>
+        </section>
+
+        <section>
           <div className="card-locall overflow-hidden">
             <div className="border-b border-slate-100 px-5 py-4">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
@@ -340,6 +422,30 @@ export function DashboardClient({
           </div>
         </div>
       ) : null}
+    </div>
+  );
+}
+
+function PlvCard({
+  title,
+  description,
+  links,
+}: {
+  title: string;
+  description: string;
+  links: { href: string; label: string }[];
+}) {
+  return (
+    <div className="card-locall flex flex-col p-5">
+      <h4 className="font-semibold text-locall-navy">{title}</h4>
+      <p className="mt-1 flex-1 text-sm text-slate-600">{description}</p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {links.map((link) => (
+          <a key={link.href} href={link.href} className="btn-locall-ghost">
+            {link.label}
+          </a>
+        ))}
+      </div>
     </div>
   );
 }
