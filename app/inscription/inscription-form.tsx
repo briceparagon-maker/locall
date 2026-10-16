@@ -22,6 +22,8 @@ export function InscriptionForm() {
   const [error, setError] = useState<string | null>(null);
   const [seoEnabled, setSeoEnabled] = useState(false);
   const [showSeoModal, setShowSeoModal] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [pending, startTransition] = useTransition();
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -107,8 +109,8 @@ export function InscriptionForm() {
             <input name="city" required className="input-locall" />
           </label>
           <label className="label-locall">
-            Département
-            <input name="department" required className="input-locall" />
+            Département <span className="font-normal text-slate-400">(facultatif)</span>
+            <input name="department" className="input-locall" />
           </label>
         </div>
 
@@ -125,25 +127,43 @@ export function InscriptionForm() {
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="label-locall">
             Mot de passe
-            <input
-              name="password"
-              type="password"
-              required
-              minLength={8}
-              autoComplete="new-password"
-              className="input-locall"
-            />
+            <span className="relative mt-1 block">
+              <input
+                name="password"
+                type={showPassword ? "text" : "password"}
+                required
+                minLength={8}
+                autoComplete="new-password"
+                className="input-locall mt-0 pr-24"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((open) => !open)}
+                className="absolute inset-y-0 right-3 text-sm font-semibold text-locall-link underline-offset-4 hover:underline"
+              >
+                {showPassword ? "Masquer" : "Afficher"}
+              </button>
+            </span>
           </label>
           <label className="label-locall">
             Confirmer le mot de passe
-            <input
-              name="passwordConfirm"
-              type="password"
-              required
-              minLength={8}
-              autoComplete="new-password"
-              className="input-locall"
-            />
+            <span className="relative mt-1 block">
+              <input
+                name="passwordConfirm"
+                type={showPasswordConfirm ? "text" : "password"}
+                required
+                minLength={8}
+                autoComplete="new-password"
+                className="input-locall mt-0 pr-24"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPasswordConfirm((open) => !open)}
+                className="absolute inset-y-0 right-3 text-sm font-semibold text-locall-link underline-offset-4 hover:underline"
+              >
+                {showPasswordConfirm ? "Masquer" : "Afficher"}
+              </button>
+            </span>
           </label>
         </div>
 

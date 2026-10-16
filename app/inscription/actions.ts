@@ -58,8 +58,8 @@ export async function registerTrial(formData: FormData) {
   if (!ownerFirstName || !ownerLastName) {
     return { ok: false as const, error: "Indiquez votre prénom et votre nom." };
   }
-  if (!address || !postalCode || !city || !department) {
-    return { ok: false as const, error: "Complétez l’adresse, le code postal, la ville et le département." };
+  if (!address || !postalCode || !city) {
+    return { ok: false as const, error: "Complétez l’adresse, le code postal et la ville." };
   }
   if (!phone) return { ok: false as const, error: "Indiquez un téléphone." };
   if (!isEmail(email)) return { ok: false as const, error: "Indiquez un e-mail valide." };
@@ -105,7 +105,7 @@ export async function registerTrial(formData: FormData) {
     ownerFirstName,
     ownerLastName,
     postalCode,
-    department,
+    department: department || null,
     phone,
     passwordHash: hashPassword(password),
     trialEndsAt,
