@@ -10,7 +10,7 @@ const ENGAGEMENTS = [
 
 export default function Home() {
   return (
-    <div className="flex min-h-dvh flex-col bg-background text-foreground">
+    <div className="flex min-h-dvh flex-col bg-[#0A192F] text-foreground">
       <header className="bg-locall-navy text-white">
         <div className="mx-auto flex max-w-5xl flex-col gap-1 px-4 py-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -30,12 +30,15 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="w-full">
-        <Link href="/inscription" className="block leading-none">
+      <main className="w-full bg-gradient-to-b from-[#0D1B2A] to-[#0A192F]">
+        <Link
+          href="/inscription"
+          className="mx-auto block w-fit max-w-full leading-none"
+        >
           <img
-            src="/stop-aux-mauvais-avis-locall.jpg"
+            src="/stop-aux-mauvais-avis-locall.jpg?v=fluo"
             alt="Stop aux mauvais avis — Activez votre essai LOCALL"
-            className="block h-auto w-full"
+            className="mx-auto block h-auto w-auto max-w-full"
           />
         </Link>
       </main>

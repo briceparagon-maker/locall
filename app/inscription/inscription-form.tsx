@@ -177,8 +177,9 @@ export function InscriptionForm() {
                 className="mt-1 accent-locall-orange"
               />
               <span>
-                Activer la réponse automatique SEO pour vos avis 4/5 et 5/5
-                Google (Option offerte)
+                Activer maintenant (ou plus tard dans votre tableau de bord) la
+                réponse automatique SEO pour vos avis 4/5 et 5/5 Google avec des
+                mots-clés spécifiques à votre établissement (Option offerte).
               </span>
             </label>
             <button
