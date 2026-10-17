@@ -6,9 +6,17 @@ export default function ConnexionPage() {
     <div className="min-h-dvh bg-background text-foreground">
       <header className="bg-locall-navy text-white">
         <div className="mx-auto flex max-w-md items-center justify-between px-4 py-5">
-          <p className="text-xs font-semibold tracking-[0.22em] text-locall-orange">
-            LOCALL
-          </p>
+          <Link
+            href="/"
+            className="no-underline hover:opacity-90"
+            aria-label="LOCALL — Accueil"
+          >
+            <img
+              src="/logo-locall.jpg"
+              alt="LOCALL"
+              className="h-10 w-auto max-h-10 max-w-[168px] object-contain object-left sm:h-11 sm:max-h-11 sm:max-w-[196px]"
+            />
+          </Link>
           <Link
             href="/"
             className="text-sm font-semibold text-white underline-offset-4 hover:text-locall-orange hover:underline"

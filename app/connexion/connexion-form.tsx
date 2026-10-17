@@ -6,6 +6,7 @@ import { loginOwner } from "./actions";
 
 export function ConnexionForm() {
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const [pending, startTransition] = useTransition();
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -26,13 +27,22 @@ export function ConnexionForm() {
       </label>
       <label className="label-locall">
         Mot de passe
-        <input
-          name="password"
-          type="password"
-          required
-          autoComplete="current-password"
-          className="input-locall"
-        />
+        <span className="relative mt-1 block">
+          <input
+            name="password"
+            type={showPassword ? "text" : "password"}
+            required
+            autoComplete="current-password"
+            className="input-locall mt-0 pr-24"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((open) => !open)}
+            className="absolute inset-y-0 right-3 text-sm font-semibold text-locall-link underline-offset-4 hover:underline"
+          >
+            {showPassword ? "Masquer" : "Afficher"}
+          </button>
+        </span>
       </label>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
       <p className="text-right text-sm">

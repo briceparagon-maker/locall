@@ -1,9 +1,11 @@
 "use client";
 
 import { useMemo, useState, useTransition } from "react";
+import Link from "next/link";
+import { GooglePlaceSetupModal } from "@/components/google-place-setup-modal";
 import { GoogleSeoOptionModal } from "@/components/google-seo-option-modal";
 import { LogoutButton } from "@/components/logout-button";
-import { setAutoRespondGooglePositive } from "./actions";
+import { setAutoRespondGooglePositive, saveGooglePlaceSetup } from "./actions";
 
 export type ComplaintRow = {
   id: number;
@@ -82,6 +84,10 @@ export function DashboardClient({
   const [optionError, setOptionError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [copied, setCopied] = useState(false);
+  const [showPlaceSetup, setShowPlaceSetup] = useState(false);
+  const [placeSetupError, setPlaceSetupError] = useState<string | null>(null);
+  const [savedGooglePlaceUrl, setSavedGooglePlaceUrl] = useState(googlePlaceUrl);
+  const googleListingUrl = savedGooglePlaceUrl || googlePlaceUrl;
   const selected = useMemo(
     () => complaints.find((row) => row.id === selectedId) ?? null,
     [complaints, selectedId],
@@ -134,15 +140,25 @@ export function DashboardClient({
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <header className="bg-locall-navy text-white">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
-          <div>
-            <p className="text-xs font-semibold tracking-[0.2em] text-locall-orange">
-              LOCALL
-            </p>
-            <h1 className="text-xl font-semibold">Dashboard établissement</h1>
-            <p className="text-sm text-white/70">{restaurantName}</p>
+        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-3 px-4 py-4 sm:grid-cols-3">
+          <Link
+            href="/"
+            className="justify-self-start no-underline hover:opacity-90"
+            aria-label="LOCALL — Accueil"
+          >
+            <img
+              src="/logo-locall.jpg"
+              alt="LOCALL"
+              className="h-10 w-auto max-h-10 max-w-[168px] object-contain object-left sm:h-11 sm:max-h-11 sm:max-w-[196px]"
+            />
+          </Link>
+          <div className="justify-self-center text-center">
+            <h1 className="text-xl font-semibold leading-tight">
+              Dashboard établissement
+            </h1>
+            <p className="mt-0.5 text-sm text-white/80">{restaurantName}</p>
           </div>
-          <div className="flex flex-wrap items-center justify-end gap-2">
+          <div className="flex flex-wrap items-center justify-start gap-2 sm:justify-end sm:justify-self-end">
             {isAdmin ? (
               <a
                 href="/admin"
@@ -151,16 +167,27 @@ export function DashboardClient({
                 Admin
               </a>
             ) : null}
-            {googlePlaceUrl ? (
+            {googleListingUrl ? (
               <a
-                href={googlePlaceUrl}
+                href={googleListingUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
               >
                 Ma fiche Google ↗
               </a>
-            ) : null}
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  setPlaceSetupError(null);
+                  setShowPlaceSetup(true);
+                }}
+                className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
+              >
+                Ma fiche Google ↗
+              </button>
+            )}
             <LogoutButton className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10" />
           </div>
         </div>
@@ -445,6 +472,26 @@ export function DashboardClient({
           </div>
         </section>
       </main>
+
+      <GooglePlaceSetupModal
+        open={showPlaceSetup}
+        pending={pending}
+        error={placeSetupError}
+        onClose={() => setShowPlaceSetup(false)}
+        onSave={(url, seo) => {
+          setPlaceSetupError(null);
+          startTransition(async () => {
+            const result = await saveGooglePlaceSetup(restaurantId, url, seo);
+            if (!result.ok) {
+              setPlaceSetupError(result.error);
+              return;
+            }
+            setSavedGooglePlaceUrl(result.url);
+            setOptionEnabled(result.enabled);
+            setShowPlaceSetup(false);
+          });
+        }}
+      />
 
       <GoogleSeoOptionModal
         open={showOptionModal}
