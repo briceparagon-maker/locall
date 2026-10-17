@@ -110,6 +110,8 @@ export async function registerTrial(formData: FormData) {
     phone,
     passwordHash: hashPassword(password),
     trialEndsAt,
+    subscriptionStatus: "trial",
+    role: "Owner",
   });
 
   if (!created?.id) {

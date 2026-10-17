@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'268b7c87020eebe3fc85812ee20c0f271fa9660dc94eb6faef2232b9bd5e7d29'>;
+  StorageHashBase<'85ac7c3fb684867e212763356791422c72a7ed37d270122f277e42d1b5153bce'>;
 export type ExecutionHash =
   ExecutionHashBase<'2046b9d7f16a7106ed3c5927fb0a859fff391d0a89d6457dbfef0d79818965bb'>;
 export type ProfileHash =
@@ -254,8 +254,13 @@ export type FieldOutputTypes = {
       readonly passwordHash: CodecTypes['pg/text@1']['output'] | null;
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
       readonly postalCode: CodecTypes['pg/text@1']['output'] | null;
+      readonly role: CodecTypes['pg/text@1']['output'];
       readonly slug: CodecTypes['pg/text@1']['output'] | null;
+      readonly stripeCustomerId: CodecTypes['pg/text@1']['output'] | null;
+      readonly stripeSubscriptionId: CodecTypes['pg/text@1']['output'] | null;
+      readonly subscriptionStatus: CodecTypes['pg/text@1']['output'];
       readonly trialEndsAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly trialReminderSentAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly Review: {
@@ -301,8 +306,13 @@ export type FieldInputTypes = {
       readonly passwordHash: CodecTypes['pg/text@1']['input'] | null;
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
       readonly postalCode: CodecTypes['pg/text@1']['input'] | null;
+      readonly role: CodecTypes['pg/text@1']['input'];
       readonly slug: CodecTypes['pg/text@1']['input'] | null;
+      readonly stripeCustomerId: CodecTypes['pg/text@1']['input'] | null;
+      readonly stripeSubscriptionId: CodecTypes['pg/text@1']['input'] | null;
+      readonly subscriptionStatus: CodecTypes['pg/text@1']['input'];
       readonly trialEndsAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly trialReminderSentAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly Review: {
@@ -348,7 +358,12 @@ export type StorageColumnTypes = {
       readonly passwordHash: CodecTypes['pg/text@1']['output'] | null;
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
       readonly postalCode: CodecTypes['pg/text@1']['output'] | null;
+      readonly role: CodecTypes['pg/text@1']['output'];
       readonly slug: CodecTypes['pg/text@1']['output'] | null;
+      readonly stripe_customer_id: CodecTypes['pg/text@1']['output'] | null;
+      readonly stripe_subscription_id: CodecTypes['pg/text@1']['output'] | null;
+      readonly subscription_status: CodecTypes['pg/text@1']['output'];
+      readonly trial_reminder_sent_at: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly trialEndsAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
@@ -395,7 +410,12 @@ export type StorageColumnInputTypes = {
       readonly passwordHash: CodecTypes['pg/text@1']['input'] | null;
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
       readonly postalCode: CodecTypes['pg/text@1']['input'] | null;
+      readonly role: CodecTypes['pg/text@1']['input'];
       readonly slug: CodecTypes['pg/text@1']['input'] | null;
+      readonly stripe_customer_id: CodecTypes['pg/text@1']['input'] | null;
+      readonly stripe_subscription_id: CodecTypes['pg/text@1']['input'] | null;
+      readonly subscription_status: CodecTypes['pg/text@1']['input'];
+      readonly trial_reminder_sent_at: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly trialEndsAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
@@ -442,8 +462,13 @@ export namespace Models {
     passwordHash: CodecTypes['pg/text@1']['output'] | null;
     phone: CodecTypes['pg/text@1']['output'] | null;
     postalCode: CodecTypes['pg/text@1']['output'] | null;
+    role: CodecTypes['pg/text@1']['output'];
     slug: CodecTypes['pg/text@1']['output'] | null;
+    stripeCustomerId: CodecTypes['pg/text@1']['output'] | null;
+    stripeSubscriptionId: CodecTypes['pg/text@1']['output'] | null;
+    subscriptionStatus: CodecTypes['pg/text@1']['output'];
     trialEndsAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+    trialReminderSentAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
     updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     reviews: public_Review[];
     readonly [RelationKeys]?: 'reviews';
@@ -629,13 +654,51 @@ type ContractBase = Omit<
                   readonly nullable: true;
                   readonly many: false;
                 };
+                readonly role: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'Owner'>;
+                  };
+                  readonly many: false;
+                };
                 readonly slug: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: true;
                   readonly many: false;
                 };
+                readonly stripe_customer_id: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly stripe_subscription_id: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly subscription_status: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'trial'>;
+                  };
+                  readonly many: false;
+                };
                 readonly trialEndsAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly trial_reminder_sent_at: {
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-string@1';
                   readonly nullable: true;
@@ -905,11 +968,34 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly role: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly slug: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly stripeCustomerId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly stripeSubscriptionId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly subscriptionStatus: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly trialEndsAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly trialReminderSentAt: {
                 readonly nullable: true;
                 readonly type: {
                   readonly kind: 'scalar';
@@ -962,8 +1048,13 @@ type ContractBase = Omit<
                 readonly passwordHash: { readonly column: 'passwordHash' };
                 readonly phone: { readonly column: 'phone' };
                 readonly postalCode: { readonly column: 'postalCode' };
+                readonly role: { readonly column: 'role' };
                 readonly slug: { readonly column: 'slug' };
+                readonly stripeCustomerId: { readonly column: 'stripe_customer_id' };
+                readonly stripeSubscriptionId: { readonly column: 'stripe_subscription_id' };
+                readonly subscriptionStatus: { readonly column: 'subscription_status' };
                 readonly trialEndsAt: { readonly column: 'trialEndsAt' };
+                readonly trialReminderSentAt: { readonly column: 'trial_reminder_sent_at' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
               };
             };

@@ -152,6 +152,13 @@
                   "kind": "scalar"
                 }
               },
+              "role": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "slug": {
                 "nullable": true,
                 "type": {
@@ -159,7 +166,35 @@
                   "kind": "scalar"
                 }
               },
+              "stripeCustomerId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "stripeSubscriptionId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "subscriptionStatus": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "trialEndsAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "trialReminderSentAt": {
                 "nullable": true,
                 "type": {
                   "codecId": "pg/timestamptz-string@1",
@@ -250,11 +285,26 @@
                 "postalCode": {
                   "column": "postalCode"
                 },
+                "role": {
+                  "column": "role"
+                },
                 "slug": {
                   "column": "slug"
                 },
+                "stripeCustomerId": {
+                  "column": "stripe_customer_id"
+                },
+                "stripeSubscriptionId": {
+                  "column": "stripe_subscription_id"
+                },
+                "subscriptionStatus": {
+                  "column": "subscription_status"
+                },
                 "trialEndsAt": {
                   "column": "trialEndsAt"
+                },
+                "trialReminderSentAt": {
+                  "column": "trial_reminder_sent_at"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -588,12 +638,45 @@
                   "dataType": "pg/text",
                   "nullable": true
                 },
+                "role": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "Owner"
+                  },
+                  "nullable": false
+                },
                 "slug": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": true
                 },
+                "stripe_customer_id": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "stripe_subscription_id": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "subscription_status": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "trial"
+                  },
+                  "nullable": false
+                },
                 "trialEndsAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true
+                },
+                "trial_reminder_sent_at": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
                   "nullable": true
@@ -776,7 +859,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "268b7c87020eebe3fc85812ee20c0f271fa9660dc94eb6faef2232b9bd5e7d29"
+    "storageHash": "85ac7c3fb684867e212763356791422c72a7ed37d270122f277e42d1b5153bce"
   },
   "execution": {
     "executionHash": "2046b9d7f16a7106ed3c5927fb0a859fff391d0a89d6457dbfef0d79818965bb",

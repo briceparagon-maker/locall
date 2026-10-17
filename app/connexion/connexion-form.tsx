@@ -35,6 +35,11 @@ export function ConnexionForm() {
         />
       </label>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      <p className="text-right text-sm">
+        <Link href="/mot-de-passe-oublie" className="link-locall">
+          Mot de passe perdu
+        </Link>
+      </p>
       <button type="submit" disabled={pending} className="btn-locall-cta h-12 w-full uppercase tracking-wide">
         {pending ? "Connexion…" : "Se connecter"}
       </button>

@@ -22,6 +22,12 @@ export async function getOwnerRestaurantId() {
   return Number.isInteger(id) && id > 0 ? id : null;
 }
 
+export async function getOwnerEmail() {
+  const store = await cookies();
+  const email = store.get(EMAIL_COOKIE)?.value?.trim().toLowerCase() ?? "";
+  return email || null;
+}
+
 export async function clearOwnerSession() {
   const store = await cookies();
   store.delete(ID_COOKIE);

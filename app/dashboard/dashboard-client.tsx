@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { GoogleSeoOptionModal } from "@/components/google-seo-option-modal";
+import { LogoutButton } from "@/components/logout-button";
 import { setAutoRespondGooglePositive } from "./actions";
 
 export type ComplaintRow = {
@@ -47,7 +48,12 @@ export function DashboardClient({
   slug,
   qrDataUrl,
   reviewUrl,
+  googlePlaceUrl,
   autoRespondGooglePositive,
+  isAdmin,
+  subscriptionStatus,
+  trialDaysLeft,
+  billingNotice,
   kpis,
   complaints,
 }: {
@@ -56,7 +62,12 @@ export function DashboardClient({
   slug: string;
   qrDataUrl: string;
   reviewUrl: string;
+  googlePlaceUrl: string;
   autoRespondGooglePositive: boolean;
+  isAdmin: boolean;
+  subscriptionStatus: "trial" | "active" | "cancelled";
+  trialDaysLeft: number | null;
+  billingNotice: string | null;
   kpis: {
     overall: string;
     googlePushed: number;
@@ -128,19 +139,71 @@ export function DashboardClient({
             <p className="text-xs font-semibold tracking-[0.2em] text-locall-orange">
               LOCALL
             </p>
-            <h1 className="text-xl font-semibold">Dashboard commerçant</h1>
+            <h1 className="text-xl font-semibold">Dashboard établissement</h1>
             <p className="text-sm text-white/70">{restaurantName}</p>
           </div>
-          <a
-            href={reviewUrl}
-            className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
-          >
-            Voir /r/{slug}
-          </a>
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            {isAdmin ? (
+              <a
+                href="/admin"
+                className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
+              >
+                Admin
+              </a>
+            ) : null}
+            {googlePlaceUrl ? (
+              <a
+                href={googlePlaceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
+              >
+                Ma fiche Google ↗
+              </a>
+            ) : null}
+            <LogoutButton className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10" />
+          </div>
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl space-y-8 px-4 py-8">
+        {billingNotice ? (
+          <p className="rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+            {billingNotice}
+          </p>
+        ) : null}
+        {subscriptionStatus !== "active" ? (
+          <section className="card-locall flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-semibold text-locall-navy">Abonnement mensuel LOCALL</p>
+              <p className="mt-1 text-sm text-slate-600">
+                {subscriptionStatus === "cancelled"
+                  ? "Votre abonnement est annulé. Réactivez-le pour continuer à protéger votre note."
+                  : trialDaysLeft === null
+                    ? "Passez à l’abonnement pour protéger votre note Google sans interruption."
+                    : trialDaysLeft > 0
+                      ? `Il vous reste ${trialDaysLeft} jour${trialDaysLeft > 1 ? "s" : ""} d’essai.`
+                      : "Votre essai est terminé. Abonnez-vous pour garder la protection LOCALL."}
+              </p>
+            </div>
+            <form action="/api/stripe/checkout" method="post">
+              <button type="submit" className="btn-locall-cta">
+                S’abonner
+              </button>
+            </form>
+          </section>
+        ) : (
+          <section className="card-locall flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-slate-600">
+              Abonnement <strong>actif</strong>. Gérez votre moyen de paiement dans le portail Stripe.
+            </p>
+            <form action="/api/stripe/portal" method="post">
+              <button type="submit" className="btn-locall-ghost">
+                Gérer l’abonnement
+              </button>
+            </form>
+          </section>
+        )}
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <KpiCard
             label="Note globale"
@@ -218,8 +281,8 @@ export function DashboardClient({
               Votre Smart QR Code &amp; Supports PLV
             </h2>
             <p className="mt-1 text-sm text-slate-600">
-              Affichez-le sur place : chaque scan ouvre votre page publique{" "}
-              <span className="font-medium">/r/{slug}</span>.
+              Chaque scan ouvre votre page d’interception LOCALL : les avis 1-3★
+              restent internes, les 4-5★ peuvent aller vers Google.
             </p>
           </div>
 
@@ -238,7 +301,7 @@ export function DashboardClient({
             <div className="card-locall flex flex-col justify-center gap-4 p-5">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Lien public
+                  Lien d’interception LOCALL
                 </p>
                 <p className="mt-2 break-all rounded-xl bg-slate-50 px-3 py-2 text-sm text-locall-navy">
                   {reviewUrl}
@@ -266,7 +329,8 @@ export function DashboardClient({
               Impression &amp; supports physiques
             </h3>
             <p className="mt-1 text-sm text-slate-600">
-              Templates PDF prêts à imprimer, avec votre QR déjà intégré.
+              Templates PDF prêts à imprimer, avec votre QR d’interception déjà
+              intégré.
             </p>
             <div className="mt-4 grid gap-4 md:grid-cols-3">
               <PlvCard

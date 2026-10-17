@@ -1,13 +1,20 @@
 import { connection } from "next/server";
 import { redirect } from "next/navigation";
+import { isSuperAdmin } from "@/lib/admin";
 import { appUrl } from "@/lib/app-url";
+import { normalizeSubscriptionStatus, trialDaysLeft } from "@/lib/billing";
 import { qrPngDataUrl } from "@/lib/qr";
-import { getOwnerRestaurantId } from "@/lib/session";
+import { getOwnerEmail, getOwnerRestaurantId } from "@/lib/session";
 import { db } from "@/src/prisma/db";
 import { DashboardClient, type ComplaintRow } from "./dashboard-client";
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ billing?: string }>;
+}) {
   await connection();
+  const params = await searchParams;
 
   const sessionRestaurantId = await getOwnerRestaurantId();
   if (!sessionRestaurantId) redirect("/connexion");
@@ -77,7 +84,18 @@ export default async function DashboardPage() {
       slug={slug}
       qrDataUrl={qrDataUrl}
       reviewUrl={reviewUrl}
+      googlePlaceUrl={restaurant.googlePlaceUrl?.trim() || ""}
       autoRespondGooglePositive={Boolean(restaurant.autoRespondGooglePositive)}
+      isAdmin={isSuperAdmin(await getOwnerEmail(), restaurant.role)}
+      subscriptionStatus={normalizeSubscriptionStatus(restaurant.subscriptionStatus)}
+      trialDaysLeft={trialDaysLeft(restaurant.trialEndsAt)}
+      billingNotice={
+        params.billing === "success"
+          ? "Paiement reçu. Votre abonnement sera activé dès confirmation Stripe."
+          : params.billing === "cancel"
+            ? "Paiement annulé. Vous pouvez réessayer quand vous voulez."
+            : null
+      }
       kpis={{
         overall,
         googlePushed,
