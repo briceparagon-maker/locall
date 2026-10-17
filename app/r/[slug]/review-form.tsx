@@ -12,6 +12,7 @@ type ReviewFormProps = {
     category: string;
     googleReviewUrl: string | null;
     googlePlaceId: string | null;
+    facebookReviewUrl: string | null;
   };
   reviewerName: string;
   currentMonth: number;
@@ -59,7 +60,7 @@ function googleWriteReviewUrl(restaurant: ReviewFormProps["restaurant"]) {
   if (restaurant.googlePlaceId) {
     return `https://search.google.com/local/writereview?placeid=${encodeURIComponent(restaurant.googlePlaceId)}`;
   }
-  return googleListingUrl(restaurant);
+  return null;
 }
 
 function initialFromName(name: string) {
@@ -146,7 +147,11 @@ export function ReviewForm({
   const isPositive = rating >= 4;
   const isNegative = rating >= 1 && rating <= 3;
   const listingUrl = googleListingUrl(restaurant);
-  const publishUrl = googleWriteReviewUrl(restaurant);
+  const googlePublishUrl = googleWriteReviewUrl(restaurant);
+  const facebookPublishUrl = restaurant.facebookReviewUrl?.trim() || null;
+  const hasGoogleDest = Boolean(googlePublishUrl);
+  const hasFacebookDest = Boolean(facebookPublishUrl);
+  const publishUrl = googlePublishUrl || facebookPublishUrl || listingUrl;
   const showDetails = showsDetailRatings(restaurant.category);
   const maxMonth = visitYear === currentYear ? currentMonth : 12;
   const safeVisitMonth = Math.min(visitMonth, maxMonth);
@@ -362,17 +367,49 @@ export function ReviewForm({
             ) : null}
 
             {isPositive ? (
-              <a
-                href={publishUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={publishButtonClass}
-                onClick={() => {
-                  void trackGooglePublish(restaurant.id, rating);
-                }}
-              >
-                Publier
-              </a>
+              hasGoogleDest && hasFacebookDest ? (
+                <div className="mt-6 space-y-3">
+                  <p className={`text-center text-sm ${CHARTER_MUTED}`}>
+                    Laissez votre avis sur Google et sur Facebook.
+                  </p>
+                  <a
+                    href={googlePublishUrl ?? undefined}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={publishButtonClass.replace("mt-6 ", "")}
+                    onClick={() => {
+                      void trackGooglePublish(restaurant.id, rating);
+                    }}
+                  >
+                    Publier sur Google
+                  </a>
+                  <a
+                    href={facebookPublishUrl ?? undefined}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex min-h-12 w-full items-center justify-center rounded-full bg-[#1877f2] px-6 text-base font-medium text-white shadow-sm hover:bg-[#166fe5] disabled:opacity-60"
+                    onClick={() => {
+                      void trackGooglePublish(restaurant.id, rating);
+                    }}
+                  >
+                    Publier sur Facebook
+                  </a>
+                </div>
+              ) : (
+                <a
+                  href={publishUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={publishButtonClass}
+                  onClick={() => {
+                    void trackGooglePublish(restaurant.id, rating);
+                  }}
+                >
+                  {hasFacebookDest && !hasGoogleDest
+                    ? "Publier sur Facebook"
+                    : "Publier"}
+                </a>
+              )
             ) : (
               <button
                 type={isNegative ? "submit" : "button"}
@@ -384,7 +421,7 @@ export function ReviewForm({
             )}
           </form>
 
-        <p className="mt-auto pt-10 text-center">
+        <p className="mt-auto flex flex-col items-center gap-2 pt-10 text-center">
           <a
             href={listingUrl}
             target="_blank"
@@ -393,6 +430,16 @@ export function ReviewForm({
           >
             Voir la fiche Google
           </a>
+          {facebookPublishUrl ? (
+            <a
+              href={facebookPublishUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={discreetLinkClass}
+            >
+              Voir la page Facebook
+            </a>
+          ) : null}
         </p>
       </main>
     </div>

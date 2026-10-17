@@ -85,6 +85,7 @@ export default async function DashboardPage({
       qrDataUrl={qrDataUrl}
       reviewUrl={reviewUrl}
       googlePlaceUrl={restaurant.googlePlaceUrl?.trim() || ""}
+      facebookReviewUrl={restaurant.facebookReviewUrl?.trim() || ""}
       autoRespondGooglePositive={Boolean(restaurant.autoRespondGooglePositive)}
       isAdmin={isSuperAdmin(await getOwnerEmail(), restaurant.role)}
       subscriptionStatus={normalizeSubscriptionStatus(restaurant.subscriptionStatus)}

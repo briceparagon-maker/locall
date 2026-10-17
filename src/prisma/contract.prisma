@@ -11,6 +11,7 @@ model Restaurant {
   googlePlaceId   String?  @unique
   googleReviewUrl String?
   googlePlaceUrl  String?  @map("google_place_url")
+  facebookReviewUrl String? @map("facebook_review_url")
   slug            String?  @unique
   autoRespondGooglePositive Boolean @default(false) @map("auto_respond_google_positive")
   ownerStatus     String?

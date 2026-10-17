@@ -22,7 +22,19 @@ function SiteHeaderBar({ loggedIn }: { loggedIn: boolean }) {
           />
         </Link>
         <div className="justify-self-center text-center">
-          {loggedIn ? null : (
+          {loggedIn ? (
+            <Link
+              href="/dashboard"
+              className="inline-block leading-tight no-underline hover:opacity-90"
+            >
+              <span className="block text-sm font-semibold text-white">
+                Accéder à
+              </span>
+              <span className="block text-xl font-extrabold tracking-tight text-locall-orange underline decoration-locall-orange decoration-[3px] underline-offset-4">
+                mon dashboard
+              </span>
+            </Link>
+          ) : (
             <Link
               href="/inscription"
               className="inline-block leading-tight no-underline hover:opacity-90"

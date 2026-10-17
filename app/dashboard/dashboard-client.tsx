@@ -5,7 +5,11 @@ import Link from "next/link";
 import { GooglePlaceSetupModal } from "@/components/google-place-setup-modal";
 import { GoogleSeoOptionModal } from "@/components/google-seo-option-modal";
 import { LogoutButton } from "@/components/logout-button";
-import { setAutoRespondGooglePositive, saveGooglePlaceSetup } from "./actions";
+import {
+  setAutoRespondGooglePositive,
+  saveGooglePlaceSetup,
+  saveReviewDestinations,
+} from "./actions";
 
 export type ComplaintRow = {
   id: number;
@@ -51,6 +55,7 @@ export function DashboardClient({
   qrDataUrl,
   reviewUrl,
   googlePlaceUrl,
+  facebookReviewUrl,
   autoRespondGooglePositive,
   isAdmin,
   subscriptionStatus,
@@ -65,6 +70,7 @@ export function DashboardClient({
   qrDataUrl: string;
   reviewUrl: string;
   googlePlaceUrl: string;
+  facebookReviewUrl: string;
   autoRespondGooglePositive: boolean;
   isAdmin: boolean;
   subscriptionStatus: "trial" | "active" | "cancelled";
@@ -88,6 +94,12 @@ export function DashboardClient({
   const [placeSetupError, setPlaceSetupError] = useState<string | null>(null);
   const [savedGooglePlaceUrl, setSavedGooglePlaceUrl] = useState(googlePlaceUrl);
   const googleListingUrl = savedGooglePlaceUrl || googlePlaceUrl;
+  const [googleDestUrl, setGoogleDestUrl] = useState(googleListingUrl);
+  const [facebookDestUrl, setFacebookDestUrl] = useState(facebookReviewUrl);
+  const [positiveReviewError, setPositiveReviewError] = useState<string | null>(
+    null,
+  );
+  const [positiveReviewSaved, setPositiveReviewSaved] = useState(false);
   const selected = useMemo(
     () => complaints.find((row) => row.id === selectedId) ?? null,
     [complaints, selectedId],
@@ -309,7 +321,8 @@ export function DashboardClient({
             </h2>
             <p className="mt-1 text-sm text-slate-600">
               Chaque scan ouvre votre page d’interception LOCALL : les avis 1-3★
-              restent internes, les 4-5★ peuvent aller vers Google.
+              restent internes. Les avis 4-5★ sont proposés sur Google et/ou
+              Facebook, selon les liens que vous renseignez.
             </p>
           </div>
 
@@ -341,6 +354,80 @@ export function DashboardClient({
                   {copied ? "Lien copié" : "Copier le lien"}
                 </button>
               </div>
+              <form
+                className="space-y-3 border-t border-slate-100 pt-4"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  setPositiveReviewError(null);
+                  setPositiveReviewSaved(false);
+                  startTransition(async () => {
+                    const result = await saveReviewDestinations(
+                      restaurantId,
+                      googleDestUrl,
+                      facebookDestUrl,
+                    );
+                    if (!result.ok) {
+                      setPositiveReviewError(result.error);
+                      return;
+                    }
+                    setSavedGooglePlaceUrl(result.googleUrl);
+                    setGoogleDestUrl(result.googleUrl);
+                    setFacebookDestUrl(result.facebookUrl);
+                    setPositiveReviewSaved(true);
+                    window.setTimeout(() => setPositiveReviewSaved(false), 2500);
+                  });
+                }}
+              >
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    Avis 4-5★ — Google et Facebook
+                  </p>
+                  <p className="mt-1 text-sm text-slate-600">
+                    Renseignez un lien, les deux, ou un seul. Si les deux sont
+                    remplis, le client verra deux boutons après une note 4/5 ou
+                    5/5. Le QR LOCALL ne change pas.
+                  </p>
+                  <label className="label-locall mt-3">
+                    Fiche Google Maps
+                    <input
+                      type="url"
+                      value={googleDestUrl}
+                      onChange={(event) => {
+                        setGoogleDestUrl(event.target.value);
+                        setPositiveReviewSaved(false);
+                      }}
+                      placeholder="https://g.page/… ou https://maps.google.com/…"
+                      className="input-locall"
+                    />
+                  </label>
+                  <label className="label-locall mt-3">
+                    Page avis Facebook
+                    <input
+                      type="url"
+                      value={facebookDestUrl}
+                      onChange={(event) => {
+                        setFacebookDestUrl(event.target.value);
+                        setPositiveReviewSaved(false);
+                      }}
+                      placeholder="https://www.facebook.com/…"
+                      className="input-locall"
+                    />
+                  </label>
+                </div>
+                {positiveReviewError ? (
+                  <p className="text-sm text-red-600">{positiveReviewError}</p>
+                ) : null}
+                {positiveReviewSaved ? (
+                  <p className="text-sm text-emerald-700">Liens enregistrés.</p>
+                ) : null}
+                <button
+                  type="submit"
+                  disabled={pending}
+                  className="btn-locall-cta w-full sm:w-auto"
+                >
+                  {pending ? "Enregistrement…" : "Enregistrer ces liens"}
+                </button>
+              </form>
               <button
                 type="button"
                 onClick={downloadQr}
@@ -487,6 +574,7 @@ export function DashboardClient({
               return;
             }
             setSavedGooglePlaceUrl(result.url);
+            setGoogleDestUrl(result.url);
             setOptionEnabled(result.enabled);
             setShowPlaceSetup(false);
           });
