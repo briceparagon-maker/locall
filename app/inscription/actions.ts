@@ -49,6 +49,7 @@ export async function registerTrial(formData: FormData) {
   const passwordConfirm = String(formData.get("passwordConfirm") ?? "");
   const autoRespondGooglePositive = formData.get("autoRespondGooglePositive") === "on";
   const googlePlaceUrl = text(formData, "googlePlaceUrl");
+  const facebookReviewUrl = text(formData, "facebookReviewUrl");
   const acceptTerms = formData.get("acceptTerms") === "on";
 
   if (!name) return { ok: false as const, error: "Indiquez le nom de l’établissement." };
@@ -83,6 +84,12 @@ export async function registerTrial(formData: FormData) {
         "Indiquez l’URL de votre fiche Google Business, Google Maps ou lien d’avis.",
     };
   }
+  if (facebookReviewUrl && !isHttpUrl(facebookReviewUrl)) {
+    return {
+      ok: false as const,
+      error: "Le lien Facebook doit être une URL valide (https://…).",
+    };
+  }
 
   const existing = await db.orm.public.Restaurant.where({ ownerEmail: email }).first();
   if (existing) {
@@ -102,6 +109,7 @@ export async function registerTrial(formData: FormData) {
     autoRespondGooglePositive,
     googlePlaceUrl: autoRespondGooglePositive ? googlePlaceUrl : null,
     googleReviewUrl: autoRespondGooglePositive ? googlePlaceUrl : null,
+    facebookReviewUrl: facebookReviewUrl || null,
     ownerStatus,
     ownerFirstName,
     ownerLastName,

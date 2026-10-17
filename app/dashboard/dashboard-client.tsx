@@ -153,32 +153,18 @@ export function DashboardClient({
     <div className="min-h-dvh bg-background text-foreground">
       <header className="bg-locall-navy text-white">
         <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-3 px-4 py-4 sm:grid-cols-3">
-          <Link
-            href="/"
-            className="justify-self-start no-underline hover:opacity-90"
-            aria-label="LOCALL — Accueil"
-          >
-            <img
-              src="/logo-locall.jpg"
-              alt="LOCALL"
-              className="h-10 w-auto max-h-10 max-w-[168px] object-contain object-left sm:h-11 sm:max-h-11 sm:max-w-[196px]"
-            />
-          </Link>
-          <div className="justify-self-center text-center">
-            <h1 className="text-xl font-semibold leading-tight">
-              Dashboard établissement
-            </h1>
-            <p className="mt-0.5 text-sm text-white/80">{restaurantName}</p>
-          </div>
-          <div className="flex flex-wrap items-center justify-start gap-2 sm:justify-end sm:justify-self-end">
-            {isAdmin ? (
-              <a
-                href="/admin"
-                className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
-              >
-                Admin
-              </a>
-            ) : null}
+          <div className="flex flex-wrap items-center justify-start gap-2 sm:gap-3">
+            <Link
+              href="/"
+              className="no-underline hover:opacity-90"
+              aria-label="LOCALL — Accueil"
+            >
+              <img
+                src="/logo-locall.jpg"
+                alt="LOCALL"
+                className="h-10 w-auto max-h-10 max-w-[168px] object-contain object-left sm:h-11 sm:max-h-11 sm:max-w-[196px]"
+              />
+            </Link>
             {googleListingUrl ? (
               <a
                 href={googleListingUrl}
@@ -199,6 +185,39 @@ export function DashboardClient({
               >
                 Ma fiche Google ↗
               </button>
+            )}
+          </div>
+          <div className="justify-self-center text-center">
+            <h1 className="text-xl font-semibold leading-tight">
+              Dashboard établissement
+            </h1>
+            <p className="mt-0.5 text-sm text-white/80">{restaurantName}</p>
+          </div>
+          <div className="flex flex-wrap items-center justify-start gap-2 sm:justify-end sm:justify-self-end">
+            {isAdmin ? (
+              <a
+                href="/admin"
+                className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
+              >
+                Admin
+              </a>
+            ) : null}
+            {facebookDestUrl ? (
+              <a
+                href={facebookDestUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
+              >
+                Ma fiche Facebook ↗
+              </a>
+            ) : (
+              <a
+                href="#lien-facebook"
+                className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
+              >
+                Ma fiche Facebook ↗
+              </a>
             )}
             <LogoutButton className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10" />
           </div>
@@ -400,7 +419,7 @@ export function DashboardClient({
                       className="input-locall"
                     />
                   </label>
-                  <label className="label-locall mt-3">
+                  <label id="lien-facebook" className="label-locall mt-3 scroll-mt-24">
                     Page avis Facebook
                     <input
                       type="url"

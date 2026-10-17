@@ -22,38 +22,32 @@ function SiteHeaderBar({ loggedIn }: { loggedIn: boolean }) {
           />
         </Link>
         <div className="justify-self-center text-center">
-          {loggedIn ? (
-            <Link
-              href="/dashboard"
-              className="inline-block leading-tight no-underline hover:opacity-90"
-            >
-              <span className="block text-sm font-semibold text-white">
-                Accéder à
+          <Link
+            href="/inscription"
+            className="inline-block leading-tight no-underline hover:opacity-90"
+          >
+            <span className="block text-sm font-semibold text-white">
+              Essai gratuit
+            </span>
+            <span className="block text-xl font-extrabold tracking-tight text-locall-orange">
+              14{" "}
+              <span className="underline decoration-locall-orange decoration-[3px] underline-offset-4">
+                jours
               </span>
-              <span className="block text-xl font-extrabold tracking-tight text-locall-orange underline decoration-locall-orange decoration-[3px] underline-offset-4">
-                mon dashboard
-              </span>
-            </Link>
-          ) : (
-            <Link
-              href="/inscription"
-              className="inline-block leading-tight no-underline hover:opacity-90"
-            >
-              <span className="block text-sm font-semibold text-white">
-                Essai gratuit
-              </span>
-              <span className="block text-xl font-extrabold tracking-tight text-locall-orange">
-                14{" "}
-                <span className="underline decoration-locall-orange decoration-[3px] underline-offset-4">
-                  jours
-                </span>
-              </span>
-            </Link>
-          )}
+            </span>
+          </Link>
         </div>
-        <div className="justify-self-start sm:justify-self-end">
+        <div className="flex items-center justify-start gap-4 sm:justify-self-end">
           {loggedIn ? (
-            <LogoutButton className={headerLinkClass} />
+            <>
+              <Link
+                href="/dashboard"
+                className="text-sm font-semibold text-locall-orange underline-offset-4 hover:underline"
+              >
+                Mon compte
+              </Link>
+              <LogoutButton className={headerLinkClass} />
+            </>
           ) : (
             <Link href="/connexion" className={headerLinkClass}>
               Connexion

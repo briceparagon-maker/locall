@@ -197,12 +197,26 @@ export function InscriptionForm() {
               <input
                 name="googlePlaceUrl"
                 type="url"
-                required
+                required={seoEnabled}
                 placeholder="https://g.page/r/... ou https://maps.google.com/..."
                 className="input-locall"
               />
             </label>
           ) : null}
+          <label className="label-locall">
+            Lien de votre page avis Facebook (facultatif)
+            <input
+              name="facebookReviewUrl"
+              type="url"
+              placeholder="https://www.facebook.com/…"
+              className="input-locall"
+            />
+          </label>
+          <p className="text-xs text-slate-500">
+            Google, Facebook, les deux ou aucun : l’inscription reste possible.
+            Vous pourrez compléter ces liens plus tard dans votre tableau de
+            bord.
+          </p>
         </div>
 
         <div className="flex items-start gap-3 text-sm text-locall-navy">
