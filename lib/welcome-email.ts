@@ -2,7 +2,7 @@ import { Resend } from "resend";
 import { appUrl, escapeHtml, isEmail } from "@/lib/app-url";
 
 export const WELCOME_EMAIL_SUBJECT =
-  "🛡️ Bienvenue chez LOCALL — Votre Smart QR est prêt (14 jours offerts)";
+  "🛡️ Bienvenue chez LOCALL — Configurez vos supports, puis activez vos 14 jours";
 
 export function welcomeEmailHtml(input: {
   firstName: string;
@@ -15,11 +15,13 @@ export function welcomeEmailHtml(input: {
 
   return `<div style="font-family:Arial,sans-serif;color:#0A192F;line-height:1.6;max-width:560px">
 <p style="margin:0 0 16px">Bonjour ${firstName},</p>
-<p style="margin:0 0 16px">Bienvenue chez <strong>LOCALL</strong>. L’essai de 14 jours de <strong>${establishmentName}</strong> est activé, <strong>sans carte bancaire</strong>. Votre Smart QR est prêt.</p>
-<p style="margin:0 0 8px"><strong>Deux étapes pour démarrer :</strong></p>
+<p style="margin:0 0 16px">Bienvenue chez <strong>LOCALL</strong>. Votre compte <strong>${establishmentName}</strong> est créé, <strong>sans carte bancaire</strong>.</p>
+<p style="margin:0 0 16px">Vos 14 jours d’essai commencent lorsque vous cliquez sur <strong>Activer mes 14 jours d’essai gratuits</strong> dans le dashboard, une fois vos supports en place.</p>
+<p style="margin:0 0 8px"><strong>Pour démarrer :</strong></p>
 <ol style="margin:0 0 20px;padding-left:20px">
 <li style="margin:0 0 8px">Connectez-vous à votre Dashboard.</li>
-<li>Téléchargez votre Smart QR et installez-le sur place.</li>
+<li style="margin:0 0 8px">Vérifiez vos fiches Google / Facebook, imprimez vos QR, puis activez l’essai.</li>
+<li>Installez vos supports sur place.</li>
 </ol>
 <p style="margin:0 0 20px">
   <a href="${dashboardUrl}" style="display:inline-block;background:#FF5500;color:#ffffff;text-decoration:none;padding:12px 22px;border-radius:999px;font-weight:700">Accéder à mon Dashboard</a>

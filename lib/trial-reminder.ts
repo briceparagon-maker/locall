@@ -40,7 +40,8 @@ export async function sendTrialReminders() {
   let sent = 0;
 
   for (const restaurant of restaurants) {
-    if ((restaurant.subscriptionStatus ?? "trial") !== "trial") continue;
+    const status = (restaurant.subscriptionStatus ?? "").trim().toLowerCase();
+    if (status !== "trial" && status !== "trialing") continue;
     if (!restaurant.trialEndsAt) continue;
     const ends = new Date(restaurant.trialEndsAt).getTime();
     if (Number.isNaN(ends) || ends < start.getTime() || ends >= end.getTime()) continue;

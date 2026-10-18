@@ -1,5 +1,6 @@
 import { connection } from "next/server";
 import { appUrl } from "@/lib/app-url";
+import { normalizeSubscriptionStatus } from "@/lib/billing";
 import { getOwnerRestaurantId } from "@/lib/session";
 import { getStripe, stripePriceId } from "@/lib/stripe";
 import { db } from "@/src/prisma/db";
@@ -23,6 +24,13 @@ export async function POST() {
   const restaurant = await db.orm.public.Restaurant.where({ id: restaurantId }).first();
   if (!restaurant) {
     return Response.json({ ok: false, error: "Établissement introuvable." }, { status: 404 });
+  }
+
+  if (
+    normalizeSubscriptionStatus(restaurant.subscriptionStatus) ===
+    "pending_activation"
+  ) {
+    return Response.redirect(new URL("/dashboard", appUrl()), 303);
   }
 
   let customerId = restaurant.stripeCustomerId ?? undefined;

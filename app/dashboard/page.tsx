@@ -55,6 +55,9 @@ export default async function DashboardPage({
         ).toFixed(1);
   const protectionRate = intercepted === 0 ? 0 : 100;
 
+  const subscriptionStatus = normalizeSubscriptionStatus(
+    restaurant.subscriptionStatus,
+  );
   const slug = restaurant.slug ?? String(restaurant.id);
   const reviewUrl = `${appUrl()}/r/${slug}`;
   const qrDataUrl = await qrPngDataUrl(reviewUrl, 2048);
@@ -88,8 +91,12 @@ export default async function DashboardPage({
       facebookReviewUrl={restaurant.facebookReviewUrl?.trim() || ""}
       autoRespondGooglePositive={Boolean(restaurant.autoRespondGooglePositive)}
       isAdmin={isSuperAdmin(await getOwnerEmail(), restaurant.role)}
-      subscriptionStatus={normalizeSubscriptionStatus(restaurant.subscriptionStatus)}
-      trialDaysLeft={trialDaysLeft(restaurant.trialEndsAt)}
+      subscriptionStatus={subscriptionStatus}
+      trialDaysLeft={
+        subscriptionStatus === "pending_activation"
+          ? null
+          : trialDaysLeft(restaurant.trialEndsAt)
+      }
       billingNotice={
         params.billing === "success"
           ? "Paiement reçu. Votre abonnement sera activé dès confirmation Stripe."

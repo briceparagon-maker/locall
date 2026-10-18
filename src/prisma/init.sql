@@ -27,7 +27,7 @@ ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS department TEXT;
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS phone TEXT;
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS "passwordHash" TEXT;
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS "trialEndsAt" TIMESTAMPTZ;
-ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS subscription_status TEXT NOT NULL DEFAULT 'trial';
+ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS subscription_status TEXT NOT NULL DEFAULT 'pending_activation';
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT;
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS stripe_subscription_id TEXT;
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS trial_reminder_sent_at TIMESTAMPTZ;

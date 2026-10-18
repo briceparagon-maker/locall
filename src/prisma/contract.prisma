@@ -22,7 +22,7 @@ model Restaurant {
   phone           String?
   passwordHash    String?
   trialEndsAt     TimestamptzString?
-  subscriptionStatus String @default("trial") @map("subscription_status")
+  subscriptionStatus String @default("pending_activation") @map("subscription_status")
   stripeCustomerId String? @map("stripe_customer_id")
   stripeSubscriptionId String? @map("stripe_subscription_id")
   trialReminderSentAt TimestamptzString? @map("trial_reminder_sent_at")

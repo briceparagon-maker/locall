@@ -1,6 +1,8 @@
 import { io } from "next/cache";
 import { notFound } from "next/navigation";
+import { normalizeSubscriptionStatus } from "@/lib/billing";
 import { db } from "@/src/prisma/db";
+import { ComingSoonPage } from "./coming-soon";
 import { ReviewForm } from "./review-form";
 
 export async function ReviewPageContent({
@@ -14,6 +16,13 @@ export async function ReviewPageContent({
 
   if (!restaurant) {
     notFound();
+  }
+
+  if (
+    normalizeSubscriptionStatus(restaurant.subscriptionStatus) ===
+    "pending_activation"
+  ) {
+    return <ComingSoonPage restaurantName={restaurant.name} />;
   }
 
   const now = new Date();

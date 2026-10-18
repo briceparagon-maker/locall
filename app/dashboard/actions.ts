@@ -1,6 +1,12 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { isHttpUrl } from "@/lib/app-url";
+import {
+  normalizeSubscriptionStatus,
+  trialDaysLeft,
+  trialEndsInFourteenDays,
+} from "@/lib/billing";
 import { getOwnerRestaurantId } from "@/lib/session";
 import { db } from "@/src/prisma/db";
 
@@ -108,5 +114,57 @@ export async function saveReviewDestinations(
     ok: true as const,
     googleUrl: google.value ?? "",
     facebookUrl: facebook.value ?? "",
+  };
+}
+
+export async function activateTrial(restaurantId: number) {
+  const owned = await requireOwnedRestaurant(restaurantId);
+  if (!owned.ok) return owned;
+
+  const restaurant = await db.orm.public.Restaurant.where({
+    id: restaurantId,
+  }).first();
+  if (!restaurant) {
+    return { ok: false as const, error: "Établissement introuvable." };
+  }
+
+  const status = normalizeSubscriptionStatus(restaurant.subscriptionStatus);
+  if (status === "active") {
+    return { ok: false as const, error: "Votre abonnement est déjà actif." };
+  }
+  if (status === "cancelled") {
+    return {
+      ok: false as const,
+      error: "Réactivez votre abonnement pour continuer.",
+    };
+  }
+  if (status === "trialing") {
+    return {
+      ok: true as const,
+      status,
+      trialEndsAt: restaurant.trialEndsAt,
+      trialDaysLeft: trialDaysLeft(restaurant.trialEndsAt),
+    };
+  }
+
+  const trialEndsAt = trialEndsInFourteenDays();
+  const updated = await db.orm.public.Restaurant.where({ id: restaurantId }).update({
+    subscriptionStatus: "trialing",
+    trialEndsAt,
+  });
+
+  if (!updated) {
+    return { ok: false as const, error: "Impossible d’activer l’essai." };
+  }
+
+  const slug = restaurant.slug ?? String(restaurant.id);
+  revalidatePath("/dashboard");
+  revalidatePath(`/r/${slug}`);
+
+  return {
+    ok: true as const,
+    status: "trialing" as const,
+    trialEndsAt,
+    trialDaysLeft: trialDaysLeft(trialEndsAt),
   };
 }

@@ -682,7 +682,7 @@
                   "dataType": "pg/text",
                   "default": {
                     "kind": "literal",
-                    "value": "trial"
+                    "value": "pending_activation"
                   },
                   "nullable": false
                 },

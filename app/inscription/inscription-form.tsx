@@ -2,6 +2,7 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import Link from "next/link";
+import { GoogleReviewLinkGuide } from "@/components/google-review-link-guide";
 import { GoogleSeoOptionModal } from "@/components/google-seo-option-modal";
 import { registerTrial } from "./actions";
 
@@ -178,8 +179,9 @@ export function InscriptionForm() {
               />
               <span>
                 Activer maintenant (ou plus tard dans votre tableau de bord) la
-                réponse automatique SEO pour vos avis 4/5 et 5/5 Google avec des
-                mots-clés spécifiques à votre établissement (Option offerte).
+                réponse automatique SEO pour vos avis 4/5 et 5/5 Google et/ou
+                Facebook avec des mots-clés spécifiques à votre établissement
+                (Option offerte).
               </span>
             </label>
             <button
@@ -191,28 +193,33 @@ export function InscriptionForm() {
             </button>
           </div>
           {seoEnabled ? (
-            <label className="label-locall">
-              URL de votre fiche Google Business / Google Maps (ou Lien d’avis
-              Google)
-              <input
-                name="googlePlaceUrl"
-                type="url"
-                required={seoEnabled}
-                placeholder="https://g.page/r/... ou https://maps.google.com/..."
-                className="input-locall"
-              />
-            </label>
+            <>
+              <div>
+                <label className="label-locall">
+                  URL de votre fiche Google Business / Google Maps (ou Lien
+                  d’avis Google)
+                  <input
+                    name="googlePlaceUrl"
+                    type="url"
+                    required={seoEnabled}
+                    placeholder="https://g.page/r/... ou https://maps.google.com/..."
+                    className="input-locall"
+                  />
+                </label>
+                <GoogleReviewLinkGuide />
+              </div>
+              <label className="label-locall">
+                URL de votre page avis Facebook (facultatif)
+                <input
+                  name="facebookReviewUrl"
+                  type="url"
+                  placeholder="https://www.facebook.com/…"
+                  className="input-locall"
+                />
+              </label>
+            </>
           ) : null}
-          <label className="label-locall">
-            Lien de votre page avis Facebook (facultatif)
-            <input
-              name="facebookReviewUrl"
-              type="url"
-              placeholder="https://www.facebook.com/…"
-              className="input-locall"
-            />
-          </label>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-black">
             Google, Facebook, les deux ou aucun : l’inscription reste possible.
             Vous pourrez compléter ces liens plus tard dans votre tableau de
             bord.
@@ -253,7 +260,7 @@ export function InscriptionForm() {
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
         <button type="submit" disabled={pending} className="btn-locall-cta h-12 w-full uppercase tracking-wide">
-          {pending ? "Activation…" : "Activer mes 14 jours gratuits →"}
+          {pending ? "Création du compte…" : "Créer mon compte →"}
         </button>
         <p className="text-center text-sm text-slate-500">
           Déjà inscrit ?{" "}
@@ -262,7 +269,7 @@ export function InscriptionForm() {
           </Link>
         </p>
         <p className="text-center text-sm text-slate-500">
-          Sans engagement | Activation instantanée
+          Sans engagement | Essai 14 jours à activer dans le dashboard
         </p>
       </form>
 

@@ -90,13 +90,11 @@ export async function registerTrial(formData: FormData) {
       error: "Le lien Facebook doit être une URL valide (https://…).",
     };
   }
-
   const existing = await db.orm.public.Restaurant.where({ ownerEmail: email }).first();
   if (existing) {
     return { ok: false as const, error: "Un compte existe déjà pour cet e-mail. Connectez-vous." };
   }
 
-  const trialEndsAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
   const slug = await uniqueSlug(name);
   const created = await db.orm.public.Restaurant.select("id").create({
     name,
@@ -117,8 +115,8 @@ export async function registerTrial(formData: FormData) {
     department: department || null,
     phone,
     passwordHash: hashPassword(password),
-    trialEndsAt,
-    subscriptionStatus: "trial",
+    trialEndsAt: null,
+    subscriptionStatus: "pending_activation",
     role: "Owner",
   });
 

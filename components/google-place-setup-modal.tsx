@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { GoogleReviewLinkGuide } from "@/components/google-review-link-guide";
 
 export function GooglePlaceSetupModal({
   open,
@@ -51,16 +52,19 @@ export function GooglePlaceSetupModal({
             onSave(String(formData.get("googlePlaceUrl") ?? ""), seoEnabled);
           }}
         >
-          <label className="label-locall">
-            URL de votre fiche Google Business / Google Maps
-            <input
-              name="googlePlaceUrl"
-              type="url"
-              required
-              placeholder="https://g.page/r/... ou https://maps.google.com/..."
-              className="input-locall"
-            />
-          </label>
+          <div>
+            <label className="label-locall">
+              URL de votre fiche Google Business / Google Maps
+              <input
+                name="googlePlaceUrl"
+                type="url"
+                required
+                placeholder="https://g.page/r/... ou https://maps.google.com/..."
+                className="input-locall"
+              />
+            </label>
+            <GoogleReviewLinkGuide />
+          </div>
 
           <div className="space-y-2">
             <label className="flex cursor-pointer items-start gap-3 text-sm text-locall-navy">

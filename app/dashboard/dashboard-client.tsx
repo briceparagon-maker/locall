@@ -2,10 +2,14 @@
 
 import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { GooglePlaceSetupModal } from "@/components/google-place-setup-modal";
 import { GoogleSeoOptionModal } from "@/components/google-seo-option-modal";
 import { LogoutButton } from "@/components/logout-button";
+import type { SubscriptionStatus } from "@/lib/billing";
+import { PLV_ORDER_LINKS } from "@/lib/plv-order";
 import {
+  activateTrial,
   setAutoRespondGooglePositive,
   saveGooglePlaceSetup,
   saveReviewDestinations,
@@ -73,7 +77,7 @@ export function DashboardClient({
   facebookReviewUrl: string;
   autoRespondGooglePositive: boolean;
   isAdmin: boolean;
-  subscriptionStatus: "trial" | "active" | "cancelled";
+  subscriptionStatus: SubscriptionStatus;
   trialDaysLeft: number | null;
   billingNotice: string | null;
   kpis: {
@@ -84,6 +88,10 @@ export function DashboardClient({
   };
   complaints: ComplaintRow[];
 }) {
+  const router = useRouter();
+  const [status, setStatus] = useState(subscriptionStatus);
+  const [daysLeft, setDaysLeft] = useState(trialDaysLeft);
+  const [activateError, setActivateError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [optionEnabled, setOptionEnabled] = useState(autoRespondGooglePositive);
   const [showOptionModal, setShowOptionModal] = useState(false);
@@ -192,6 +200,17 @@ export function DashboardClient({
               Dashboard établissement
             </h1>
             <p className="mt-0.5 text-sm text-white/80">{restaurantName}</p>
+            {status === "trialing" && daysLeft !== null ? (
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-locall-orange">
+                {daysLeft > 0
+                  ? `${daysLeft} jour${daysLeft > 1 ? "s" : ""} d’essai restant${daysLeft > 1 ? "s" : ""}`
+                  : "Essai terminé"}
+              </p>
+            ) : status === "pending_activation" ? (
+              <p className="mt-1 text-xs font-medium text-white/70">
+                Essai 14 jours — en attente d’activation
+              </p>
+            ) : null}
           </div>
           <div className="flex flex-wrap items-center justify-start gap-2 sm:justify-end sm:justify-self-end">
             {isAdmin ? (
@@ -230,27 +249,185 @@ export function DashboardClient({
             {billingNotice}
           </p>
         ) : null}
-        {subscriptionStatus !== "active" ? (
-          <section className="card-locall flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="font-semibold text-locall-navy">Abonnement mensuel LOCALL</p>
-              <p className="mt-1 text-sm text-slate-600">
-                {subscriptionStatus === "cancelled"
-                  ? "Votre abonnement est annulé. Réactivez-le pour continuer à protéger votre note."
-                  : trialDaysLeft === null
-                    ? "Passez à l’abonnement pour protéger votre note Google sans interruption."
-                    : trialDaysLeft > 0
-                      ? `Il vous reste ${trialDaysLeft} jour${trialDaysLeft > 1 ? "s" : ""} d’essai.`
-                      : "Votre essai est terminé. Abonnez-vous pour garder la protection LOCALL."}
+        {status === "pending_activation" ? (
+          <section className="overflow-hidden rounded-2xl border-2 border-locall-orange bg-white shadow-sm">
+            <div className="bg-locall-navy px-5 py-5 text-white sm:px-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-locall-orange">
+                Mise en route
+              </p>
+              <h2 className="mt-2 text-2xl font-extrabold leading-tight">
+                Activez votre essai quand vos supports sont en place
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm text-white/80">
+                Le chrono de 14 jours ne démarre pas tant que vous n’avez pas
+                cliqué sur le bouton ci-dessous. En attendant, le QR affiche
+                « Établissement bientôt configuré ».
               </p>
             </div>
-            <form action="/api/stripe/checkout" method="post">
-              <button type="submit" className="btn-locall-cta">
-                S’abonner
-              </button>
-            </form>
+            <ol className="space-y-0 divide-y divide-slate-100">
+              <li className="flex gap-4 px-5 py-5 sm:px-8">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-locall-orange text-sm font-bold text-white">
+                  1
+                </span>
+                <div>
+                  <p className="font-semibold text-locall-navy">
+                    Vérification de vos fiches
+                  </p>
+                  <p className="mt-1 text-sm text-slate-600">
+                    Contrôlez que vos pages Google et/ou Facebook sont prêtes à
+                    recevoir les avis 4-5★.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {googleListingUrl ? (
+                      <a
+                        href={googleListingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-locall-ghost text-sm"
+                      >
+                        Ma fiche Google ↗
+                      </a>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPlaceSetupError(null);
+                          setShowPlaceSetup(true);
+                        }}
+                        className="btn-locall-ghost text-sm"
+                      >
+                        Ma fiche Google ↗
+                      </button>
+                    )}
+                    {facebookDestUrl ? (
+                      <a
+                        href={facebookDestUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-locall-ghost text-sm"
+                      >
+                        Ma fiche Facebook ↗
+                      </a>
+                    ) : (
+                      <a href="#lien-facebook" className="btn-locall-ghost text-sm">
+                        Ma fiche Facebook ↗
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </li>
+              <li className="flex gap-4 px-5 py-5 sm:px-8">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-locall-orange text-sm font-bold text-white">
+                  2
+                </span>
+                <div>
+                  <p className="font-semibold text-locall-navy">
+                    Impression des supports
+                  </p>
+                  <p className="mt-1 text-sm text-slate-600">
+                    Téléchargez votre QR HD et vos templates PLV. Le QR pointe
+                    déjà vers votre page LOCALL ; il s’activera à l’étape 4.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={downloadQr}
+                      className="btn-locall-ghost text-sm"
+                    >
+                      Télécharger le QR HD
+                    </button>
+                    <a href="/api/plv/chevalet-a6" className="btn-locall-ghost text-sm">
+                      Chevalet A6
+                    </a>
+                    <a href="/api/plv/chevalet-a5" className="btn-locall-ghost text-sm">
+                      Chevalet A5
+                    </a>
+                    <a href="/api/plv/sticker-carre" className="btn-locall-ghost text-sm">
+                      Sticker carré
+                    </a>
+                    <a href="/api/plv/sticker-rond" className="btn-locall-ghost text-sm">
+                      Sticker rond
+                    </a>
+                    <a href="/api/plv/affiche-a4" className="btn-locall-ghost text-sm">
+                      Affiche A4
+                    </a>
+                  </div>
+                </div>
+              </li>
+              <li className="flex gap-4 px-5 py-5 sm:px-8">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-locall-orange text-sm font-bold text-white">
+                  3
+                </span>
+                <div>
+                  <p className="font-semibold text-locall-navy">
+                    Commande de supports
+                  </p>
+                  <p className="mt-1 text-sm text-slate-600">
+                    Commandez un kit LOCALL ou passez par un imprimeur partenaire.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {PLV_ORDER_LINKS.map((link) => (
+                      <Link
+                        key={link.label}
+                        href={link.href}
+                        className="btn-locall-ghost text-sm"
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </li>
+              <li className="flex gap-4 px-5 py-5 sm:px-8">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-locall-orange text-sm font-bold text-white">
+                  4
+                </span>
+                <div className="w-full">
+                  <p className="font-semibold text-locall-navy">
+                    Activation de l’essai
+                  </p>
+                  <p className="mt-1 text-sm text-slate-600">
+                    Démarre le compteur de 14 jours et ouvre le Smart QR vers la
+                    page d’interception.
+                  </p>
+                  {activateError ? (
+                    <p className="mt-2 text-sm text-red-600">{activateError}</p>
+                  ) : null}
+                  <button
+                    type="button"
+                    disabled={pending}
+                    onClick={() => {
+                      setActivateError(null);
+                      startTransition(async () => {
+                        const result = await activateTrial(restaurantId);
+                        if (!result.ok) {
+                          setActivateError(result.error);
+                          return;
+                        }
+                        setStatus(result.status);
+                        setDaysLeft(result.trialDaysLeft);
+                        router.refresh();
+                      });
+                    }}
+                    className="btn-locall-cta mt-4 w-full text-base font-extrabold tracking-wide sm:w-auto"
+                  >
+                    {pending
+                      ? "Activation…"
+                      : "ACTIVER MES 14 JOURS D’ESSAI GRATUITS"}
+                  </button>
+                </div>
+              </li>
+            </ol>
           </section>
-        ) : (
+        ) : null}
+        {status === "trialing" && daysLeft !== null ? (
+          <p className="rounded-xl bg-orange-50 px-4 py-3 text-sm font-medium text-locall-navy">
+            {daysLeft > 0
+              ? `Il vous reste ${daysLeft} jour${daysLeft > 1 ? "s" : ""} d’essai gratuit.`
+              : "Votre essai de 14 jours est terminé."}
+          </p>
+        ) : null}
+        {status === "active" ? (
           <section className="card-locall flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-slate-600">
               Abonnement <strong>actif</strong>. Gérez votre moyen de paiement dans le portail Stripe.
@@ -261,7 +438,27 @@ export function DashboardClient({
               </button>
             </form>
           </section>
-        )}
+        ) : status !== "pending_activation" ? (
+          <section className="card-locall flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="font-semibold text-locall-navy">Abonnement mensuel LOCALL</p>
+              <p className="mt-1 text-sm text-slate-600">
+                {status === "cancelled"
+                  ? "Votre abonnement est annulé. Réactivez-le pour continuer à protéger votre note."
+                  : daysLeft === null
+                    ? "Passez à l’abonnement pour protéger votre note Google sans interruption."
+                    : daysLeft > 0
+                      ? `Il vous reste ${daysLeft} jour${daysLeft > 1 ? "s" : ""} d’essai.`
+                      : "Votre essai est terminé. Abonnez-vous pour garder la protection LOCALL."}
+              </p>
+            </div>
+            <form action="/api/stripe/checkout" method="post">
+              <button type="submit" className="btn-locall-cta">
+                S’abonner
+              </button>
+            </form>
+          </section>
+        ) : null}
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <KpiCard
             label="Note globale"
@@ -283,6 +480,88 @@ export function DashboardClient({
             value={`${kpis.protectionRate} %`}
             hint="Avis négatifs évités sur Google"
           />
+        </section>
+
+        <section>
+          <div className="card-locall overflow-hidden">
+            <div className="border-b border-slate-100 px-5 py-4">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                Flux de réclamations
+              </h2>
+              <p className="mt-1 text-sm text-slate-600">
+                Retours 1-3★ — cliquez une ligne pour lire le message IA.
+              </p>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-left text-sm">
+                <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">Date</th>
+                    <th className="px-4 py-3 font-medium">Note</th>
+                    <th className="px-4 py-3 font-medium">Commentaire</th>
+                    <th className="px-4 py-3 font-medium">Statut</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {complaints.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="px-4 py-10 text-center text-slate-500">
+                        Aucune réclamation interceptée pour le moment.
+                      </td>
+                    </tr>
+                  ) : (
+                    complaints.map((row) => (
+                      <tr
+                        key={row.id}
+                        role="button"
+                        tabIndex={0}
+                        className="cursor-pointer border-t border-slate-100 hover:bg-orange-50"
+                        onClick={() => setSelectedId(row.id)}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            setSelectedId(row.id);
+                          }
+                        }}
+                      >
+                        <td className="whitespace-nowrap px-4 py-3 text-slate-600">
+                          {formatDate(row.createdAt)}
+                        </td>
+                        <td className="px-4 py-3">
+                          <StarPips rating={row.rating} />
+                        </td>
+                        <td className="max-w-xs truncate px-4 py-3 text-slate-700">
+                          {row.comment || "—"}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-wrap gap-1.5">
+                            {row.clientEmailed ? (
+                              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-locall-success">
+                                🟢 Réponse client envoyée
+                              </span>
+                            ) : row.status === "RESOLVED_AUTO" ? (
+                              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-locall-success">
+                                🟢 Réponse automatique envoyée par LOCALL
+                              </span>
+                            ) : (
+                              <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-800">
+                                Intercepté
+                              </span>
+                            )}
+                            {row.ownerNotified ? (
+                              <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-locall-link">
+                                📧 Patron notifié
+                              </span>
+                            ) : null}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </section>
 
         <section className="card-locall p-5">
@@ -494,88 +773,6 @@ export function DashboardClient({
             🔒 Vos supports imprimés et ce QR code restent actifs à vie, sans
             aucun frais supplémentaire.
           </p>
-        </section>
-
-        <section>
-          <div className="card-locall overflow-hidden">
-            <div className="border-b border-slate-100 px-5 py-4">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-                Flux de réclamations
-              </h2>
-              <p className="mt-1 text-sm text-slate-600">
-                Retours 1-3★ — cliquez une ligne pour lire le message IA.
-              </p>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-left text-sm">
-                <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">Date</th>
-                    <th className="px-4 py-3 font-medium">Note</th>
-                    <th className="px-4 py-3 font-medium">Commentaire</th>
-                    <th className="px-4 py-3 font-medium">Statut</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {complaints.length === 0 ? (
-                    <tr>
-                      <td colSpan={4} className="px-4 py-10 text-center text-slate-500">
-                        Aucune réclamation interceptée pour le moment.
-                      </td>
-                    </tr>
-                  ) : (
-                    complaints.map((row) => (
-                      <tr
-                        key={row.id}
-                        role="button"
-                        tabIndex={0}
-                        className="cursor-pointer border-t border-slate-100 hover:bg-orange-50"
-                        onClick={() => setSelectedId(row.id)}
-                        onKeyDown={(event) => {
-                          if (event.key === "Enter" || event.key === " ") {
-                            event.preventDefault();
-                            setSelectedId(row.id);
-                          }
-                        }}
-                      >
-                        <td className="whitespace-nowrap px-4 py-3 text-slate-600">
-                          {formatDate(row.createdAt)}
-                        </td>
-                        <td className="px-4 py-3">
-                          <StarPips rating={row.rating} />
-                        </td>
-                        <td className="max-w-xs truncate px-4 py-3 text-slate-700">
-                          {row.comment || "—"}
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex flex-wrap gap-1.5">
-                            {row.clientEmailed ? (
-                              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-locall-success">
-                                🟢 Réponse client envoyée
-                              </span>
-                            ) : row.status === "RESOLVED_AUTO" ? (
-                              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-locall-success">
-                                🟢 Réponse automatique envoyée par LOCALL
-                              </span>
-                            ) : (
-                              <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-800">
-                                Intercepté
-                              </span>
-                            )}
-                            {row.ownerNotified ? (
-                              <span className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-locall-link">
-                                📧 Patron notifié
-                              </span>
-                            ) : null}
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
         </section>
       </main>
 

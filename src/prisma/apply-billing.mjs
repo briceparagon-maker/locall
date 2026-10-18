@@ -8,7 +8,7 @@ if (!url) {
 }
 
 const sql = `
-ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS subscription_status TEXT NOT NULL DEFAULT 'trial';
+ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS subscription_status TEXT NOT NULL DEFAULT 'pending_activation';
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT;
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS stripe_subscription_id TEXT;
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS trial_reminder_sent_at TIMESTAMPTZ;
