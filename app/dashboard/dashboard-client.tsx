@@ -4,7 +4,9 @@ import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { GooglePlaceSetupModal } from "@/components/google-place-setup-modal";
+import { GoogleReviewLinkGuide } from "@/components/google-review-link-guide";
 import { GoogleSeoOptionModal } from "@/components/google-seo-option-modal";
+import { InterceptInfoModal } from "@/components/intercept-info-modal";
 import { LogoutButton } from "@/components/logout-button";
 import type { SubscriptionStatus } from "@/lib/billing";
 import { PLV_ORDER_LINKS } from "@/lib/plv-order";
@@ -95,9 +97,9 @@ export function DashboardClient({
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [optionEnabled, setOptionEnabled] = useState(autoRespondGooglePositive);
   const [showOptionModal, setShowOptionModal] = useState(false);
+  const [showInterceptInfo, setShowInterceptInfo] = useState(false);
   const [optionError, setOptionError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
-  const [copied, setCopied] = useState(false);
   const [showPlaceSetup, setShowPlaceSetup] = useState(false);
   const [placeSetupError, setPlaceSetupError] = useState<string | null>(null);
   const [savedGooglePlaceUrl, setSavedGooglePlaceUrl] = useState(googlePlaceUrl);
@@ -142,21 +144,6 @@ export function DashboardClient({
     link.click();
   }
 
-  async function copyReviewUrl() {
-    try {
-      await navigator.clipboard.writeText(reviewUrl);
-    } catch {
-      const field = document.createElement("textarea");
-      field.value = reviewUrl;
-      document.body.appendChild(field);
-      field.select();
-      document.execCommand("copy");
-      field.remove();
-    }
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
-  }
-
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <header className="bg-locall-navy text-white">
@@ -173,27 +160,12 @@ export function DashboardClient({
                 className="h-10 w-auto max-h-10 max-w-[168px] object-contain object-left sm:h-11 sm:max-h-11 sm:max-w-[196px]"
               />
             </Link>
-            {googleListingUrl ? (
-              <a
-                href={googleListingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
-              >
-                Ma fiche Google ↗
-              </a>
-            ) : (
-              <button
-                type="button"
-                onClick={() => {
-                  setPlaceSetupError(null);
-                  setShowPlaceSetup(true);
-                }}
-                className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
-              >
-                Ma fiche Google ↗
-              </button>
-            )}
+            <a
+              href="#lien-google"
+              className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
+            >
+              Ma fiche Google ↗
+            </a>
           </div>
           <div className="justify-self-center text-center">
             <h1 className="text-xl font-semibold leading-tight">
@@ -221,23 +193,12 @@ export function DashboardClient({
                 Admin
               </a>
             ) : null}
-            {facebookDestUrl ? (
-              <a
-                href={facebookDestUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
-              >
-                Ma fiche Facebook ↗
-              </a>
-            ) : (
-              <a
-                href="#lien-facebook"
-                className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
-              >
-                Ma fiche Facebook ↗
-              </a>
-            )}
+            <a
+              href="#lien-facebook"
+              className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
+            >
+              Ma fiche Facebook ↗
+            </a>
             <LogoutButton className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10" />
           </div>
         </div>
@@ -258,10 +219,12 @@ export function DashboardClient({
               <h2 className="mt-2 text-2xl font-extrabold leading-tight">
                 Activez votre essai quand vos supports sont en place
               </h2>
-              <p className="mt-2 max-w-2xl text-sm text-white/80">
-                Le chrono de 14 jours ne démarre pas tant que vous n’avez pas
-                cliqué sur le bouton ci-dessous. En attendant, le QR affiche
-                « Établissement bientôt configuré ».
+              <p className="mt-2 max-w-2xl text-sm text-white">
+                Le chrono des 14 jours ne démarre qu’après avoir cliqué sur le
+                bouton situé en bas de la page.
+                <br />
+                En attendant, le QR code affiche : « Établissement bientôt
+                configuré ».
               </p>
             </div>
             <ol className="space-y-0 divide-y divide-slate-100">
@@ -326,7 +289,7 @@ export function DashboardClient({
                   </p>
                   <p className="mt-1 text-sm text-slate-600">
                     Téléchargez votre QR HD et vos templates PLV. Le QR pointe
-                    déjà vers votre page LOCALL ; il s’activera à l’étape 4.
+                    déjà vers votre page LOCALL ; il s’activera en bas de page.
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <button
@@ -376,45 +339,6 @@ export function DashboardClient({
                       </Link>
                     ))}
                   </div>
-                </div>
-              </li>
-              <li className="flex gap-4 px-5 py-5 sm:px-8">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-locall-orange text-sm font-bold text-white">
-                  4
-                </span>
-                <div className="w-full">
-                  <p className="font-semibold text-locall-navy">
-                    Activation de l’essai
-                  </p>
-                  <p className="mt-1 text-sm text-slate-600">
-                    Démarre le compteur de 14 jours et ouvre le Smart QR vers la
-                    page d’interception.
-                  </p>
-                  {activateError ? (
-                    <p className="mt-2 text-sm text-red-600">{activateError}</p>
-                  ) : null}
-                  <button
-                    type="button"
-                    disabled={pending}
-                    onClick={() => {
-                      setActivateError(null);
-                      startTransition(async () => {
-                        const result = await activateTrial(restaurantId);
-                        if (!result.ok) {
-                          setActivateError(result.error);
-                          return;
-                        }
-                        setStatus(result.status);
-                        setDaysLeft(result.trialDaysLeft);
-                        router.refresh();
-                      });
-                    }}
-                    className="btn-locall-cta mt-4 w-full text-base font-extrabold tracking-wide sm:w-auto"
-                  >
-                    {pending
-                      ? "Activation…"
-                      : "ACTIVER MES 14 JOURS D’ESSAI GRATUITS"}
-                  </button>
                 </div>
               </li>
             </ol>
@@ -564,58 +488,10 @@ export function DashboardClient({
           </div>
         </section>
 
-        <section className="card-locall p-5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Paramètres Google
-          </p>
-          <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="max-w-xl">
-              <p className="font-medium text-slate-900">
-                Réponse automatique SEO pour vos avis 4/5 et 5/5 Google (Option
-                offerte)
-              </p>
-              <p className="mt-1 text-sm text-slate-500">
-                {optionEnabled
-                  ? "LOCALL publiera des remerciements SEO sur vos avis Google 4★ et 5★."
-                  : "Option désactivée. Activez-la pour laisser l’IA répondre à vos avis positifs."}
-              </p>
-              {optionError ? (
-                <p className="mt-2 text-sm text-red-600">{optionError}</p>
-              ) : null}
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setShowOptionModal(true)}
-                className="link-locall text-sm"
-              >
-                En savoir plus
-              </button>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={optionEnabled}
-                aria-label="Réponse automatique SEO pour vos avis 4/5 et 5/5 Google"
-                disabled={pending}
-                onClick={onToggleOption}
-                className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
-                  optionEnabled ? "bg-locall-success" : "bg-slate-300"
-                } ${pending ? "opacity-60" : ""}`}
-              >
-                <span
-                  className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform ${
-                    optionEnabled ? "translate-x-5" : "translate-x-0.5"
-                  }`}
-                />
-              </button>
-            </div>
-          </div>
-        </section>
-
         <section className="space-y-5">
           <div>
             <h2 className="text-lg font-semibold text-locall-navy">
-              Votre Smart QR Code &amp; Supports PLV
+              Votre Smart QR Code
             </h2>
             <p className="mt-1 text-sm text-slate-600">
               Chaque scan ouvre votre page d’interception LOCALL : les avis 1-3★
@@ -625,7 +501,7 @@ export function DashboardClient({
           </div>
 
           <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-            <div className="card-locall p-5">
+            <div className="card-locall flex flex-col p-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                 QR code
               </p>
@@ -634,112 +510,165 @@ export function DashboardClient({
                 alt={`QR code vers ${reviewUrl}`}
                 className="mx-auto mt-4 h-52 w-52 bg-white p-2"
               />
+              <button
+                type="button"
+                onClick={downloadQr}
+                className="btn-locall-cta mt-4 w-full"
+              >
+                Télécharger le QR
+              </button>
             </div>
 
-            <div className="card-locall flex flex-col justify-center gap-4 p-5">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Lien d’interception LOCALL
+            <div className="flex flex-col gap-4">
+              <div className="card-locall p-5">
+                <p className="font-semibold text-locall-navy">
+                  Lien d’interception LOCALL pour vos avis 1/5-2/5-3/5★
                 </p>
                 <p className="mt-2 break-all rounded-xl bg-slate-50 px-3 py-2 text-sm text-locall-navy">
                   {reviewUrl}
                 </p>
                 <button
                   type="button"
-                  onClick={copyReviewUrl}
-                  className="btn-locall-ghost mt-3"
+                  onClick={() => setShowInterceptInfo(true)}
+                  className="mt-3 text-sm font-semibold text-locall-link transition-colors hover:text-locall-orange active:text-locall-orange"
                 >
-                  {copied ? "Lien copié" : "Copier le lien"}
+                  💡 Important à savoir :
                 </button>
               </div>
-              <form
-                className="space-y-3 border-t border-slate-100 pt-4"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  setPositiveReviewError(null);
-                  setPositiveReviewSaved(false);
-                  startTransition(async () => {
-                    const result = await saveReviewDestinations(
-                      restaurantId,
-                      googleDestUrl,
-                      facebookDestUrl,
-                    );
-                    if (!result.ok) {
-                      setPositiveReviewError(result.error);
-                      return;
-                    }
-                    setSavedGooglePlaceUrl(result.googleUrl);
-                    setGoogleDestUrl(result.googleUrl);
-                    setFacebookDestUrl(result.facebookUrl);
-                    setPositiveReviewSaved(true);
-                    window.setTimeout(() => setPositiveReviewSaved(false), 2500);
-                  });
-                }}
-              >
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Avis 4-5★ — Google et Facebook
+
+              <div className="card-locall p-5">
+                <p className="font-semibold text-locall-navy">
+                  Paramètres Google pour vos avis 4/5 et 5/5 Google (Option
+                  offerte)
+                </p>
+                <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
+                  <p className="font-medium text-slate-900">
+                    Réponse automatique SEO
                   </p>
-                  <p className="mt-1 text-sm text-slate-600">
-                    Renseignez un lien, les deux, ou un seul. Si les deux sont
-                    remplis, le client verra deux boutons après une note 4/5 ou
-                    5/5. Le QR LOCALL ne change pas.
-                  </p>
-                  <label className="label-locall mt-3">
-                    Fiche Google Maps
-                    <input
-                      type="url"
-                      value={googleDestUrl}
-                      onChange={(event) => {
-                        setGoogleDestUrl(event.target.value);
-                        setPositiveReviewSaved(false);
-                      }}
-                      placeholder="https://g.page/… ou https://maps.google.com/…"
-                      className="input-locall"
-                    />
-                  </label>
-                  <label id="lien-facebook" className="label-locall mt-3 scroll-mt-24">
-                    Page avis Facebook
-                    <input
-                      type="url"
-                      value={facebookDestUrl}
-                      onChange={(event) => {
-                        setFacebookDestUrl(event.target.value);
-                        setPositiveReviewSaved(false);
-                      }}
-                      placeholder="https://www.facebook.com/…"
-                      className="input-locall"
-                    />
-                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowOptionModal(true)}
+                    className="link-locall text-sm"
+                  >
+                    En savoir plus
+                  </button>
                 </div>
-                {positiveReviewError ? (
-                  <p className="text-sm text-red-600">{positiveReviewError}</p>
-                ) : null}
-                {positiveReviewSaved ? (
-                  <p className="text-sm text-emerald-700">Liens enregistrés.</p>
-                ) : null}
-                <button
-                  type="submit"
-                  disabled={pending}
-                  className="btn-locall-cta w-full sm:w-auto"
+                <form
+                  className="mt-3 space-y-3"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    setPositiveReviewError(null);
+                    setPositiveReviewSaved(false);
+                    startTransition(async () => {
+                      const result = await saveReviewDestinations(
+                        restaurantId,
+                        googleDestUrl,
+                        facebookDestUrl,
+                      );
+                      if (!result.ok) {
+                        setPositiveReviewError(result.error);
+                        return;
+                      }
+                      setSavedGooglePlaceUrl(result.googleUrl);
+                      setGoogleDestUrl(result.googleUrl);
+                      setFacebookDestUrl(result.facebookUrl);
+                      setPositiveReviewSaved(true);
+                      window.setTimeout(
+                        () => setPositiveReviewSaved(false),
+                        2500,
+                      );
+                    });
+                  }}
                 >
-                  {pending ? "Enregistrement…" : "Enregistrer ces liens"}
-                </button>
-              </form>
-              <button
-                type="button"
-                onClick={downloadQr}
-                className="btn-locall-cta w-full sm:w-auto"
-              >
-                Télécharger mon QR Code (HD)
-              </button>
+                  <p className="text-sm text-slate-600">
+                    Renseignez un lien, les deux, ou un seul. Si les deux sont
+                    remplis, le client verra deux boutons après une note 4/5
+                    ou 5/5. Le QR LOCALL ne change pas.
+                  </p>
+                  <GoogleReviewLinkGuide />
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <label
+                      id="lien-google"
+                      className="label-locall scroll-mt-24"
+                    >
+                      Fiche Google Maps
+                      <input
+                        type="url"
+                        value={googleDestUrl}
+                        onChange={(event) => {
+                          setGoogleDestUrl(event.target.value);
+                          setPositiveReviewSaved(false);
+                        }}
+                        placeholder="https://g.page/… ou https://maps.google.com/…"
+                        className="input-locall"
+                      />
+                    </label>
+                    <label
+                      id="lien-facebook"
+                      className="label-locall scroll-mt-24"
+                    >
+                      Page avis Facebook
+                      <input
+                        type="url"
+                        value={facebookDestUrl}
+                        onChange={(event) => {
+                          setFacebookDestUrl(event.target.value);
+                          setPositiveReviewSaved(false);
+                        }}
+                        placeholder="https://www.facebook.com/…"
+                        className="input-locall"
+                      />
+                    </label>
+                  </div>
+                  {positiveReviewError ? (
+                    <p className="text-sm text-red-600">{positiveReviewError}</p>
+                  ) : null}
+                  {positiveReviewSaved ? (
+                    <p className="text-sm text-emerald-700">Liens enregistrés.</p>
+                  ) : null}
+                  <button
+                    type="submit"
+                    disabled={pending}
+                    className="btn-locall-cta w-full sm:w-auto"
+                  >
+                    {pending ? "Enregistrement…" : "Enregistrer ces liens"}
+                  </button>
+                </form>
+                <div className="mt-4 flex items-center gap-4">
+                  <p className="text-sm text-slate-500">
+                    {optionEnabled
+                      ? "LOCALL publiera des remerciements SEO sur vos avis Google 4★ et 5★."
+                      : "Option désactivée. Activez-la pour laisser l’IA répondre à vos avis positifs."}
+                  </p>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={optionEnabled}
+                    aria-label="Réponse automatique SEO pour vos avis 4/5 et 5/5 Google"
+                    disabled={pending}
+                    onClick={onToggleOption}
+                    className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
+                      optionEnabled ? "bg-locall-success" : "bg-slate-300"
+                    } ${pending ? "opacity-60" : ""}`}
+                  >
+                    <span
+                      className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform ${
+                        optionEnabled ? "translate-x-5" : "translate-x-0.5"
+                      }`}
+                    />
+                  </button>
+                </div>
+                {optionError ? (
+                  <p className="mt-2 text-sm text-red-600">{optionError}</p>
+                ) : null}
+              </div>
             </div>
           </div>
 
-          <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-              Impression &amp; supports physiques
-            </h3>
+          <div className="pt-6">
+            <h2 className="text-lg font-semibold text-locall-navy">
+              Supports PLV
+            </h2>
             <p className="mt-1 text-sm text-slate-600">
               Templates PDF prêts à imprimer, avec votre QR d’interception déjà
               intégré.
@@ -774,6 +703,43 @@ export function DashboardClient({
             aucun frais supplémentaire.
           </p>
         </section>
+
+        {status === "pending_activation" ? (
+          <section className="card-locall p-5 sm:p-8">
+            <p className="font-semibold text-locall-navy">
+              Activation de l’essai
+            </p>
+            <p className="mt-1 text-sm text-slate-600">
+              Démarre le compteur de 14 jours et ouvre le Smart QR vers la page
+              d’interception.
+            </p>
+            {activateError ? (
+              <p className="mt-2 text-sm text-red-600">{activateError}</p>
+            ) : null}
+            <button
+              type="button"
+              disabled={pending}
+              onClick={() => {
+                setActivateError(null);
+                startTransition(async () => {
+                  const result = await activateTrial(restaurantId);
+                  if (!result.ok) {
+                    setActivateError(result.error);
+                    return;
+                  }
+                  setStatus(result.status);
+                  setDaysLeft(result.trialDaysLeft);
+                  router.refresh();
+                });
+              }}
+              className="btn-locall-cta mt-4 w-full text-base font-extrabold tracking-wide sm:w-auto"
+            >
+              {pending
+                ? "Activation…"
+                : "ACTIVER MES 14 JOURS D’ESSAI GRATUITS"}
+            </button>
+          </section>
+        ) : null}
       </main>
 
       <GooglePlaceSetupModal
@@ -803,6 +769,11 @@ export function DashboardClient({
         pending={pending}
         onClose={() => setShowOptionModal(false)}
         onActivate={() => persistOption(true, true)}
+      />
+
+      <InterceptInfoModal
+        open={showInterceptInfo}
+        onClose={() => setShowInterceptInfo(false)}
       />
 
       {selected ? (
