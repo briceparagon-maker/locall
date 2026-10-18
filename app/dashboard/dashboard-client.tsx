@@ -8,6 +8,7 @@ import { GoogleReviewLinkGuide } from "@/components/google-review-link-guide";
 import { GoogleSeoOptionModal } from "@/components/google-seo-option-modal";
 import { InterceptInfoModal } from "@/components/intercept-info-modal";
 import { LogoutButton } from "@/components/logout-button";
+import { isHttpUrl } from "@/lib/app-url";
 import type { SubscriptionStatus } from "@/lib/billing";
 import { PLV_ORDER_LINKS } from "@/lib/plv-order";
 import {
@@ -115,7 +116,7 @@ export function DashboardClient({
     [complaints, selectedId],
   );
 
-  function persistOption(enabled: boolean, closeModal = false) {
+  function persistOption(enabled: boolean) {
     setOptionError(null);
     startTransition(async () => {
       const result = await setAutoRespondGooglePositive(restaurantId, enabled);
@@ -124,8 +125,11 @@ export function DashboardClient({
         return;
       }
       setOptionEnabled(enabled);
-      if (closeModal) setShowOptionModal(false);
     });
+  }
+
+  function hasReviewDestination() {
+    return isHttpUrl(googleDestUrl.trim()) || isHttpUrl(facebookDestUrl.trim());
   }
 
   function onToggleOption() {
@@ -134,7 +138,11 @@ export function DashboardClient({
       persistOption(false);
       return;
     }
-    setShowOptionModal(true);
+    if (!hasReviewDestination()) {
+      setOptionError("Mettre au minimum 1 lien pour activer le bouton");
+      return;
+    }
+    persistOption(true);
   }
 
   function downloadQr() {
@@ -766,9 +774,7 @@ export function DashboardClient({
       <GoogleSeoOptionModal
         open={showOptionModal}
         alreadyEnabled={optionEnabled}
-        pending={pending}
         onClose={() => setShowOptionModal(false)}
-        onActivate={() => persistOption(true, true)}
       />
 
       <InterceptInfoModal
