@@ -7,7 +7,7 @@ export default function Home() {
     <div className="flex min-h-dvh flex-col bg-locall-navy text-foreground">
       <SiteHeader />
 
-      <main className="w-full bg-white pb-10 sm:pb-14">
+      <main className="w-full bg-locall-navy leading-none">
         <TrialStepsBanner />
       </main>
 
