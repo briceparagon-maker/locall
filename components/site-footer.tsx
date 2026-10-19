@@ -14,7 +14,7 @@ const FOOTER_LINKS = [
 export function SiteFooter() {
   return (
     <footer className="bg-locall-navy text-white">
-      <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-6">
+      <div className="filtravis-shell flex flex-col gap-4 py-6">
         <nav
           aria-label="Liens du pied de page"
           className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2"

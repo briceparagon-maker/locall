@@ -6,8 +6,8 @@
   --locall-orange: #ff5500;
   --locall-orange-end: #ff2200;
   --locall-orange-hover: #e64d00;
-  --locall-navy: #0a192f;
-  --locall-navy-alt: #0d1b2a;
+  --locall-navy: #0a2348;
+  --locall-navy-alt: #081c38;
   --locall-success: #10b981;
   --locall-success-bright: #22c55e;
   --locall-link: #2563eb;
@@ -73,5 +73,22 @@ body {
 
   .label-locall {
     @apply block text-sm font-medium text-locall-navy;
+  }
+
+  .filtravis-shell {
+    @apply mx-auto w-full max-w-5xl px-4;
+  }
+
+  .text-filtravis-gold {
+    background-image: linear-gradient(
+      180deg,
+      #fff6c8 0%,
+      #f5d76e 38%,
+      #e0a825 72%,
+      #c48912 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 }

@@ -7,6 +7,9 @@ import { GooglePlaceSetupModal } from "@/components/google-place-setup-modal";
 import { GoogleReviewLinkGuide } from "@/components/google-review-link-guide";
 import { GoogleSeoOptionModal } from "@/components/google-seo-option-modal";
 import { InterceptInfoModal } from "@/components/intercept-info-modal";
+import { SiteFooter } from "@/components/site-footer";
+import { FiltravisLogoLink, TrialCtaLink } from "@/components/site-brand";
+import { useStickyLogoScale } from "@/components/use-sticky-logo-scale";
 import { LogoutButton } from "@/components/logout-button";
 import { isHttpUrl } from "@/lib/app-url";
 import type { SubscriptionStatus } from "@/lib/billing";
@@ -152,22 +155,18 @@ export function DashboardClient({
     link.click();
   }
 
+  const { scale: logoScale, scrolled: headerScrolled } = useStickyLogoScale();
+
   return (
-    <div className="min-h-dvh bg-background text-foreground">
-      <header className="bg-locall-navy text-white">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-3 px-4 py-4 sm:grid-cols-3">
+    <div className="flex min-h-dvh flex-col bg-background text-foreground">
+      <header
+        className={`sticky top-0 z-50 bg-locall-navy text-white transition-shadow ${
+          headerScrolled ? "shadow-lg shadow-black/30" : ""
+        }`}
+      >
+        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-3 overflow-visible px-4 py-4 sm:grid-cols-3">
           <div className="flex flex-wrap items-center justify-start gap-2 sm:gap-3">
-            <Link
-              href="/"
-              className="no-underline hover:opacity-90"
-              aria-label="LOCALL — Accueil"
-            >
-              <img
-                src="/logo-locall.jpg"
-                alt="LOCALL"
-                className="h-10 w-auto max-h-10 max-w-[168px] object-contain object-left sm:h-11 sm:max-h-11 sm:max-w-[196px]"
-              />
-            </Link>
+            <TrialCtaLink />
             <a
               href="#lien-google"
               className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
@@ -176,7 +175,8 @@ export function DashboardClient({
             </a>
           </div>
           <div className="justify-self-center text-center">
-            <h1 className="text-xl font-semibold leading-tight">
+            <FiltravisLogoLink scale={logoScale} />
+            <h1 className="mt-1 text-sm font-semibold leading-tight">
               Dashboard établissement
             </h1>
             <p className="mt-0.5 text-sm text-white/80">{restaurantName}</p>
@@ -212,7 +212,7 @@ export function DashboardClient({
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl space-y-8 px-4 py-8">
+      <main className="mx-auto w-full max-w-6xl flex-1 space-y-8 px-4 py-8">
         {billingNotice ? (
           <p className="rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
             {billingNotice}
@@ -814,6 +814,7 @@ export function DashboardClient({
           </div>
         </div>
       ) : null}
+      <SiteFooter />
     </div>
   );
 }

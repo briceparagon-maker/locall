@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { SiteFooter } from "@/components/site-footer";
 import { statusLabel, type SubscriptionStatus } from "@/lib/billing";
 
 export type AdminRestaurant = {
@@ -66,14 +67,18 @@ export function AdminDashboard({
   });
 
   return (
-    <div className="min-h-dvh bg-background text-foreground">
+    <div className="flex min-h-dvh flex-col bg-background text-foreground">
       <header className="bg-locall-navy text-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
           <div>
-            <p className="text-xs font-semibold tracking-[0.2em] text-locall-orange">
-              LOCALL
-            </p>
-            <h1 className="text-xl font-semibold">Master Dashboard Admin</h1>
+            <a href="/" className="inline-block no-underline hover:opacity-90" aria-label="FILTRAVIS — Accueil">
+              <img
+                src="/logo-filtravis.jpg"
+                alt="FILTRAVIS"
+                className="h-11 w-auto max-h-11 max-w-[240px] object-contain"
+              />
+            </a>
+            <h1 className="mt-2 text-xl font-semibold">Master Dashboard Admin</h1>
             <p className="text-sm text-white/70">SuperAdmin — vue globale</p>
           </div>
           <a
@@ -85,7 +90,7 @@ export function AdminDashboard({
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl space-y-8 px-4 py-8">
+      <main className="mx-auto w-full max-w-6xl flex-1 space-y-8 px-4 py-8">
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <Metric label="Établissements" value={String(metrics.establishments)} hint="Comptes inscrits" />
           <Metric
@@ -271,6 +276,7 @@ export function AdminDashboard({
           </div>
         </section>
       </main>
+      <SiteFooter />
     </div>
   );
 }

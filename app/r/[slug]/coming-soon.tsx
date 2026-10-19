@@ -1,6 +1,6 @@
 export function ComingSoonPage({ restaurantName }: { restaurantName: string }) {
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center bg-[#0A192F] px-6 py-16 text-center text-white">
+    <div className="flex min-h-dvh flex-col items-center justify-center bg-locall-navy px-6 py-16 text-center text-white">
       <p className="text-xs font-semibold tracking-[0.22em] text-locall-orange">
         LOCALL
       </p>
