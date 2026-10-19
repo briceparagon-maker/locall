@@ -151,7 +151,7 @@ export function DashboardClient({
   function downloadQr() {
     const link = document.createElement("a");
     link.href = qrDataUrl;
-    link.download = `locall-qr-${slug}-hd.png`;
+    link.download = `filtravis-qr-${slug}-hd.png`;
     link.click();
   }
 
