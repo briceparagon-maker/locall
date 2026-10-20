@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 
 const STEPS = [
@@ -8,19 +7,19 @@ const STEPS = [
     id: 1,
     title: "Étape 1 — Votre Smart QR Code est disponible",
     body: "Le texte de cette étape arrive bientôt.",
-    style: { left: "6%", top: "73%", width: "28%", height: "16%" },
+    style: { left: "6.5%", top: "30%", width: "28%", height: "50%" },
   },
   {
     id: 2,
     title: "Étape 2 — Préparation de vos supports",
     body: "Le texte de cette étape arrive bientôt.",
-    style: { left: "36%", top: "73%", width: "28%", height: "16%" },
+    style: { left: "36%", top: "30%", width: "28%", height: "50%" },
   },
   {
     id: 3,
     title: "Étape 3 — Votre période d’essai offerte commence",
     body: "Le texte de cette étape arrive bientôt.",
-    style: { left: "66%", top: "73%", width: "28%", height: "16%" },
+    style: { left: "65.5%", top: "30%", width: "28%", height: "50%" },
   },
 ] as const;
 
@@ -37,7 +36,7 @@ const STEP_VISUALS = {
     src: "/modale-etape-2-filtravis.jpg?v=1",
     alt: "Téléchargez votre Smart QR Code. Choisissez vos supports, utilisez des fournisseurs professionnels et maximisez vos résultats.",
     ariaLabel: "Téléchargez votre Smart QR Code",
-    maxClass: "max-w-[720px]",
+    maxClass: "mt-16 max-w-[840px]",
     closeX: { left: "88.5%", top: "1.6%", width: "10%", height: "9.5%" },
     closeBtn: { left: "33%", top: "83.8%", width: "34%", height: "6.8%" },
   },
@@ -51,9 +50,6 @@ const STEP_VISUALS = {
   },
 } as const;
 
-const ctaClassName =
-  "absolute z-10 cursor-pointer rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-locall-orange focus-visible:ring-offset-2";
-
 const closeHotspotClass =
   "absolute z-10 cursor-pointer rounded-full bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-[#e0a825] focus-visible:ring-offset-2";
 
@@ -65,31 +61,9 @@ export function TrialStepsBanner() {
   return (
     <div className="filtravis-shell relative leading-none">
       <img
-        src="/page-accueil-filtravis.jpg?v=4"
-        alt="FILTRAVIS — Chaque avis compte. Essayez gratuitement pendant 14 jours."
+        src="/bandeau-filtravis-essai.jpg?v=2"
+        alt="Comment fonctionne FILTRAVIS ? Cliquez sur les étapes 1, 2 ou 3 pour découvrir les explications."
         className="block h-auto w-full"
-      />
-      <Link
-        href="/inscription"
-        aria-label="Essayez gratuitement pendant 14 jours"
-        className={ctaClassName}
-        style={{
-          left: "31.5%",
-          top: "25.6%",
-          width: "42%",
-          height: "4.2%",
-        }}
-      />
-      <Link
-        href="/inscription"
-        aria-label="Essayez gratuitement pendant 14 jours"
-        className={ctaClassName}
-        style={{
-          left: "26.5%",
-          top: "59.5%",
-          width: "47%",
-          height: "4.4%",
-        }}
       />
       {STEPS.map((step) => (
         <button

@@ -7,6 +7,16 @@ export default function InscriptionPage() {
     <div className="flex min-h-dvh flex-col bg-background text-foreground">
       <SiteHeader />
 
+      <div className="w-full bg-locall-navy leading-none">
+        <div className="filtravis-shell">
+          <img
+            src="/stop-mauvais-avis-filtravis.jpg?v=2"
+            alt="Stop aux mauvais avis. Essai gratuit 14 jours."
+            className="block h-auto w-full"
+          />
+        </div>
+      </div>
+
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-10">
         <section className="card-locall p-6 sm:p-8">
           <h1 className="text-2xl font-bold text-locall-navy">

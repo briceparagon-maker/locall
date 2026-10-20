@@ -8,15 +8,16 @@ export function TrialCtaLink({
   return (
     <Link
       href="/inscription"
-      className={`inline-block leading-tight no-underline hover:opacity-90 ${className}`}
+      aria-label="Stop aux mauvais Avis — Essai gratuit 14 jours"
+      className={`inline-block leading-none no-underline hover:opacity-90 ${className}`}
     >
-      <span className="block text-sm font-semibold text-white">
-        Essai gratuit
+      <span className="block whitespace-nowrap text-sm font-semibold leading-none text-white sm:text-[15px]">
+        Stop aux mauvais Avis
       </span>
-      <span className="block text-xl font-extrabold tracking-tight text-white">
-        14{" "}
-        <span className="text-filtravis-gold underline decoration-[#e0a825] decoration-[3px] underline-offset-4">
-          jours
+      <span className="-mt-0.5 block whitespace-nowrap text-sm font-semibold leading-none text-white">
+        Essai gratuit{" "}
+        <span className="text-xl font-extrabold leading-none tracking-tight text-filtravis-gold">
+          14 jours
         </span>
       </span>
     </Link>
