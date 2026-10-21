@@ -8,8 +8,8 @@ export function LandingHero() {
     <div className="filtravis-shell leading-none">
       <div className="relative">
         <img
-          src="/page-accueil-filtravis.jpg?v=7"
-          alt="FILTRAVIS — Chaque avis compte. Stop aux mauvais avis*."
+          src="/page-accueil-filtravis.jpg?v=9"
+          alt="FILTRAVIS — Chaque avis compte. Un seul avis peut changer la perception de votre entreprise. Comment fonctionne FILTRAVIS ?"
           className="block h-auto w-full"
         />
         <Link
@@ -17,21 +17,21 @@ export function LandingHero() {
           aria-label="Stop aux mauvais avis*"
           className={ctaClassName}
           style={{
-            left: "31.5%",
-            top: "38.8%",
-            width: "42%",
-            height: "6.4%",
+            left: "24%",
+            top: "37.3%",
+            width: "52%",
+            height: "6%",
           }}
         />
         <Link
           href="/inscription"
-          aria-label="Essayez gratuitement pendant 14 jours"
+          aria-label="Tout savoir : comment fonctionne FILTRAVIS"
           className={ctaClassName}
           style={{
-            left: "26.5%",
-            top: "90.3%",
-            width: "47%",
-            height: "6.7%",
+            left: "31%",
+            top: "86%",
+            width: "38%",
+            height: "7.1%",
           }}
         />
       </div>

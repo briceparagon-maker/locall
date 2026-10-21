@@ -56,7 +56,7 @@ export function ConnexionForm() {
       <p className="text-center text-sm text-slate-500">
         Pas encore de compte ?{" "}
         <Link href="/inscription" className="link-locall">
-          Activer l’essai gratuit
+          Inscrivez-vous
         </Link>
       </p>
     </form>

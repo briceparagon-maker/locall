@@ -25,7 +25,7 @@ const STEPS = [
 
 const STEP_VISUALS = {
   1: {
-    src: "/modale-etape-1-filtravis.jpg?v=1",
+    src: "/etape-1-filtravis.png?v=1",
     alt: "Votre Smart QR Code est disponible. Une fois votre formulaire rempli, un Smart QR Code unique et personnalisé est créé spécialement pour votre établissement.",
     ariaLabel: "Votre Smart QR Code est disponible",
     maxClass: "max-w-3xl",
@@ -33,7 +33,7 @@ const STEP_VISUALS = {
     closeBtn: { left: "27%", top: "84.2%", width: "46%", height: "8.5%" },
   },
   2: {
-    src: "/modale-etape-2-filtravis.jpg?v=1",
+    src: "/etape-2-filtravis.jpg?v=1",
     alt: "Téléchargez votre Smart QR Code. Choisissez vos supports, utilisez des fournisseurs professionnels et maximisez vos résultats.",
     ariaLabel: "Téléchargez votre Smart QR Code",
     maxClass: "mt-16 max-w-[840px]",
@@ -41,7 +41,7 @@ const STEP_VISUALS = {
     closeBtn: { left: "33%", top: "83.8%", width: "34%", height: "6.8%" },
   },
   3: {
-    src: "/modale-etape-3-filtravis.jpg?v=3",
+    src: "/etape-3-filtravis.jpg?v=1",
     alt: "Votre Smart QR Code est opérationnel. Mettez vos supports en place, activez l’essai 14 jours dans le tableau de bord, et votre QR Code est branché.",
     ariaLabel: "Votre Smart QR Code est opérationnel",
     maxClass: "max-w-6xl",
