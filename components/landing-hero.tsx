@@ -8,8 +8,8 @@ export function LandingHero() {
     <div className="filtravis-shell leading-none">
       <div className="relative">
         <img
-          src="/page-accueil-filtravis.jpg?v=9"
-          alt="FILTRAVIS — Chaque avis compte. Un seul avis peut changer la perception de votre entreprise. Comment fonctionne FILTRAVIS ?"
+          src="/page-accueil-filtravis.jpg?v=15"
+          alt="FILTRAVIS — Chaque avis compte. Un seul avis peut changer la perception de votre entreprise."
           className="block h-auto w-full"
         />
         <Link
@@ -17,24 +17,23 @@ export function LandingHero() {
           aria-label="Stop aux mauvais avis*"
           className={ctaClassName}
           style={{
-            left: "24%",
-            top: "37.3%",
-            width: "52%",
-            height: "6%",
-          }}
-        />
-        <Link
-          href="/inscription"
-          aria-label="Tout savoir : comment fonctionne FILTRAVIS"
-          className={ctaClassName}
-          style={{
-            left: "31%",
-            top: "86%",
-            width: "38%",
-            height: "7.1%",
+            left: "27%",
+            top: "37.5%",
+            width: "46%",
+            height: "5.8%",
           }}
         />
       </div>
+      <img
+        src="/bandeau-filtravis-essai.jpg?v=4"
+        alt="Comment fonctionne FILTRAVIS ?"
+        className="block h-auto w-full"
+      />
+      <img
+        src="/bandeau-protection-filtravis.jpg?v=6"
+        alt="Protection à 100 %. Les avis sensibles 1, 2 et 3 étoiles sont recueillis en interne quand le client scanne le QR Code dans votre établissement."
+        className="block h-auto w-full"
+      />
     </div>
   );
 }
