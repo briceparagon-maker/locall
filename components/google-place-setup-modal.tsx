@@ -98,7 +98,7 @@ export function GooglePlaceSetupModal({
                   (Option offerte)
                 </p>
                 <p>
-                  Autorisez LOCALL à publier des réponses de remerciement
+                  Autorisez FILTRAVIS à publier des réponses de remerciement
                   personnalisées et optimisées pour votre SEO directement pour
                   vos avis 4/5 et 5/5 sur Google. Aucune action manuelle
                   requise : l’IA s’en occupe 24h/24.

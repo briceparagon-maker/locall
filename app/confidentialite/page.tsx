@@ -4,7 +4,7 @@ export default function ConfidentialitePage() {
   return (
     <LegalShell title="Politique de confidentialité">
       <p>
-        LOCALL traite les données nécessaires à l’inscription et au
+        FILTRAVIS traite les données nécessaires à l’inscription et au
         fonctionnement du dashboard : identité du commerçant, coordonnées,
         établissement, avis clients et e-mails de suivi.
       </p>

@@ -219,7 +219,7 @@ export function InscriptionForm() {
               </label>
             </>
           ) : null}
-          <p className="text-xs text-black">
+          <p className="text-xs text-locall-navy">
             Google, Facebook, les deux ou aucun : l’inscription reste possible.
             Vous pourrez compléter ces liens plus tard dans votre tableau de
             bord.
@@ -262,13 +262,13 @@ export function InscriptionForm() {
         <button type="submit" disabled={pending} className="btn-locall-cta h-12 w-full uppercase tracking-wide">
           {pending ? "Création du compte…" : "Créer mon compte →"}
         </button>
-        <p className="text-center text-sm text-slate-500">
+        <p className="text-center text-sm text-locall-navy">
           Déjà inscrit ?{" "}
           <Link href="/connexion" className="link-locall">
             Se connecter
           </Link>
         </p>
-        <p className="text-center text-sm text-slate-500">
+        <p className="text-center text-sm text-locall-navy">
           Sans engagement | Essai 14 jours à activer dans le dashboard
         </p>
       </form>

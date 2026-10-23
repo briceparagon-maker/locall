@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "LocalNational.fr - Gestion de la Réputation Locale",
+  title: "FILTRAVIS - Gestion de la Réputation Locale",
   description: "Solution intelligente d'avis et Smart QR Code pour commerçants.",
 };
 

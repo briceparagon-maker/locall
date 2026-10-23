@@ -210,9 +210,9 @@ function ownerAlertHtml(input: {
 <li><strong>Note interceptée :</strong> ${escapeHtml(starsLine(input.rating))}</li>
 ${detailsBlock}
 <li><strong>Commentaire client :</strong> "${escapeHtml(excerpt)}"</li>
-<li><strong>Action LOCALL :</strong> ${escapeHtml(action)}</li>
+<li><strong>Action FILTRAVIS :</strong> ${escapeHtml(action)}</li>
 </ul>
-<p><a href="${escapeHtml(input.dashboardUrl)}" style="display:inline-block;background:linear-gradient(90deg,#FF5500,#FF2200);color:#fff;text-decoration:none;padding:12px 18px;border-radius:999px;font-weight:700">👉 Consulter les détails sur votre Dashboard LOCALL</a></p>
+<p><a href="${escapeHtml(input.dashboardUrl)}" style="display:inline-block;background:linear-gradient(90deg,#FF5500,#FF2200);color:#fff;text-decoration:none;padding:12px 18px;border-radius:999px;font-weight:700">👉 Consulter les détails sur votre Dashboard FILTRAVIS</a></p>
 <p style="color:#555">Votre réputation est entre de bonnes mains.</p>
 </div>`;
 }
@@ -287,7 +287,7 @@ export async function autoRespondToReview(
 
   const resendKey = process.env.RESEND_API_KEY?.trim();
   const from =
-    process.env.RESEND_FROM?.trim() || "LOCALL <onboarding@resend.dev>";
+    process.env.RESEND_FROM?.trim() || "FILTRAVIS <onboarding@resend.dev>";
   const dashboardUrl = `${appUrl()}/dashboard`;
   const ownerEmail =
     restaurant.ownerEmail?.trim() || process.env.OWNER_EMAIL?.trim() || "";
@@ -316,7 +316,7 @@ export async function autoRespondToReview(
       const sent = await resend.emails.send({
         from,
         to: ownerEmail,
-        subject: `🛡️ [LOCALL Protection] Mauvais avis intercepté pour ${restaurant.name} !`,
+        subject: `🛡️ [FILTRAVIS Protection] Mauvais avis intercepté pour ${restaurant.name} !`,
         html: ownerAlertHtml({
           restaurantName: restaurant.name,
           activity: activityLabel(restaurant.activity, restaurant.category),

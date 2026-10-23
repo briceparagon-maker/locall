@@ -3,7 +3,7 @@ import { getResend, resendFrom } from "@/lib/resend-client";
 import { db } from "@/src/prisma/db";
 
 export const TRIAL_REMINDER_SUBJECT =
-  "⏳ Plus que 3 jours d'essai gratuit sur LOCALL – Protégez votre note Google";
+  "⏳ Plus que 3 jours d'essai gratuit sur FILTRAVIS – Protégez votre note Google";
 
 function reminderHtml(input: {
   firstName: string;

@@ -297,7 +297,7 @@ export function DashboardClient({
                   </p>
                   <p className="mt-1 text-sm text-slate-600">
                     Téléchargez votre QR HD et vos templates PLV. Le QR pointe
-                    déjà vers votre page LOCALL ; il s’activera en bas de page.
+                    déjà vers votre page FILTRAVIS ; il s’activera en bas de page.
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <button
@@ -334,7 +334,7 @@ export function DashboardClient({
                     Commande de supports
                   </p>
                   <p className="mt-1 text-sm text-slate-600">
-                    Commandez un kit LOCALL ou passez par un imprimeur partenaire.
+                    Commandez un kit FILTRAVIS ou passez par un imprimeur partenaire.
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {PLV_ORDER_LINKS.map((link) => (
@@ -373,7 +373,7 @@ export function DashboardClient({
         ) : status !== "pending_activation" ? (
           <section className="card-locall flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="font-semibold text-locall-navy">Abonnement mensuel LOCALL</p>
+              <p className="font-semibold text-locall-navy">Abonnement mensuel FILTRAVIS</p>
               <p className="mt-1 text-sm text-slate-600">
                 {status === "cancelled"
                   ? "Votre abonnement est annulé. Réactivez-le pour continuer à protéger votre note."
@@ -381,7 +381,7 @@ export function DashboardClient({
                     ? "Passez à l’abonnement pour protéger votre note Google sans interruption."
                     : daysLeft > 0
                       ? `Il vous reste ${daysLeft} jour${daysLeft > 1 ? "s" : ""} d’essai.`
-                      : "Votre essai est terminé. Abonnez-vous pour garder la protection LOCALL."}
+                      : "Votre essai est terminé. Abonnez-vous pour garder la protection FILTRAVIS."}
               </p>
             </div>
             <form action="/api/stripe/checkout" method="post">
@@ -473,7 +473,7 @@ export function DashboardClient({
                               </span>
                             ) : row.status === "RESOLVED_AUTO" ? (
                               <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-locall-success">
-                                🟢 Réponse automatique envoyée par LOCALL
+                                🟢 Réponse automatique envoyée par FILTRAVIS
                               </span>
                             ) : (
                               <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-800">
@@ -502,7 +502,7 @@ export function DashboardClient({
               Votre Smart QR Code
             </h2>
             <p className="mt-1 text-sm text-slate-600">
-              Chaque scan ouvre votre page d’interception LOCALL : les avis 1-3★
+              Chaque scan ouvre votre page d’interception FILTRAVIS : les avis 1-3★
               restent internes. Les avis 4-5★ sont proposés sur Google et/ou
               Facebook, selon les liens que vous renseignez.
             </p>
@@ -530,7 +530,7 @@ export function DashboardClient({
             <div className="flex flex-col gap-4">
               <div className="card-locall p-5">
                 <p className="font-semibold text-locall-navy">
-                  Lien d’interception LOCALL pour vos avis 1/5-2/5-3/5★
+                  Lien d’interception FILTRAVIS pour vos avis 1/5-2/5-3/5★
                 </p>
                 <p className="mt-2 break-all rounded-xl bg-slate-50 px-3 py-2 text-sm text-locall-navy">
                   {reviewUrl}
@@ -591,7 +591,7 @@ export function DashboardClient({
                   <p className="text-sm text-slate-600">
                     Renseignez un lien, les deux, ou un seul. Si les deux sont
                     remplis, le client verra deux boutons après une note 4/5
-                    ou 5/5. Le QR LOCALL ne change pas.
+                    ou 5/5. Le QR FILTRAVIS ne change pas.
                   </p>
                   <GoogleReviewLinkGuide />
                   <div className="grid gap-3 sm:grid-cols-2">
@@ -645,7 +645,7 @@ export function DashboardClient({
                 <div className="mt-4 flex items-center gap-4">
                   <p className="text-sm text-slate-500">
                     {optionEnabled
-                      ? "LOCALL publiera des remerciements SEO sur vos avis Google 4★ et 5★."
+                      ? "FILTRAVIS publiera des remerciements SEO sur vos avis Google 4★ et 5★."
                       : "Option désactivée. Activez-la pour laisser l’IA répondre à vos avis positifs."}
                   </p>
                   <button

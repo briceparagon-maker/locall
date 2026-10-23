@@ -10,7 +10,7 @@ export default function FaqPage() {
       </p>
       <p className="font-semibold text-locall-navy">Que se passe-t-il si un client met 1, 2 ou 3 étoiles ?</p>
       <p>
-        L’avis n’est pas envoyé sur Google. LOCALL l’intercepte, vous alerte et
+        L’avis n’est pas envoyé sur Google. FILTRAVIS l’intercepte, vous alerte et
         peut envoyer une réponse d’apaisement au client.
       </p>
       <p className="font-semibold text-locall-navy">Et pour un avis 4 ou 5 étoiles ?</p>

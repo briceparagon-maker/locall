@@ -4,11 +4,11 @@ export default function MentionsLegalesPage() {
   return (
     <LegalShell title="Mentions légales">
       <p>
-        Le site LocalNational.fr édite le service LOCALL, solution de
+        Le site LocalNational.fr édite le service FILTRAVIS, solution de
         protection de la réputation locale et de Smart QR pour les commerçants.
       </p>
       <p>
-        Directeur de la publication : l’éditeur de LOCALL. Les coordonnées
+        Directeur de la publication : l’éditeur de FILTRAVIS. Les coordonnées
         complètes (raison sociale, siège, SIREN) seront précisées ici dès
         publication officielle.
       </p>

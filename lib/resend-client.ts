@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 
 export function resendFrom() {
-  return process.env.RESEND_FROM?.trim() || "LOCALL <onboarding@resend.dev>";
+  return process.env.RESEND_FROM?.trim() || "FILTRAVIS <onboarding@resend.dev>";
 }
 
 export function getResend() {

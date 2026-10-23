@@ -60,10 +60,10 @@ export async function sendPasswordResetEmail(rawEmail: string) {
     const sent = await resend.emails.send({
       from: resendFrom(),
       to: email,
-      subject: "Réinitialisation de votre mot de passe LOCALL",
+      subject: "Réinitialisation de votre mot de passe FILTRAVIS",
       html: `<div style="font-family:Arial,sans-serif;color:#0A192F;line-height:1.6;max-width:560px">
 <p>Bonjour ${escapeHtml(restaurant.ownerFirstName?.trim() || "commerçant")},</p>
-<p>Une demande de réinitialisation de mot de passe a été faite pour votre compte LOCALL.</p>
+<p>Une demande de réinitialisation de mot de passe a été faite pour votre compte FILTRAVIS.</p>
 <p><a href="${escapeHtml(resetUrl)}" style="display:inline-block;background:#FF5500;color:#ffffff;text-decoration:none;padding:12px 22px;border-radius:999px;font-weight:700">Choisir un nouveau mot de passe</a></p>
 <p style="color:#64748b;font-size:13px">Ce lien expire dans 1 heure. Si vous n’êtes pas à l’origine de cette demande, ignorez cet e-mail.</p>
 </div>`,

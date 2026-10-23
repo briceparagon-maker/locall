@@ -25,7 +25,7 @@ export function LandingHero() {
         />
       </div>
       <img
-        src="/bandeau-filtravis-essai.jpg?v=4"
+        src="/bandeau-filtravis-essai.jpg?v=5"
         alt="Comment fonctionne FILTRAVIS ?"
         className="block h-auto w-full"
       />

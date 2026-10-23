@@ -38,7 +38,7 @@ export function GoogleSeoOptionModal({
         </h3>
         <div className="mt-4 space-y-4 text-sm leading-6 text-slate-700">
           <p>
-            Autorisez LOCALL à publier des réponses de remerciement
+            Autorisez FILTRAVIS à publier des réponses de remerciement
             personnalisées et optimisées pour votre SEO directement pour vos
             avis 4/5 et 5/5 sur Google. Aucune action manuelle requise :
             l&apos;IA s&apos;en occupe 24h/24.

@@ -72,7 +72,7 @@ function drawPanel(
     height: pad * 1.55,
     color: NAVY,
   });
-  page.drawText("LOCALL", {
+  page.drawText("FILTRAVIS", {
     x: x + pad,
     y: y + pad * 0.5,
     size: Math.max(8, pad * 0.5),
@@ -174,8 +174,8 @@ export async function buildPlvPdf(input: {
       font: fontBold,
       color: NAVY,
     });
-    page.drawText("LOCALL", {
-      x: (size - fontBold.widthOfTextAtSize("LOCALL", 8)) / 2,
+    page.drawText("FILTRAVIS", {
+      x: (size - fontBold.widthOfTextAtSize("FILTRAVIS", 8)) / 2,
       y: size - mm(13),
       size: 8,
       font: fontBold,
@@ -194,7 +194,7 @@ export async function buildPlvPdf(input: {
       height: mm(28),
       color: NAVY,
     });
-    page.drawText("LOCALL", {
+    page.drawText("FILTRAVIS", {
       x: mm(18),
       y: height - mm(18),
       size: 16,

@@ -4,7 +4,7 @@ export default function AProposPage() {
   return (
     <LegalShell title="À propos">
       <p>
-        LOCALL aide les commerçants à protéger leur e-réputation : les avis
+        FILTRAVIS aide les commerçants à protéger leur e-réputation : les avis
         1-3★ restent internes, les 4-5★ peuvent être propulsés vers Google.
       </p>
       <p>

@@ -1,6 +1,7 @@
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { InscriptionForm } from "./inscription-form";
+import { InscriptionIntro } from "./inscription-intro";
 
 export default function InscriptionPage() {
   return (
@@ -18,15 +19,11 @@ export default function InscriptionPage() {
       </div>
 
       <main className="filtravis-shell flex-1 py-10">
-        <section className="card-locall p-6 sm:p-8">
-          <h1 className="text-2xl font-bold text-locall-navy">
-            Créez votre compte LOCALL
-          </h1>
-          <p className="mt-2 text-sm text-slate-500">
-            Sans carte bancaire. Vos 14 jours d’essai commencent quand vous les
-            activez dans le dashboard.
-          </p>
-          <InscriptionForm />
+        <section className="card-locall p-6 sm:p-8 text-locall-navy">
+          <InscriptionIntro />
+          <div className="mt-8 border-t border-slate-200 pt-2">
+            <InscriptionForm />
+          </div>
         </section>
       </main>
       <SiteFooter />

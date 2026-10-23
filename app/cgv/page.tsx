@@ -4,7 +4,7 @@ export default function CgvPage() {
   return (
     <LegalShell title="Conditions générales de vente">
       <p>
-        LOCALL propose un essai de 14 jours, sans carte bancaire. À l’issue de
+        FILTRAVIS propose un essai de 14 jours, sans carte bancaire. À l’issue de
         l’essai, l’accès au service de protection (interception des avis 1-3★,
         dashboard, Smart QR) se poursuit via un abonnement mensuel réglé en
         ligne (Stripe).

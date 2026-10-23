@@ -1,5 +1,5 @@
 export const PLV_ORDER_LINKS = [
-  { href: "/contact", label: "Commander le kit LOCALL", external: false },
+  { href: "/contact", label: "Commander le kit FILTRAVIS", external: false },
   {
     href: "/contact",
     label: "Partenaire impression — chevalets",

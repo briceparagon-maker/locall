@@ -2,7 +2,7 @@ import { Resend } from "resend";
 import { appUrl, escapeHtml, isEmail } from "@/lib/app-url";
 
 export const WELCOME_EMAIL_SUBJECT =
-  "🛡️ Bienvenue chez LOCALL — Configurez vos supports, puis activez vos 14 jours";
+  "🛡️ Bienvenue chez FILTRAVIS — Configurez vos supports, puis activez vos 14 jours";
 
 export function welcomeEmailHtml(input: {
   firstName: string;
@@ -15,7 +15,7 @@ export function welcomeEmailHtml(input: {
 
   return `<div style="font-family:Arial,sans-serif;color:#0A192F;line-height:1.6;max-width:560px">
 <p style="margin:0 0 16px">Bonjour ${firstName},</p>
-<p style="margin:0 0 16px">Bienvenue chez <strong>LOCALL</strong>. Votre compte <strong>${establishmentName}</strong> est créé, <strong>sans carte bancaire</strong>.</p>
+<p style="margin:0 0 16px">Bienvenue chez <strong>FILTRAVIS</strong>. Votre compte <strong>${establishmentName}</strong> est créé, <strong>sans carte bancaire</strong>.</p>
 <p style="margin:0 0 16px">Vos 14 jours d’essai commencent lorsque vous cliquez sur <strong>Activer mes 14 jours d’essai gratuits</strong> dans le dashboard, une fois vos supports en place.</p>
 <p style="margin:0 0 8px"><strong>Pour démarrer :</strong></p>
 <ol style="margin:0 0 20px;padding-left:20px">
@@ -27,7 +27,7 @@ export function welcomeEmailHtml(input: {
   <a href="${dashboardUrl}" style="display:inline-block;background:#FF5500;color:#ffffff;text-decoration:none;padding:12px 22px;border-radius:999px;font-weight:700">Accéder à mon Dashboard</a>
 </p>
 <p style="margin:0 0 16px;color:#334155">Vos supports et votre QR code restent actifs à vie.</p>
-<p style="margin:0">L’équipe LOCALL</p>
+<p style="margin:0">L’équipe FILTRAVIS</p>
 </div>`;
 }
 
@@ -41,7 +41,7 @@ export async function sendWelcomeEmail(input: {
   if (!resendKey || !isEmail(to)) return { sent: false as const };
 
   const from =
-    process.env.RESEND_FROM?.trim() || "LOCALL <onboarding@resend.dev>";
+    process.env.RESEND_FROM?.trim() || "FILTRAVIS <onboarding@resend.dev>";
   const dashboardUrl = `${appUrl()}/dashboard`;
   const resend = new Resend(resendKey);
 

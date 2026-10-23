@@ -30,7 +30,7 @@ export function SiteFooter() {
           ))}
         </nav>
         <p className="text-center text-xs text-white/55">
-          © LOCALL — LocalNational.fr
+          © FILTRAVIS — LVEB GROUP
         </p>
       </div>
     </footer>
