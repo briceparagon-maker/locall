@@ -34,6 +34,24 @@ export function LandingHero() {
         alt="Protection à 100 %. Les avis sensibles 1, 2 et 3 étoiles sont recueillis en interne quand le client scanne le QR Code dans votre établissement."
         className="block h-auto w-full"
       />
+      <div className="relative z-10 -mt-3">
+        <img
+          src="/stop-inscription-filtravis.png?v=3"
+          alt="Stop aux mauvais avis. Essai gratuit 14 jours. Inscription sans engagement et sans carte bancaire."
+          className="block h-auto w-full"
+        />
+        <Link
+          href="/inscription"
+          aria-label="Inscription — Sans engagement, sans CB"
+          className={ctaClassName}
+          style={{
+            left: "35%",
+            top: "58%",
+            width: "30%",
+            height: "36%",
+          }}
+        />
+      </div>
     </div>
   );
 }

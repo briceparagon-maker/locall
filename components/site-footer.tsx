@@ -14,6 +14,7 @@ const FOOTER_LINKS = [
 export function SiteFooter() {
   return (
     <footer className="bg-locall-navy text-white">
+      <div className="filtravis-gold-rule" aria-hidden="true" />
       <div className="filtravis-shell flex flex-col gap-4 py-6">
         <nav
           aria-label="Liens du pied de page"

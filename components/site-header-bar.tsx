@@ -42,6 +42,7 @@ export function SiteHeaderBar({ loggedIn }: { loggedIn: boolean }) {
           )}
         </div>
       </div>
+      <div className="filtravis-gold-rule" aria-hidden="true" />
     </header>
   );
 }
