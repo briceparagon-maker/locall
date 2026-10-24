@@ -9,14 +9,63 @@ import { registerTrial } from "./actions";
 const STATUSES = ["Indépendant", "Franchisé", "Franchiseur"] as const;
 
 const ACTIVITIES = [
-  "Restaurant",
-  "Boulangerie",
-  "Café",
-  "Coiffeur",
-  "Garage",
-  "Hôtel",
-  "Commerce",
-  "Autre",
+  "Agences de voyages / tourisme",
+  "Agences immobilières",
+  "Aide à domicile / services à la personne",
+  "Alimentation / épiceries",
+  "Animaleries / services pour animaux",
+  "Assurances / courtage",
+  "Auto-écoles",
+  "Automobile : entretien / réparation",
+  "Bars / cafés",
+  "Beauté / esthétique",
+  "Bijouteries / horlogeries",
+  "Boulangeries / pâtisseries",
+  "Bricolage",
+  "Burgers / restauration rapide",
+  "Carrosseries",
+  "Centres automobiles",
+  "Centres de contrôle technique",
+  "Centres de formation",
+  "Centres de lavage automobile",
+  "Chocolateries / confiseries",
+  "Coiffure / salons de coiffure",
+  "Commerce alimentaire spécialisé",
+  "Commerce de proximité",
+  "Courtage / financement",
+  "Décoration / ameublement",
+  "Déménagement / stockage",
+  "Dépannage / réparation",
+  "Équipement de la maison",
+  "Fitness / salles de sport",
+  "Fleuristes",
+  "Garages automobiles",
+  "Garde d’enfants",
+  "Hôtels",
+  "Instituts de beauté",
+  "Jardineries",
+  "Location automobile",
+  "Loisirs",
+  "Magasins de chaussures",
+  "Magasins de cuisine",
+  "Magasins de meubles",
+  "Mode / prêt-à-porter",
+  "Nettoyage",
+  "Opticiens",
+  "Pare-brise / vitrage automobile",
+  "Pizzerias",
+  "Rénovation / habitat",
+  "Restaurants",
+  "Restauration rapide / snacking",
+  "Santé / audition / optique",
+  "Services à la personne",
+  "Services aux entreprises",
+  "Services funéraires",
+  "Sport / fitness",
+  "Supermarchés / supérettes",
+  "Téléphonie / informatique",
+  "Travaux / bâtiment",
+  "Vélos / deux-roues",
 ];
 
 export function InscriptionForm() {
@@ -74,7 +123,7 @@ export function InscriptionForm() {
             name="activity"
             required
             list="locall-activities"
-            placeholder="Restaurant, Coiffeur, Garage…"
+            placeholder="Restaurants, Coiffure / salons de coiffure…"
             className="input-locall"
           />
           <datalist id="locall-activities">
