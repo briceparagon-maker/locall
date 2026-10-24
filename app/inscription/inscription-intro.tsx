@@ -1,19 +1,12 @@
 export function InscriptionIntro() {
   return (
     <div className="space-y-6 text-locall-navy">
-      <header className="space-y-3">
-        <h1 className="text-2xl font-bold tracking-tight text-locall-navy sm:text-3xl">
-          Créez votre compte FILTRAVIS
-        </h1>
-        <p>
-          <span className="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-800">
-            Sans engagement et sans carte bancaire
-          </span>
-        </p>
-        <p className="text-sm leading-relaxed sm:text-base">
-          Créez votre compte, puis accédez immédiatement à votre tableau de
-          bord.
-        </p>
+      <header>
+        <div className="mx-auto flex max-w-xl flex-col items-center rounded-2xl border-2 border-emerald-800 px-4 py-4 text-center">
+          <h1 className="text-2xl font-bold tracking-tight text-locall-navy sm:text-3xl">
+            RÉCAPITULATIF
+          </h1>
+        </div>
       </header>
 
       <section className="space-y-4">

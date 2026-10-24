@@ -40,7 +40,7 @@ export function InscriptionForm() {
 
   return (
     <>
-      <form className="mt-6 space-y-4" onSubmit={onSubmit}>
+      <form className="space-y-4" onSubmit={onSubmit}>
         <label className="label-locall">
           Nom de l’établissement
           <input name="name" required className="input-locall" />
