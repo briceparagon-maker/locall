@@ -43,27 +43,6 @@ export function GoogleSeoOptionModal({
             avis 4/5 et 5/5 sur Google. Aucune action manuelle requise :
             l&apos;IA s&apos;en occupe 24h/24.
           </p>
-          <hr className="border-slate-200" />
-          <p className="font-medium text-locall-navy">💡 Important à savoir :</p>
-          <ul className="list-disc space-y-2 pl-5">
-            <li>
-              <strong>Protection à 100 % :</strong> Notre application gère les
-              avis sensibles (1/5, 2/5 et 3/5) directement en interne. Tant que
-              le client scanne votre QR code en établissement, son avis négatif
-              est intercepté à 100 % avant d&apos;atteindre votre fiche Google.
-            </li>
-            <li>
-              <strong>Maximisez vos résultats :</strong> Plus vous disposez de
-              présentoirs et de stickers QR codes (sur vos tables, au comptoir
-              ou en vitrine), plus vos clients seront incités à vous donner
-              leur avis dans votre établissement.
-            </li>
-            <li>
-              <strong>Un cercle vertueux :</strong> Vous récoltez un maximum
-              d&apos;avis positifs sur Google, tout en protégeant votre note et
-              votre réputation des mauvaises surprises !
-            </li>
-          </ul>
         </div>
         <div className="mt-6 flex flex-wrap gap-3">
           {!alreadyEnabled && onActivate ? (

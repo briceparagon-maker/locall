@@ -32,7 +32,7 @@ export async function GET(
     reviewUrl: `${appUrl()}/r/${slug}`,
   });
 
-  return new Response(bytes, {
+  return new Response(new Uint8Array(bytes).buffer, {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `attachment; filename="${plvFilename(template, slug)}"`,

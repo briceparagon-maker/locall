@@ -8,6 +8,8 @@ import { getOwnerEmail, getOwnerRestaurantId } from "@/lib/session";
 import { db } from "@/src/prisma/db";
 import { DashboardClient, type ComplaintRow } from "./dashboard-client";
 
+export const instant = false;
+
 export default async function DashboardPage({
   searchParams,
 }: {

@@ -5,6 +5,8 @@ import { SiteHeader } from "@/components/site-header";
 import { verifyResetToken } from "@/lib/password-reset";
 import { ResetForm } from "./reset-form";
 
+export const instant = false;
+
 export default async function ReinitialiserMotDePassePage({
   searchParams,
 }: {

@@ -218,140 +218,6 @@ export function DashboardClient({
             {billingNotice}
           </p>
         ) : null}
-        {status === "pending_activation" ? (
-          <section className="overflow-hidden rounded-2xl border-2 border-locall-orange bg-white shadow-sm">
-            <div className="bg-locall-navy px-5 py-5 text-white sm:px-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-locall-orange">
-                Mise en route
-              </p>
-              <h2 className="mt-2 text-2xl font-extrabold leading-tight">
-                Activez votre essai quand vos supports sont en place
-              </h2>
-              <p className="mt-2 max-w-2xl text-sm text-white">
-                Le chrono des 14 jours ne démarre qu’après avoir cliqué sur le
-                bouton situé en bas de la page.
-                <br />
-                En attendant, le QR code affiche : « Établissement bientôt
-                configuré ».
-              </p>
-            </div>
-            <ol className="space-y-0 divide-y divide-slate-100">
-              <li className="flex gap-4 px-5 py-5 sm:px-8">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-locall-orange text-sm font-bold text-white">
-                  1
-                </span>
-                <div>
-                  <p className="font-semibold text-locall-navy">
-                    Vérification de vos fiches
-                  </p>
-                  <p className="mt-1 text-sm text-slate-600">
-                    Contrôlez que vos pages Google et/ou Facebook sont prêtes à
-                    recevoir les avis 4-5★.
-                  </p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {googleListingUrl ? (
-                      <a
-                        href={googleListingUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-locall-ghost text-sm"
-                      >
-                        Ma fiche Google ↗
-                      </a>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPlaceSetupError(null);
-                          setShowPlaceSetup(true);
-                        }}
-                        className="btn-locall-ghost text-sm"
-                      >
-                        Ma fiche Google ↗
-                      </button>
-                    )}
-                    {facebookDestUrl ? (
-                      <a
-                        href={facebookDestUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-locall-ghost text-sm"
-                      >
-                        Ma fiche Facebook ↗
-                      </a>
-                    ) : (
-                      <a href="#lien-facebook" className="btn-locall-ghost text-sm">
-                        Ma fiche Facebook ↗
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </li>
-              <li className="flex gap-4 px-5 py-5 sm:px-8">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-locall-orange text-sm font-bold text-white">
-                  2
-                </span>
-                <div>
-                  <p className="font-semibold text-locall-navy">
-                    Impression des supports
-                  </p>
-                  <p className="mt-1 text-sm text-slate-600">
-                    Téléchargez votre QR HD et vos templates PLV. Le QR pointe
-                    déjà vers votre page FILTRAVIS ; il s’activera en bas de page.
-                  </p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      onClick={downloadQr}
-                      className="btn-locall-ghost text-sm"
-                    >
-                      Télécharger le QR HD
-                    </button>
-                    <a href="/api/plv/chevalet-a6" className="btn-locall-ghost text-sm">
-                      Chevalet A6
-                    </a>
-                    <a href="/api/plv/chevalet-a5" className="btn-locall-ghost text-sm">
-                      Chevalet A5
-                    </a>
-                    <a href="/api/plv/sticker-carre" className="btn-locall-ghost text-sm">
-                      Sticker carré
-                    </a>
-                    <a href="/api/plv/sticker-rond" className="btn-locall-ghost text-sm">
-                      Sticker rond
-                    </a>
-                    <a href="/api/plv/affiche-a4" className="btn-locall-ghost text-sm">
-                      Affiche A4
-                    </a>
-                  </div>
-                </div>
-              </li>
-              <li className="flex gap-4 px-5 py-5 sm:px-8">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-locall-orange text-sm font-bold text-white">
-                  3
-                </span>
-                <div>
-                  <p className="font-semibold text-locall-navy">
-                    Commande de supports
-                  </p>
-                  <p className="mt-1 text-sm text-slate-600">
-                    Commandez un kit FILTRAVIS ou passez par un imprimeur partenaire.
-                  </p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {PLV_ORDER_LINKS.map((link) => (
-                      <Link
-                        key={link.label}
-                        href={link.href}
-                        className="btn-locall-ghost text-sm"
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </li>
-            </ol>
-          </section>
-        ) : null}
         {status === "trialing" && daysLeft !== null ? (
           <p className="rounded-xl bg-orange-50 px-4 py-3 text-sm font-medium text-locall-navy">
             {daysLeft > 0
@@ -518,6 +384,9 @@ export function DashboardClient({
                 alt={`QR code vers ${reviewUrl}`}
                 className="mx-auto mt-4 h-52 w-52 bg-white p-2"
               />
+              <p className="mt-4 text-center text-sm text-slate-700">
+                Ce QR code reste actif à vie, sans aucun frais supplémentaire.
+              </p>
               <button
                 type="button"
                 onClick={downloadQr}
@@ -561,6 +430,33 @@ export function DashboardClient({
                     En savoir plus
                   </button>
                 </div>
+                <div className="mt-2 flex items-center gap-4">
+                  <p className="text-sm text-slate-500">
+                    {optionEnabled
+                      ? "FILTRAVIS publiera des remerciements SEO sur vos avis Google 4★ et 5★."
+                      : "Option désactivée. Activez-la pour laisser l’IA répondre à vos avis positifs."}
+                  </p>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={optionEnabled}
+                    aria-label="Réponse automatique SEO pour vos avis 4/5 et 5/5 Google"
+                    disabled={pending}
+                    onClick={onToggleOption}
+                    className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
+                      optionEnabled ? "bg-locall-success" : "bg-slate-300"
+                    } ${pending ? "opacity-60" : ""}`}
+                  >
+                    <span
+                      className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform ${
+                        optionEnabled ? "translate-x-5" : "translate-x-0.5"
+                      }`}
+                    />
+                  </button>
+                </div>
+                {optionError ? (
+                  <p className="mt-2 text-sm text-red-600">{optionError}</p>
+                ) : null}
                 <form
                   className="mt-3 space-y-3"
                   onSubmit={(event) => {
@@ -642,33 +538,6 @@ export function DashboardClient({
                     {pending ? "Enregistrement…" : "Enregistrer ces liens"}
                   </button>
                 </form>
-                <div className="mt-4 flex items-center gap-4">
-                  <p className="text-sm text-slate-500">
-                    {optionEnabled
-                      ? "FILTRAVIS publiera des remerciements SEO sur vos avis Google 4★ et 5★."
-                      : "Option désactivée. Activez-la pour laisser l’IA répondre à vos avis positifs."}
-                  </p>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={optionEnabled}
-                    aria-label="Réponse automatique SEO pour vos avis 4/5 et 5/5 Google"
-                    disabled={pending}
-                    onClick={onToggleOption}
-                    className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
-                      optionEnabled ? "bg-locall-success" : "bg-slate-300"
-                    } ${pending ? "opacity-60" : ""}`}
-                  >
-                    <span
-                      className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform ${
-                        optionEnabled ? "translate-x-5" : "translate-x-0.5"
-                      }`}
-                    />
-                  </button>
-                </div>
-                {optionError ? (
-                  <p className="mt-2 text-sm text-red-600">{optionError}</p>
-                ) : null}
               </div>
             </div>
           </div>
@@ -706,46 +575,70 @@ export function DashboardClient({
             </div>
           </div>
 
-          <p className="rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-700">
-            🔒 Vos supports imprimés et ce QR code restent actifs à vie, sans
-            aucun frais supplémentaire.
-          </p>
+          {status === "pending_activation" ? (
+            <section className="overflow-hidden rounded-2xl border-2 border-locall-orange bg-white p-5 shadow-sm sm:p-8">
+              <p className="font-semibold text-locall-navy">Commande de supports</p>
+              <p className="mt-1 text-sm text-slate-600">
+                Commandez un kit FILTRAVIS ou passez par un imprimeur partenaire.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {PLV_ORDER_LINKS.map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="btn-locall-ghost text-sm"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </section>
+          ) : null}
         </section>
 
-        {status === "pending_activation" ? (
+        {status === "pending_activation" || status === "trialing" ? (
           <section className="card-locall p-5 sm:p-8">
-            <p className="font-semibold text-locall-navy">
-              Activation de l’essai
-            </p>
-            <p className="mt-1 text-sm text-slate-600">
-              Démarre le compteur de 14 jours et ouvre le Smart QR vers la page
-              d’interception.
-            </p>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="font-semibold text-locall-navy">
+                  Activation de l’essai
+                </p>
+                <p className="mt-1 text-sm text-slate-600">
+                  Démarre le compteur de 14 jours et ouvre le Smart QR vers la page
+                  d’interception.
+                </p>
+              </div>
+              <button
+                type="button"
+                disabled={pending || status === "trialing"}
+                onClick={() => {
+                  if (status === "trialing") return;
+                  setActivateError(null);
+                  startTransition(async () => {
+                    const result = await activateTrial(restaurantId);
+                    if (!result.ok) {
+                      setActivateError(result.error);
+                      return;
+                    }
+                    setStatus(result.status);
+                    setDaysLeft(result.trialDaysLeft);
+                    router.refresh();
+                  });
+                }}
+                className={`inline-flex shrink-0 items-center justify-center rounded-full px-5 py-2.5 text-base font-extrabold tracking-wide text-white shadow-md transition-colors disabled:opacity-100 ${
+                  status === "trialing"
+                    ? "bg-green-600"
+                    : "bg-red-600 hover:bg-red-700"
+                } ${pending ? "opacity-70" : ""}`}
+              >
+                {pending
+                  ? "Activation…"
+                  : "ACTIVER MES 14 JOURS D’ESSAI GRATUITS"}
+              </button>
+            </div>
             {activateError ? (
               <p className="mt-2 text-sm text-red-600">{activateError}</p>
             ) : null}
-            <button
-              type="button"
-              disabled={pending}
-              onClick={() => {
-                setActivateError(null);
-                startTransition(async () => {
-                  const result = await activateTrial(restaurantId);
-                  if (!result.ok) {
-                    setActivateError(result.error);
-                    return;
-                  }
-                  setStatus(result.status);
-                  setDaysLeft(result.trialDaysLeft);
-                  router.refresh();
-                });
-              }}
-              className="btn-locall-cta mt-4 w-full text-base font-extrabold tracking-wide sm:w-auto"
-            >
-              {pending
-                ? "Activation…"
-                : "ACTIVER MES 14 JOURS D’ESSAI GRATUITS"}
-            </button>
           </section>
         ) : null}
       </main>

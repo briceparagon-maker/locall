@@ -6,6 +6,8 @@ import { getOwnerEmail } from "@/lib/session";
 import { db } from "@/src/prisma/db";
 import { AdminDashboard, type AdminRestaurant, type AdminReview } from "./admin-dashboard";
 
+export const instant = false;
+
 export default async function AdminPage() {
   await connection();
   const email = await getOwnerEmail();

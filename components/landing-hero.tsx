@@ -25,8 +25,8 @@ export function LandingHero() {
         />
       </div>
       <img
-        src="/bandeau-filtravis-essai.jpg?v=5"
-        alt="Comment fonctionne FILTRAVIS ?"
+        src="/bandeau-filtravis-essai.png?v=12"
+        alt="Comment fonctionne FILTRAVIS ? Les avis 1/5, 2/5 et 3/5 sont interceptés et non diffusés uniquement dans votre établissement."
         className="block h-auto w-full"
       />
       <img
