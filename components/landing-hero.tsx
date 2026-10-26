@@ -29,15 +29,10 @@ export function LandingHero() {
         alt="Comment fonctionne FILTRAVIS ? Les avis 1/5, 2/5 et 3/5 sont interceptés et non diffusés uniquement dans votre établissement."
         className="block h-auto w-full"
       />
-      <img
-        src="/bandeau-protection-filtravis.jpg?v=6"
-        alt="Protection à 100 %. Les avis sensibles 1, 2 et 3 étoiles sont recueillis en interne quand le client scanne le QR Code dans votre établissement."
-        className="block h-auto w-full"
-      />
-      <div className="relative z-10 -mt-3">
+      <div className="relative z-10" style={{ marginTop: "-2.3%" }}>
         <img
-          src="/stop-inscription-filtravis.png?v=3"
-          alt="Stop aux mauvais avis. Essai gratuit 14 jours. Inscription sans engagement et sans carte bancaire."
+          src="/stop-inscription-filtravis.png?v=8"
+          alt="Le dispositif FILTRAVIS fonctionne uniquement lorsque vos clients utilisent notre QR code. En dehors de ce parcours, les avis négatifs ne pourront pas être bloqués dans votre tableau de bord. Ils seront publiés directement sur Google et/ou Facebook. Stop aux mauvais avis. Essai gratuit 14 jours. Inscription sans engagement et sans carte bancaire."
           className="block h-auto w-full"
         />
         <Link
@@ -45,10 +40,10 @@ export function LandingHero() {
           aria-label="Inscription — Sans engagement, sans CB"
           className={ctaClassName}
           style={{
-            left: "35%",
-            top: "58%",
-            width: "30%",
-            height: "36%",
+            left: "32%",
+            top: "75%",
+            width: "36%",
+            height: "18%",
           }}
         />
       </div>

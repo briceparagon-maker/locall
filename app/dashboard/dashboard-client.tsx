@@ -167,30 +167,9 @@ export function DashboardClient({
         <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-3 overflow-visible px-4 py-4 sm:grid-cols-3">
           <div className="flex flex-wrap items-center justify-start gap-2 sm:gap-3">
             <TrialCtaLink />
-            <a
-              href="#lien-google"
-              className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
-            >
-              Ma fiche Google ↗
-            </a>
           </div>
           <div className="justify-self-center text-center">
             <FiltravisLogoLink scale={logoScale} />
-            <h1 className="mt-1 text-sm font-semibold leading-tight">
-              Dashboard établissement
-            </h1>
-            <p className="mt-0.5 text-sm text-white/80">{restaurantName}</p>
-            {status === "trialing" && daysLeft !== null ? (
-              <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-locall-orange">
-                {daysLeft > 0
-                  ? `${daysLeft} jour${daysLeft > 1 ? "s" : ""} d’essai restant${daysLeft > 1 ? "s" : ""}`
-                  : "Essai terminé"}
-              </p>
-            ) : status === "pending_activation" ? (
-              <p className="mt-1 text-xs font-medium text-white/70">
-                Essai 14 jours — en attente d’activation
-              </p>
-            ) : null}
           </div>
           <div className="flex flex-wrap items-center justify-start gap-2 sm:justify-end sm:justify-self-end">
             {isAdmin ? (
@@ -201,25 +180,51 @@ export function DashboardClient({
                 Admin
               </a>
             ) : null}
-            <a
-              href="#lien-facebook"
-              className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
-            >
-              Ma fiche Facebook ↗
-            </a>
             <LogoutButton className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10" />
           </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl flex-1 space-y-8 px-4 py-8">
+      <div className="mx-auto grid w-full max-w-6xl grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 px-4 py-5 text-locall-navy">
+        <a
+          href="#lien-google"
+          className="justify-self-start rounded-full border border-locall-navy px-4 py-2 text-sm font-medium transition-colors hover:bg-locall-navy hover:text-white"
+        >
+          Ma fiche Google ↗
+        </a>
+        <div className="px-2 text-center">
+          <h1 className="text-sm font-semibold leading-tight">
+            Dashboard établissement
+          </h1>
+          <p className="mt-1 text-base font-semibold">{restaurantName}</p>
+          {status === "trialing" && daysLeft !== null ? (
+            <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-locall-orange">
+              {daysLeft > 0
+                ? `${daysLeft} jour${daysLeft > 1 ? "s" : ""} d’essai restant${daysLeft > 1 ? "s" : ""}`
+                : "Essai terminé"}
+            </p>
+          ) : status === "pending_activation" ? (
+            <p className="mt-1 text-xs font-medium text-slate-600">
+              Essai 14 jours — en attente d’activation
+            </p>
+          ) : null}
+        </div>
+        <a
+          href="#lien-facebook"
+          className="justify-self-end rounded-full border border-locall-navy px-4 py-2 text-sm font-medium transition-colors hover:bg-locall-navy hover:text-white"
+        >
+          Ma fiche Facebook ↗
+        </a>
+      </div>
+
+      <main className="dashboard-panels mx-auto w-full max-w-6xl flex-1 space-y-8 px-4 pb-8">
         {billingNotice ? (
-          <p className="rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+          <p className="dashboard-banner rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
             {billingNotice}
           </p>
         ) : null}
         {status === "trialing" && daysLeft !== null ? (
-          <p className="rounded-xl bg-orange-50 px-4 py-3 text-sm font-medium text-locall-navy">
+          <p className="dashboard-banner rounded-xl bg-orange-50 px-4 py-3 text-sm font-medium text-locall-navy">
             {daysLeft > 0
               ? `Il vous reste ${daysLeft} jour${daysLeft > 1 ? "s" : ""} d’essai gratuit.`
               : "Votre essai de 14 jours est terminé."}
@@ -413,7 +418,61 @@ export function DashboardClient({
                 </button>
               </div>
 
-              <div className="card-locall p-5">
+              <div>
+                <h2 className="text-lg font-semibold text-locall-navy">
+                  Supports PLV
+                </h2>
+                <p className="mt-1 text-sm text-slate-600">
+                  Templates PDF prêts à imprimer, avec votre QR d’interception déjà
+                  intégré.
+                </p>
+                <div className="mt-3 grid grid-cols-3 items-stretch gap-3">
+                  <PlvCard
+                    compact
+                    title="Chevalet de table"
+                    description="Format A6 / A5 — à poser sur vos tables."
+                    links={[
+                      { href: "/api/plv/chevalet-a6", label: "PDF A6" },
+                      { href: "/api/plv/chevalet-a5", label: "PDF A5" },
+                    ]}
+                  />
+                  <PlvCard
+                    compact
+                    title="Autocollant / sticker comptoir"
+                    description="Format carré ou rond, pour le comptoir."
+                    links={[
+                      { href: "/api/plv/sticker-carre", label: "PDF carré" },
+                      { href: "/api/plv/sticker-rond", label: "PDF rond" },
+                    ]}
+                  />
+                  <PlvCard
+                    compact
+                    title="Affiche A4"
+                    description="Pour la vitrine ou l’accueil."
+                    links={[{ href: "/api/plv/affiche-a4", label: "PDF A4" }]}
+                  />
+                </div>
+                {status === "pending_activation" ? (
+                  <section className="dashboard-banner mt-4 overflow-hidden rounded-2xl border border-locall-navy bg-white p-5 shadow-sm">
+                    <p className="font-semibold text-locall-navy">Commandez vos supports</p>
+                    <div className="mt-3 grid grid-cols-3 items-stretch gap-3">
+                      {PLV_ORDER_LINKS.map((link) => (
+                        <Link
+                          key={link.label}
+                          href={link.href}
+                          className="btn-locall-ghost w-full !justify-start px-3 py-2 text-left text-sm"
+                        >
+                          {link.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </section>
+                ) : null}
+              </div>
+            </div>
+          </div>
+
+          <div className="card-locall p-5">
                 <p className="font-semibold text-locall-navy">
                   Paramètres Google pour vos avis 4/5 et 5/5 Google (Option
                   offerte)
@@ -538,62 +597,7 @@ export function DashboardClient({
                     {pending ? "Enregistrement…" : "Enregistrer ces liens"}
                   </button>
                 </form>
-              </div>
-            </div>
           </div>
-
-          <div className="pt-6">
-            <h2 className="text-lg font-semibold text-locall-navy">
-              Supports PLV
-            </h2>
-            <p className="mt-1 text-sm text-slate-600">
-              Templates PDF prêts à imprimer, avec votre QR d’interception déjà
-              intégré.
-            </p>
-            <div className="mt-4 grid gap-4 md:grid-cols-3">
-              <PlvCard
-                title="Chevalet de table"
-                description="Format A6 / A5 — à poser sur vos tables."
-                links={[
-                  { href: "/api/plv/chevalet-a6", label: "PDF A6" },
-                  { href: "/api/plv/chevalet-a5", label: "PDF A5" },
-                ]}
-              />
-              <PlvCard
-                title="Autocollant / sticker comptoir"
-                description="Format carré ou rond, pour le comptoir."
-                links={[
-                  { href: "/api/plv/sticker-carre", label: "PDF carré" },
-                  { href: "/api/plv/sticker-rond", label: "PDF rond" },
-                ]}
-              />
-              <PlvCard
-                title="Affiche A4"
-                description="Pour la vitrine ou l’accueil."
-                links={[{ href: "/api/plv/affiche-a4", label: "PDF A4" }]}
-              />
-            </div>
-          </div>
-
-          {status === "pending_activation" ? (
-            <section className="overflow-hidden rounded-2xl border-2 border-locall-orange bg-white p-5 shadow-sm sm:p-8">
-              <p className="font-semibold text-locall-navy">Commande de supports</p>
-              <p className="mt-1 text-sm text-slate-600">
-                Commandez un kit FILTRAVIS ou passez par un imprimeur partenaire.
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {PLV_ORDER_LINKS.map((link) => (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    className="btn-locall-ghost text-sm"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            </section>
-          ) : null}
         </section>
 
         {status === "pending_activation" || status === "trialing" ? (
@@ -716,18 +720,28 @@ function PlvCard({
   title,
   description,
   links,
+  compact = false,
 }: {
   title: string;
   description: string;
   links: { href: string; label: string }[];
+  compact?: boolean;
 }) {
   return (
-    <div className="card-locall flex flex-col p-5">
-      <h4 className="font-semibold text-locall-navy">{title}</h4>
-      <p className="mt-1 flex-1 text-sm text-slate-600">{description}</p>
-      <div className="mt-4 flex flex-wrap gap-2">
+    <div className={`card-locall flex h-full flex-col ${compact ? "p-3" : "p-5"}`}>
+      <h4 className={`font-semibold text-locall-navy ${compact ? "text-sm leading-snug" : ""}`}>
+        {title}
+      </h4>
+      <p className={`mt-1 flex-1 text-slate-600 ${compact ? "text-xs leading-snug" : "text-sm"}`}>
+        {description}
+      </p>
+      <div className={`flex flex-wrap gap-1.5 ${compact ? "mt-3" : "mt-4 gap-2"}`}>
         {links.map((link) => (
-          <a key={link.href} href={link.href} className="btn-locall-ghost">
+          <a
+            key={link.href}
+            href={link.href}
+            className={`btn-locall-ghost ${compact ? "px-2.5 py-1 text-xs" : ""}`}
+          >
             {link.label}
           </a>
         ))}

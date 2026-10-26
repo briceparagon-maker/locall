@@ -1,18 +1,13 @@
 export const PLV_ORDER_LINKS = [
-  { href: "/contact", label: "Commander le kit FILTRAVIS", external: false },
+  { href: "/contact", label: "🛒 Directement chez nous", external: false },
   {
     href: "/contact",
-    label: "Partenaire impression — chevalets",
+    label: "🏪 Auprès de votre fournisseur",
     external: false,
   },
   {
     href: "/contact",
-    label: "Partenaire impression — stickers",
-    external: false,
-  },
-  {
-    href: "/contact",
-    label: "Partenaire impression — affiches",
+    label: "📦 Auprès d'autres fournisseurs",
     external: false,
   },
 ] as const;
