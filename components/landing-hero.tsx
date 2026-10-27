@@ -8,8 +8,8 @@ export function LandingHero() {
     <div className="filtravis-shell leading-none">
       <div className="relative">
         <img
-          src="/page-accueil-filtravis.jpg?v=15"
-          alt="FILTRAVIS — Chaque avis compte. Un seul avis peut changer la perception de votre entreprise."
+          src="/page-accueil-filtravis.png?v=16"
+          alt="FILTRAVIS — Chaque avis compte. Votre réputation surtout. Stop aux mauvais avis. Sans engagement, sans CB, installation en deux minutes."
           className="block h-auto w-full"
         />
         <Link
@@ -17,13 +17,18 @@ export function LandingHero() {
           aria-label="Stop aux mauvais avis*"
           className={ctaClassName}
           style={{
-            left: "27%",
-            top: "37.5%",
-            width: "46%",
-            height: "5.8%",
+            left: "38%",
+            top: "74.5%",
+            width: "31.5%",
+            height: "12%",
           }}
         />
       </div>
+      <img
+        src="/un-seul-avis-filtravis.jpg?v=2"
+        alt="Un seul avis peut changer la perception de votre entreprise. Votre réputation, notre priorité."
+        className="block h-auto w-full"
+      />
       <img
         src="/bandeau-filtravis-essai.png?v=12"
         alt="Comment fonctionne FILTRAVIS ? Les avis 1/5, 2/5 et 3/5 sont interceptés et non diffusés uniquement dans votre établissement."
