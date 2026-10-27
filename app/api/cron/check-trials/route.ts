@@ -1,6 +1,8 @@
 import { connection } from "next/server";
 import { sendTrialReminders } from "@/lib/trial-reminder";
 
+export const instant = false;
+
 function isAuthorized(request: Request) {
   const secret = process.env.CRON_SECRET?.trim();
   const auth = request.headers.get("authorization") ?? "";

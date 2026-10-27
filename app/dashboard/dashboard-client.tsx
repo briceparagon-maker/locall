@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { GooglePlaceSetupModal } from "@/components/google-place-setup-modal";
@@ -49,30 +49,88 @@ function formatDate(value: string) {
   }).format(date);
 }
 
+function BrandMark({ children }: { children: ReactNode }) {
+  return (
+    <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-slate-300 bg-white">
+      {children}
+    </span>
+  );
+}
+
+function GoogleMark() {
+  return (
+    <BrandMark>
+      <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
+        <path
+          fill="#4285F4"
+          d="M23.49 12.27c0-.79-.07-1.54-.2-2.27H12v4.3h6.44a5.51 5.51 0 0 1-2.39 3.61v3h3.86c2.26-2.08 3.58-5.15 3.58-8.64z"
+        />
+        <path
+          fill="#34A853"
+          d="M12 24c3.24 0 5.96-1.07 7.95-2.91l-3.86-3c-1.07.72-2.45 1.16-4.09 1.16-3.14 0-5.8-2.12-6.75-4.97H1.26v3.09A12 12 0 0 0 12 24z"
+        />
+        <path
+          fill="#FBBC05"
+          d="M5.25 14.28A7.21 7.21 0 0 1 4.87 12c0-.79.14-1.56.38-2.28V6.63H1.26A12 12 0 0 0 0 12c0 1.94.46 3.77 1.26 5.37l3.99-3.09z"
+        />
+        <path
+          fill="#EA4335"
+          d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.44-3.44C17.95 1.14 15.23 0 12 0 7.31 0 3.25 2.69 1.26 6.63l3.99 3.09C6.2 6.87 8.86 4.75 12 4.75z"
+        />
+      </svg>
+    </BrandMark>
+  );
+}
+
+function FacebookMark() {
+  return (
+    <BrandMark>
+      <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" aria-hidden>
+        <path
+          fill="#1877F2"
+          d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.09 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.7 4.53-4.7 1.31 0 2.68.24 2.68.24v2.96h-1.51c-1.49 0-1.96.93-1.96 1.89v2.27h3.33l-.53 3.49h-2.8V24C19.61 23.09 24 18.1 24 12.07z"
+        />
+      </svg>
+    </BrandMark>
+  );
+}
+
 function StatusLink({
   href,
   label,
   activated,
   activeLabel,
   inactiveLabel,
+  greenWhenActive = false,
+  orange = false,
 }: {
   href: string;
-  label: string;
+  label: ReactNode;
   activated: boolean;
   activeLabel: string;
   inactiveLabel: string;
+  greenWhenActive?: boolean;
+  orange?: boolean;
 }) {
+  const greenBackground = greenWhenActive && activated;
   return (
     <a
       href={href}
-      className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-locall-navy bg-locall-navy px-4 py-2 text-sm font-medium text-white transition-colors hover:border-locall-orange hover:bg-locall-orange"
+      className={`inline-flex items-center gap-2 whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium text-white transition-colors ${
+        greenBackground
+          ? "border-[#14915a] bg-[#14915a] hover:border-[#107a4c] hover:bg-[#107a4c]"
+          : orange
+            ? "border-locall-orange-hover bg-locall-orange-hover hover:border-locall-orange hover:bg-locall-orange"
+            : "border-locall-navy bg-locall-navy hover:border-locall-orange hover:bg-locall-orange"
+      }`}
     >
-      {label}
+      <span className="inline-flex items-center gap-1">{label}</span>
       <span
         className="rounded-full px-2 py-0.5 text-sm font-semibold leading-none text-white"
         style={{
           backgroundColor: activated ? "#14915a" : "#dc2626",
           color: "#ffffff",
+          boxShadow: greenBackground ? "0 0 0 2px #ffffff" : undefined,
         }}
       >
         {activated ? activeLabel : inactiveLabel}
@@ -142,6 +200,7 @@ export function DashboardClient({
   const googleListingUrl = savedGooglePlaceUrl || googlePlaceUrl;
   const [googleDestUrl, setGoogleDestUrl] = useState(googleListingUrl);
   const [facebookDestUrl, setFacebookDestUrl] = useState(facebookReviewUrl);
+  const [savedFacebookUrl, setSavedFacebookUrl] = useState(facebookReviewUrl);
   const [positiveReviewError, setPositiveReviewError] = useState<string | null>(
     null,
   );
@@ -151,6 +210,8 @@ export function DashboardClient({
     [complaints, selectedId],
   );
   const trialActivated = status === "trialing" || status === "active";
+  const googleFicheActive = isHttpUrl(savedGooglePlaceUrl.trim());
+  const facebookFicheActive = isHttpUrl(savedFacebookUrl.trim());
 
   function persistOption(enabled: boolean) {
     setOptionError(null);
@@ -207,7 +268,7 @@ export function DashboardClient({
           <div className="flex flex-wrap items-center justify-start gap-2 sm:justify-end sm:justify-self-end">
             {isAdmin ? (
               <a
-                href="/admin"
+                href="/backoffice-secret-filtravis-1324"
                 className="rounded-full border border-white/30 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/10"
               >
                 Admin
@@ -219,40 +280,57 @@ export function DashboardClient({
       </header>
 
       <div className="mx-auto w-full max-w-6xl px-4 py-5 text-center text-locall-navy">
-        <h1 className="text-sm font-semibold leading-tight">
+        <h1 className="text-[1.3125rem] font-semibold leading-tight">
           Dashboard établissement
         </h1>
-        <p className="mt-1 text-base font-semibold">{restaurantName}</p>
+        <p className="mt-1.5 text-2xl font-semibold">{restaurantName}</p>
         {status === "trialing" && daysLeft !== null ? (
-          <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-locall-orange">
+          <p className="mt-1.5 text-lg font-semibold uppercase tracking-wide text-locall-orange">
             {daysLeft > 0
               ? `${daysLeft} jour${daysLeft > 1 ? "s" : ""} d’essai restant${daysLeft > 1 ? "s" : ""}`
               : "Essai terminé"}
           </p>
         ) : status === "pending_activation" ? (
-          <p className="mt-1 text-xs font-medium text-slate-600">
+          <p className="mt-1.5 text-lg font-medium text-slate-600">
             Essai 14 jours — en attente d’activation
           </p>
         ) : null}
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-          <a
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-2">
+          <StatusLink
             href="#lien-google"
-            className="rounded-full border border-locall-navy bg-locall-navy px-4 py-2 text-sm font-medium text-white transition-colors hover:border-locall-orange hover:bg-locall-orange"
-          >
-            Ma fiche Google avis 4/5 et 5/5 ↗
-          </a>
-          <a
+            label={
+              <>
+                Ma fiche <GoogleMark />
+                <span className="sr-only">Google</span> avis 4/5 et 5/5
+              </>
+            }
+            activated={googleFicheActive}
+            activeLabel="Activés"
+            inactiveLabel="Non activés"
+            greenWhenActive
+            orange
+          />
+          <StatusLink
             href="#lien-facebook"
-            className="rounded-full border border-locall-navy bg-locall-navy px-4 py-2 text-sm font-medium text-white transition-colors hover:border-locall-orange hover:bg-locall-orange"
-          >
-            Ma fiche Facebook avis 4/5 et 5/5 ↗
-          </a>
+            label={
+              <>
+                Ma fiche <FacebookMark />
+                <span className="sr-only">Facebook</span> avis 4/5 et 5/5
+              </>
+            }
+            activated={facebookFicheActive}
+            activeLabel="Activés"
+            inactiveLabel="Non activés"
+            greenWhenActive
+            orange
+          />
           <StatusLink
             href="#abonnement"
             label="14 jours d’essai gratuits"
             activated={trialActivated}
             activeLabel="Activés"
             inactiveLabel="Non activés"
+            greenWhenActive
           />
           <StatusLink
             href="#tarif"
@@ -260,6 +338,7 @@ export function DashboardClient({
             activated={status === "active"}
             activeLabel="Activé"
             inactiveLabel="Non activé"
+            orange
           />
         </div>
       </div>
@@ -477,15 +556,25 @@ export function DashboardClient({
                 <section className="dashboard-banner mt-3 overflow-hidden rounded-2xl border border-locall-navy bg-white p-5 shadow-sm">
                   <p className="font-semibold text-locall-navy">Commandez vos supports</p>
                   <div className="mt-3 grid grid-cols-3 items-stretch gap-3">
-                    {PLV_ORDER_LINKS.map((link) => (
-                      <Link
-                        key={link.label}
-                        href={link.href}
-                        className="btn-locall-ghost w-full !justify-start px-3 py-2 text-left text-sm"
-                      >
-                        {link.label}
-                      </Link>
-                    ))}
+                    {PLV_ORDER_LINKS.map((link) =>
+                      link.active ? (
+                        <Link
+                          key={link.label}
+                          href={link.href}
+                          className="btn-locall-ghost w-full !justify-start px-3 py-2 text-left text-sm"
+                        >
+                          {link.label}
+                        </Link>
+                      ) : (
+                        <span
+                          key={link.label}
+                          aria-disabled="true"
+                          className="btn-locall-ghost pointer-events-none w-full cursor-default !justify-start px-3 py-2 text-left text-sm"
+                        >
+                          {link.label}
+                        </span>
+                      ),
+                    )}
                   </div>
                 </section>
                 {status === "pending_activation" || status === "trialing" ? (
@@ -599,6 +688,7 @@ export function DashboardClient({
                       setSavedGooglePlaceUrl(result.googleUrl);
                       setGoogleDestUrl(result.googleUrl);
                       setFacebookDestUrl(result.facebookUrl);
+                      setSavedFacebookUrl(result.facebookUrl);
                       setPositiveReviewSaved(true);
                       window.setTimeout(
                         () => setPositiveReviewSaved(false),

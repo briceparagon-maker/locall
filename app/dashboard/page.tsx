@@ -1,6 +1,6 @@
 import { connection } from "next/server";
 import { redirect } from "next/navigation";
-import { isSuperAdmin } from "@/lib/admin";
+import { isBackofficeOwner } from "@/lib/admin";
 import { appUrl } from "@/lib/app-url";
 import { normalizeSubscriptionStatus, trialDaysLeft } from "@/lib/billing";
 import { qrPngDataUrl } from "@/lib/qr";
@@ -92,7 +92,7 @@ export default async function DashboardPage({
       googlePlaceUrl={restaurant.googlePlaceUrl?.trim() || ""}
       facebookReviewUrl={restaurant.facebookReviewUrl?.trim() || ""}
       autoRespondGooglePositive={Boolean(restaurant.autoRespondGooglePositive)}
-      isAdmin={isSuperAdmin(await getOwnerEmail(), restaurant.role)}
+      isAdmin={isBackofficeOwner(restaurant.ownerEmail) && isBackofficeOwner(await getOwnerEmail())}
       subscriptionStatus={subscriptionStatus}
       trialDaysLeft={
         subscriptionStatus === "pending_activation"

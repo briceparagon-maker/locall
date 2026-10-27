@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { isBackofficeOwner } from "@/lib/admin";
 import { isEmail } from "@/lib/app-url";
 import { verifyPassword } from "@/lib/password";
 import { setOwnerSession } from "@/lib/session";
@@ -15,10 +16,10 @@ export async function loginOwner(formData: FormData) {
   }
 
   const restaurant = await db.orm.public.Restaurant.where({ ownerEmail: email }).first();
-  if (!restaurant || !verifyPassword(password, restaurant.passwordHash)) {
+  if (!restaurant?.passwordHash || !verifyPassword(password, restaurant.passwordHash)) {
     return { ok: false as const, error: "E-mail ou mot de passe incorrect." };
   }
 
-  await setOwnerSession(restaurant.id, email);
-  redirect("/dashboard");
+  await setOwnerSession(restaurant.id, email, restaurant.passwordHash);
+  redirect(isBackofficeOwner(email) ? "/backoffice-secret-filtravis-1324" : "/dashboard");
 }

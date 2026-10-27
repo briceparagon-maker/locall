@@ -1,13 +1,9 @@
-export function adminEmails() {
-  return (process.env.ADMIN_EMAILS ?? "")
-    .split(/[,;\s]+/)
-    .map((value) => value.trim().toLowerCase())
-    .filter(Boolean);
+const BACKOFFICE_OWNER_EMAIL = "briceparagon@gmail.com";
+
+export function isBackofficeOwner(email: string | null | undefined) {
+  return email?.trim().toLowerCase() === BACKOFFICE_OWNER_EMAIL;
 }
 
-export function isSuperAdmin(email: string | null | undefined, role?: string | null) {
-  if ((role ?? "").toLowerCase() === "superadmin") return true;
-  const normalized = email?.trim().toLowerCase() ?? "";
-  if (!normalized) return false;
-  return adminEmails().includes(normalized);
+export function isSuperAdmin(email: string | null | undefined, _role?: string | null) {
+  return isBackofficeOwner(email);
 }

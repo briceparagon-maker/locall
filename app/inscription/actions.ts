@@ -96,6 +96,7 @@ export async function registerTrial(formData: FormData) {
   }
 
   const slug = await uniqueSlug(name);
+  const passwordHash = hashPassword(password);
   const created = await db.orm.public.Restaurant.select("id").create({
     name,
     address,
@@ -114,7 +115,7 @@ export async function registerTrial(formData: FormData) {
     postalCode,
     department: department || null,
     phone,
-    passwordHash: hashPassword(password),
+    passwordHash,
     trialEndsAt: null,
     subscriptionStatus: "pending_activation",
     role: "Owner",
@@ -134,6 +135,6 @@ export async function registerTrial(formData: FormData) {
     console.error("welcome email:", error);
   }
 
-  await setOwnerSession(created.id, email);
+  await setOwnerSession(created.id, email, passwordHash);
   redirect("/dashboard");
 }
