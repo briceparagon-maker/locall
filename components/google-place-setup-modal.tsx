@@ -103,7 +103,7 @@ export function GooglePlaceSetupModal({
                   vos avis 4/5 et 5/5 sur Google. Aucune action manuelle
                   requise : l’IA s’en occupe 24h/24.
                 </p>
-                <p className="font-medium text-locall-navy">💡 Important à savoir :</p>
+                <p className="font-medium text-locall-navy">💡 Pour rappel :</p>
                 <ul className="list-disc space-y-2 pl-5">
                   <li>
                     <strong>Protection à 100 % :</strong> Notre application gère

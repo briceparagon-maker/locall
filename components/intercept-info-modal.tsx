@@ -25,7 +25,7 @@ export function InterceptInfoModal({
           id="intercept-info-title"
           className="text-lg font-semibold leading-snug text-locall-navy"
         >
-          💡 Important à savoir :
+          💡 Pour rappel :
         </h3>
         <div className="mt-4 space-y-4 text-sm leading-6 text-slate-700">
           <p>

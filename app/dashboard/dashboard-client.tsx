@@ -49,6 +49,38 @@ function formatDate(value: string) {
   }).format(date);
 }
 
+function StatusLink({
+  href,
+  label,
+  activated,
+  activeLabel,
+  inactiveLabel,
+}: {
+  href: string;
+  label: string;
+  activated: boolean;
+  activeLabel: string;
+  inactiveLabel: string;
+}) {
+  return (
+    <a
+      href={href}
+      className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-locall-navy bg-locall-navy px-4 py-2 text-sm font-medium text-white transition-colors hover:border-locall-orange hover:bg-locall-orange"
+    >
+      {label}
+      <span
+        className="rounded-full px-2 py-0.5 text-sm font-semibold leading-none text-white"
+        style={{
+          backgroundColor: activated ? "#14915a" : "#dc2626",
+          color: "#ffffff",
+        }}
+      >
+        {activated ? activeLabel : inactiveLabel}
+      </span>
+    </a>
+  );
+}
+
 function StarPips({ rating }: { rating: number }) {
   return (
     <span className="tabular-nums text-amber-500" aria-label={`${rating} sur 5`}>
@@ -118,6 +150,7 @@ export function DashboardClient({
     () => complaints.find((row) => row.id === selectedId) ?? null,
     [complaints, selectedId],
   );
+  const trialActivated = status === "trialing" || status === "active";
 
   function persistOption(enabled: boolean) {
     setOptionError(null);
@@ -185,36 +218,50 @@ export function DashboardClient({
         </div>
       </header>
 
-      <div className="mx-auto grid w-full max-w-6xl grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 px-4 py-5 text-locall-navy">
-        <a
-          href="#lien-google"
-          className="justify-self-start rounded-full border border-locall-navy px-4 py-2 text-sm font-medium transition-colors hover:bg-locall-navy hover:text-white"
-        >
-          Ma fiche Google ↗
-        </a>
-        <div className="px-2 text-center">
-          <h1 className="text-sm font-semibold leading-tight">
-            Dashboard établissement
-          </h1>
-          <p className="mt-1 text-base font-semibold">{restaurantName}</p>
-          {status === "trialing" && daysLeft !== null ? (
-            <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-locall-orange">
-              {daysLeft > 0
-                ? `${daysLeft} jour${daysLeft > 1 ? "s" : ""} d’essai restant${daysLeft > 1 ? "s" : ""}`
-                : "Essai terminé"}
-            </p>
-          ) : status === "pending_activation" ? (
-            <p className="mt-1 text-xs font-medium text-slate-600">
-              Essai 14 jours — en attente d’activation
-            </p>
-          ) : null}
+      <div className="mx-auto w-full max-w-6xl px-4 py-5 text-center text-locall-navy">
+        <h1 className="text-sm font-semibold leading-tight">
+          Dashboard établissement
+        </h1>
+        <p className="mt-1 text-base font-semibold">{restaurantName}</p>
+        {status === "trialing" && daysLeft !== null ? (
+          <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-locall-orange">
+            {daysLeft > 0
+              ? `${daysLeft} jour${daysLeft > 1 ? "s" : ""} d’essai restant${daysLeft > 1 ? "s" : ""}`
+              : "Essai terminé"}
+          </p>
+        ) : status === "pending_activation" ? (
+          <p className="mt-1 text-xs font-medium text-slate-600">
+            Essai 14 jours — en attente d’activation
+          </p>
+        ) : null}
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+          <a
+            href="#lien-google"
+            className="rounded-full border border-locall-navy bg-locall-navy px-4 py-2 text-sm font-medium text-white transition-colors hover:border-locall-orange hover:bg-locall-orange"
+          >
+            Ma fiche Google avis 4/5 et 5/5 ↗
+          </a>
+          <a
+            href="#lien-facebook"
+            className="rounded-full border border-locall-navy bg-locall-navy px-4 py-2 text-sm font-medium text-white transition-colors hover:border-locall-orange hover:bg-locall-orange"
+          >
+            Ma fiche Facebook avis 4/5 et 5/5 ↗
+          </a>
+          <StatusLink
+            href="#abonnement"
+            label="14 jours d’essai gratuits"
+            activated={trialActivated}
+            activeLabel="Activés"
+            inactiveLabel="Non activés"
+          />
+          <StatusLink
+            href="#tarif"
+            label="Abonnement"
+            activated={status === "active"}
+            activeLabel="Activé"
+            inactiveLabel="Non activé"
+          />
         </div>
-        <a
-          href="#lien-facebook"
-          className="justify-self-end rounded-full border border-locall-navy px-4 py-2 text-sm font-medium transition-colors hover:bg-locall-navy hover:text-white"
-        >
-          Ma fiche Facebook ↗
-        </a>
       </div>
 
       <main className="dashboard-panels mx-auto w-full max-w-6xl flex-1 space-y-8 px-4 pb-8">
@@ -223,15 +270,11 @@ export function DashboardClient({
             {billingNotice}
           </p>
         ) : null}
-        {status === "trialing" && daysLeft !== null ? (
-          <p className="dashboard-banner rounded-xl bg-orange-50 px-4 py-3 text-sm font-medium text-locall-navy">
-            {daysLeft > 0
-              ? `Il vous reste ${daysLeft} jour${daysLeft > 1 ? "s" : ""} d’essai gratuit.`
-              : "Votre essai de 14 jours est terminé."}
-          </p>
-        ) : null}
         {status === "active" ? (
-          <section className="card-locall flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <section
+            id="abonnement"
+            className="card-locall flex scroll-mt-24 flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between"
+          >
             <p className="text-sm text-slate-600">
               Abonnement <strong>actif</strong>. Gérez votre moyen de paiement dans le portail Stripe.
             </p>
@@ -242,24 +285,33 @@ export function DashboardClient({
             </form>
           </section>
         ) : status !== "pending_activation" ? (
-          <section className="card-locall flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <section
+            id="abonnement"
+            className="card-locall flex scroll-mt-24 flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between"
+          >
             <div>
               <p className="font-semibold text-locall-navy">Abonnement mensuel FILTRAVIS</p>
               <p className="mt-1 text-sm text-slate-600">
-                {status === "cancelled"
-                  ? "Votre abonnement est annulé. Réactivez-le pour continuer à protéger votre note."
-                  : daysLeft === null
-                    ? "Passez à l’abonnement pour protéger votre note Google sans interruption."
-                    : daysLeft > 0
-                      ? `Il vous reste ${daysLeft} jour${daysLeft > 1 ? "s" : ""} d’essai.`
-                      : "Votre essai est terminé. Abonnez-vous pour garder la protection FILTRAVIS."}
+                {status === "cancelled" ? (
+                  "Votre abonnement est annulé. Réactivez-le pour continuer à protéger votre note."
+                ) : daysLeft === null ? (
+                  "Passez à l’abonnement pour protéger votre note Google sans interruption."
+                ) : daysLeft > 0 ? (
+                  <>
+                    Il vous reste{" "}
+                    <span className="text-[2em] font-bold leading-none text-locall-navy">
+                      {daysLeft} jour{daysLeft > 1 ? "s" : ""}
+                    </span>{" "}
+                    d’essai.
+                  </>
+                ) : (
+                  "Votre essai est terminé. Abonnez-vous pour garder la protection FILTRAVIS."
+                )}
               </p>
             </div>
-            <form action="/api/stripe/checkout" method="post">
-              <button type="submit" className="btn-locall-cta">
-                S’abonner
-              </button>
-            </form>
+            <a href="#tarif" className="btn-locall-cta shrink-0">
+              S’abonner
+            </a>
           </section>
         ) : null}
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -368,29 +420,29 @@ export function DashboardClient({
         </section>
 
         <section className="space-y-5">
-          <div>
-            <h2 className="text-lg font-semibold text-locall-navy">
-              Votre Smart QR Code
-            </h2>
-            <p className="mt-1 text-sm text-slate-600">
-              Chaque scan ouvre votre page d’interception FILTRAVIS : les avis 1-3★
-              restent internes. Les avis 4-5★ sont proposés sur Google et/ou
-              Facebook, selon les liens que vous renseignez.
-            </p>
-          </div>
+          <h2 className="text-lg font-semibold text-locall-navy">
+            Votre Smart QR Code
+          </h2>
 
           <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
             <div className="card-locall flex flex-col p-5">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                QR code
+              <p className="text-center text-sm font-semibold text-locall-navy">
+                Votre QR code unique
               </p>
               <img
                 src={qrDataUrl}
                 alt={`QR code vers ${reviewUrl}`}
-                className="mx-auto mt-4 h-52 w-52 bg-white p-2"
+                className="mx-auto mt-3 h-52 w-52 bg-white p-2"
               />
-              <p className="mt-4 text-center text-sm text-slate-700">
-                Ce QR code reste actif à vie, sans aucun frais supplémentaire.
+              <p className="mt-4 text-center text-sm leading-snug text-slate-700">
+                Votre QR Code reste actif à vie !
+              </p>
+              <p className="mt-3 text-center text-sm leading-snug text-slate-700">
+                Aucun frais supplémentaire ne vous
+                <br />
+                sera facturé en cas de changement
+                <br />
+                de QR Code à l’avenir.
               </p>
               <button
                 type="button"
@@ -414,7 +466,7 @@ export function DashboardClient({
                   onClick={() => setShowInterceptInfo(true)}
                   className="mt-3 text-sm font-semibold text-locall-link transition-colors hover:text-locall-orange active:text-locall-orange"
                 >
-                  💡 Important à savoir :
+                  💡 Pour rappel :
                 </button>
               </div>
 
@@ -422,50 +474,62 @@ export function DashboardClient({
                 <h2 className="text-lg font-semibold text-locall-navy">
                   Supports PLV
                 </h2>
-                <p className="mt-1 text-sm text-slate-600">
-                  Templates PDF prêts à imprimer, avec votre QR d’interception déjà
-                  intégré.
-                </p>
-                <div className="mt-3 grid grid-cols-3 items-stretch gap-3">
-                  <PlvCard
-                    compact
-                    title="Chevalet de table"
-                    description="Format A6 / A5 — à poser sur vos tables."
-                    links={[
-                      { href: "/api/plv/chevalet-a6", label: "PDF A6" },
-                      { href: "/api/plv/chevalet-a5", label: "PDF A5" },
-                    ]}
-                  />
-                  <PlvCard
-                    compact
-                    title="Autocollant / sticker comptoir"
-                    description="Format carré ou rond, pour le comptoir."
-                    links={[
-                      { href: "/api/plv/sticker-carre", label: "PDF carré" },
-                      { href: "/api/plv/sticker-rond", label: "PDF rond" },
-                    ]}
-                  />
-                  <PlvCard
-                    compact
-                    title="Affiche A4"
-                    description="Pour la vitrine ou l’accueil."
-                    links={[{ href: "/api/plv/affiche-a4", label: "PDF A4" }]}
-                  />
-                </div>
-                {status === "pending_activation" ? (
-                  <section className="dashboard-banner mt-4 overflow-hidden rounded-2xl border border-locall-navy bg-white p-5 shadow-sm">
-                    <p className="font-semibold text-locall-navy">Commandez vos supports</p>
-                    <div className="mt-3 grid grid-cols-3 items-stretch gap-3">
-                      {PLV_ORDER_LINKS.map((link) => (
-                        <Link
-                          key={link.label}
-                          href={link.href}
-                          className="btn-locall-ghost w-full !justify-start px-3 py-2 text-left text-sm"
-                        >
-                          {link.label}
-                        </Link>
-                      ))}
-                    </div>
+                <section className="dashboard-banner mt-3 overflow-hidden rounded-2xl border border-locall-navy bg-white p-5 shadow-sm">
+                  <p className="font-semibold text-locall-navy">Commandez vos supports</p>
+                  <div className="mt-3 grid grid-cols-3 items-stretch gap-3">
+                    {PLV_ORDER_LINKS.map((link) => (
+                      <Link
+                        key={link.label}
+                        href={link.href}
+                        className="btn-locall-ghost w-full !justify-start px-3 py-2 text-left text-sm"
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+                {status === "pending_activation" || status === "trialing" ? (
+                  <section
+                    id={status === "pending_activation" ? "abonnement" : undefined}
+                    className="card-locall mt-4 scroll-mt-24 p-5"
+                  >
+                    <p className="font-semibold text-locall-navy">
+                      Activation de l’essai
+                    </p>
+                    <p className="mt-1 text-sm text-slate-600">
+                      Vos 14 jours gratuits démarrent ici. Votre Smart QR
+                      s’active tout de suite.
+                    </p>
+                    <button
+                      type="button"
+                      disabled={pending || status === "trialing"}
+                      onClick={() => {
+                        if (status === "trialing") return;
+                        setActivateError(null);
+                        startTransition(async () => {
+                          const result = await activateTrial(restaurantId);
+                          if (!result.ok) {
+                            setActivateError(result.error);
+                            return;
+                          }
+                          setStatus(result.status);
+                          setDaysLeft(result.trialDaysLeft);
+                          router.refresh();
+                        });
+                      }}
+                      className={`mt-4 inline-flex w-full items-center justify-center rounded-full px-4 py-2.5 text-center text-sm font-extrabold tracking-wide text-white shadow-md transition-colors disabled:opacity-100 ${
+                        status === "trialing"
+                          ? "bg-green-600"
+                          : "bg-red-600 hover:bg-red-700"
+                      } ${pending ? "opacity-70" : ""}`}
+                    >
+                      {pending
+                        ? "Activation…"
+                        : "ACTIVER MES 14 JOURS D’ESSAI GRATUITS"}
+                    </button>
+                    {activateError ? (
+                      <p className="mt-2 text-sm text-red-600">{activateError}</p>
+                    ) : null}
                   </section>
                 ) : null}
               </div>
@@ -600,51 +664,48 @@ export function DashboardClient({
           </div>
         </section>
 
-        {status === "pending_activation" || status === "trialing" ? (
-          <section className="card-locall p-5 sm:p-8">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="font-semibold text-locall-navy">
-                  Activation de l’essai
-                </p>
-                <p className="mt-1 text-sm text-slate-600">
-                  Démarre le compteur de 14 jours et ouvre le Smart QR vers la page
-                  d’interception.
-                </p>
-              </div>
-              <button
-                type="button"
-                disabled={pending || status === "trialing"}
-                onClick={() => {
-                  if (status === "trialing") return;
-                  setActivateError(null);
-                  startTransition(async () => {
-                    const result = await activateTrial(restaurantId);
-                    if (!result.ok) {
-                      setActivateError(result.error);
-                      return;
-                    }
-                    setStatus(result.status);
-                    setDaysLeft(result.trialDaysLeft);
-                    router.refresh();
-                  });
-                }}
-                className={`inline-flex shrink-0 items-center justify-center rounded-full px-5 py-2.5 text-base font-extrabold tracking-wide text-white shadow-md transition-colors disabled:opacity-100 ${
-                  status === "trialing"
-                    ? "bg-green-600"
-                    : "bg-red-600 hover:bg-red-700"
-                } ${pending ? "opacity-70" : ""}`}
-              >
-                {pending
-                  ? "Activation…"
-                  : "ACTIVER MES 14 JOURS D’ESSAI GRATUITS"}
+        <section id="tarif" className="scroll-mt-24 space-y-4">
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <span
+              aria-disabled="true"
+              className="cursor-default rounded-full border border-locall-navy bg-locall-navy px-4 py-2 text-sm font-medium text-white"
+            >
+              TARIFS
+            </span>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="card-locall flex flex-col px-4 py-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Indépendants
+              </p>
+              <p className="mt-1 text-xl font-bold text-locall-navy">
+                24,90 € HT / mois
+              </p>
+              <ul className="mt-3 space-y-1 text-sm text-locall-navy">
+                <li>✓ Avis interceptés illimités uniquement dans votre établissement</li>
+                <li>✓ Sans engagement • Résiliable à tout moment</li>
+              </ul>
+              <button type="button" className="btn-locall-cta mt-4 w-full">
+                S’abonner
               </button>
             </div>
-            {activateError ? (
-              <p className="mt-2 text-sm text-red-600">{activateError}</p>
-            ) : null}
-          </section>
-        ) : null}
+            <div className="card-locall flex flex-col px-4 py-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Franchisés
+              </p>
+              <p className="mt-1 text-xl font-bold text-locall-navy">
+                20 € HT / mois
+              </p>
+              <ul className="mt-3 space-y-1 text-sm text-locall-navy">
+                <li>✓ Avis interceptés illimités uniquement dans votre établissement</li>
+                <li>✓ Sans engagement • Résiliable à tout moment</li>
+              </ul>
+              <button type="button" className="btn-locall-cta mt-4 w-full">
+                S’abonner
+              </button>
+            </div>
+          </div>
+        </section>
       </main>
 
       <GooglePlaceSetupModal
@@ -712,40 +773,6 @@ export function DashboardClient({
         </div>
       ) : null}
       <SiteFooter />
-    </div>
-  );
-}
-
-function PlvCard({
-  title,
-  description,
-  links,
-  compact = false,
-}: {
-  title: string;
-  description: string;
-  links: { href: string; label: string }[];
-  compact?: boolean;
-}) {
-  return (
-    <div className={`card-locall flex h-full flex-col ${compact ? "p-3" : "p-5"}`}>
-      <h4 className={`font-semibold text-locall-navy ${compact ? "text-sm leading-snug" : ""}`}>
-        {title}
-      </h4>
-      <p className={`mt-1 flex-1 text-slate-600 ${compact ? "text-xs leading-snug" : "text-sm"}`}>
-        {description}
-      </p>
-      <div className={`flex flex-wrap gap-1.5 ${compact ? "mt-3" : "mt-4 gap-2"}`}>
-        {links.map((link) => (
-          <a
-            key={link.href}
-            href={link.href}
-            className={`btn-locall-ghost ${compact ? "px-2.5 py-1 text-xs" : ""}`}
-          >
-            {link.label}
-          </a>
-        ))}
-      </div>
     </div>
   );
 }

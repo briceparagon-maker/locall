@@ -17,7 +17,7 @@ export function InscriptionIntro() {
       <header ref={headerRef} className="space-y-3">
         <div className="mx-auto flex max-w-xl flex-col items-center rounded-2xl border-2 border-emerald-800 px-4 py-4 text-center">
           <h1 className="text-2xl font-bold tracking-tight text-locall-navy sm:text-3xl">
-            RÉCAPITULATIF
+            RÉCAPITULATIF + TARIFS
           </h1>
         </div>
         {open ? (
@@ -181,8 +181,8 @@ export function InscriptionIntro() {
 
           <footer className="space-y-2 border-t border-slate-200 pt-4">
             <p className="text-xs text-gray-500">
-              *Concerne l’ensemble des avis déposés via le Smart QR Code dans
-              votre établissement.
+              *Concerne l’ensemble des avis déposés via le Smart QR Code
+              uniquement dans votre établissement.
             </p>
             <p className="text-xs text-gray-500">
               **Plus vous disposez de supports Smart QR Code (tables, comptoir,
