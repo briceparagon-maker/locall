@@ -8,7 +8,7 @@ export type AdminRestaurant = {
   id: number;
   name: string;
   slug: string | null;
-  type: "Indépendant" | "Franchisé" | "Franchiseur" | "—";
+  type: "Indépendant" | "Franchisé" | "Franchiseur" | "Succursale" | "Agence" | "—";
   qrActive: boolean;
   trialDaysLeft: number | null;
   seoEnabled: boolean;
@@ -34,7 +34,7 @@ export function AdminDashboard({
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Metric label="Clients en essai" value={String(metrics.trialing)} hint="Essai en cours" />
         <Metric label="Abonnés 24,90 €" value={String(metrics.subscribers2490)} hint="Indépendants actifs" />
-        <Metric label="Abonnés 20 €" value={String(metrics.subscribers20)} hint="Franchisés actifs" />
+        <Metric label="Abonnés 20 €" value={String(metrics.subscribers20)} hint="Franchisés, succursales et agences" />
         <Metric label="Total avis interceptés" value={String(metrics.intercepted)} hint="Avis 1 à 3 étoiles" />
       </section>
 

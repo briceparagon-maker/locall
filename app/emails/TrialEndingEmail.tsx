@@ -51,7 +51,7 @@ export function TrialEndingEmail({
           <strong>24,90 € HT / mois</strong> pour les indépendants
         </li>
         <li>
-          <strong>20 € HT / mois</strong> pour les franchisés
+          <strong>20 € HT / mois</strong> pour les franchisés, succursales et agences
         </li>
       </ul>
       <div style={{ marginTop: "24px" }}>

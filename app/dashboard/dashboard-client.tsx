@@ -101,36 +101,30 @@ function StatusLink({
   activated,
   activeLabel,
   inactiveLabel,
-  greenWhenActive = false,
-  orange = false,
 }: {
   href: string;
   label: ReactNode;
   activated: boolean;
   activeLabel: string;
   inactiveLabel: string;
-  greenWhenActive?: boolean;
-  orange?: boolean;
 }) {
-  const greenBackground = greenWhenActive && activated;
   return (
     <a
       href={href}
       className={`inline-flex items-center gap-2 whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium text-white transition-colors ${
-        greenBackground
+        activated
           ? "border-[#14915a] bg-[#14915a] hover:border-[#107a4c] hover:bg-[#107a4c]"
-          : orange
-            ? "border-locall-orange-hover bg-locall-orange-hover hover:border-locall-orange hover:bg-locall-orange"
-            : "border-locall-navy bg-locall-navy hover:border-locall-orange hover:bg-locall-orange"
+          : "border-locall-navy bg-locall-navy hover:border-locall-navy hover:bg-locall-navy"
       }`}
     >
       <span className="inline-flex items-center gap-1">{label}</span>
       <span
-        className="rounded-full px-2 py-0.5 text-sm font-semibold leading-none text-white"
+        className="rounded-full px-2 py-0.5 text-sm font-semibold leading-none"
         style={{
           backgroundColor: activated ? "#14915a" : "#dc2626",
           color: "#ffffff",
-          boxShadow: greenBackground ? "0 0 0 2px #ffffff" : undefined,
+          boxShadow: activated ? "0 0 0 2px #ffffff" : "0 0 0 2px #dc2626",
+          border: activated ? "2px solid #14915a" : "2px solid #dc2626",
         }}
       >
         {activated ? activeLabel : inactiveLabel}
@@ -307,8 +301,6 @@ export function DashboardClient({
             activated={googleFicheActive}
             activeLabel="Activés"
             inactiveLabel="Non activés"
-            greenWhenActive
-            orange
           />
           <StatusLink
             href="#lien-facebook"
@@ -321,8 +313,6 @@ export function DashboardClient({
             activated={facebookFicheActive}
             activeLabel="Activés"
             inactiveLabel="Non activés"
-            greenWhenActive
-            orange
           />
           <StatusLink
             href="#abonnement"
@@ -330,7 +320,6 @@ export function DashboardClient({
             activated={trialActivated}
             activeLabel="Activés"
             inactiveLabel="Non activés"
-            greenWhenActive
           />
           <StatusLink
             href="#tarif"
@@ -338,7 +327,6 @@ export function DashboardClient({
             activated={status === "active"}
             activeLabel="Activé"
             inactiveLabel="Non activé"
-            orange
           />
         </div>
       </div>
@@ -781,7 +769,7 @@ export function DashboardClient({
             </div>
             <div className="card-locall flex flex-col px-4 py-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Franchisés
+                Franchisés / Succursales / Agences
               </p>
               <p className="mt-1 text-xl font-bold text-locall-navy">
                 20 € HT / mois

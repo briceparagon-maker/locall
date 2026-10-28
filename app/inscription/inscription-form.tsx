@@ -6,7 +6,7 @@ import { GoogleReviewLinkGuide } from "@/components/google-review-link-guide";
 import { GoogleSeoOptionModal } from "@/components/google-seo-option-modal";
 import { registerTrial } from "./actions";
 
-const STATUSES = ["Indépendant", "Franchisé", "Franchiseur"] as const;
+const STATUSES = ["Indépendant", "Franchisé", "Franchiseur", "Succursale", "Agence"] as const;
 
 const ACTIVITIES = [
   "Agences de voyages / tourisme",
@@ -66,6 +66,7 @@ const ACTIVITIES = [
   "Téléphonie / informatique",
   "Travaux / bâtiment",
   "Vélos / deux-roues",
+  "Vitrage automobile",
 ];
 
 export function InscriptionForm() {
@@ -74,6 +75,7 @@ export function InscriptionForm() {
   const [showSeoModal, setShowSeoModal] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const [activityChoice, setActivityChoice] = useState("");
   const [pending, startTransition] = useTransition();
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -117,21 +119,37 @@ export function InscriptionForm() {
           </div>
         </fieldset>
 
-        <label className="label-locall">
-          Activité / Métier
-          <input
-            name="activity"
-            required
-            list="locall-activities"
-            placeholder="Restaurants, Coiffure / salons de coiffure…"
-            className="input-locall"
-          />
-          <datalist id="locall-activities">
-            {ACTIVITIES.map((item) => (
-              <option key={item} value={item} />
-            ))}
-          </datalist>
-        </label>
+        <div className="space-y-2">
+          <label className="label-locall">
+            Activité / Métier
+            <select
+              name={activityChoice === "Autres" ? undefined : "activity"}
+              required
+              value={activityChoice}
+              onChange={(event) => setActivityChoice(event.target.value)}
+              className="input-locall"
+            >
+              <option value="">Choisissez votre activité</option>
+              {ACTIVITIES.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+              <option value="Autres">Autres</option>
+            </select>
+          </label>
+          {activityChoice === "Autres" ? (
+            <label className="label-locall">
+              Précisez votre activité
+              <input
+                name="activity"
+                required
+                placeholder="Indiquez votre activité"
+                className="input-locall"
+              />
+            </label>
+          ) : null}
+        </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="label-locall">
@@ -217,8 +235,37 @@ export function InscriptionForm() {
           </label>
         </div>
 
-        <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-          <div className="flex flex-wrap items-start gap-x-4 gap-y-2">
+        <div className="space-y-3">
+          <div>
+            <label className="label-locall">
+              URL de votre fiche Google Business / Google Maps (ou Lien d’avis
+              Google) ( ou l’appliquer dans votre tableau de bord )
+              <input
+                name="googlePlaceUrl"
+                type="url"
+                required={seoEnabled}
+                placeholder="https://g.page/r/... ou https://maps.google.com/..."
+                className="input-locall"
+              />
+            </label>
+            <GoogleReviewLinkGuide />
+          </div>
+          <label className="label-locall">
+            URL de votre page avis Facebook (facultatif) ( ou l’appliquer dans
+            votre tableau de bord )
+            <input
+              name="facebookReviewUrl"
+              type="url"
+              placeholder="https://www.facebook.com/…"
+              className="input-locall"
+            />
+          </label>
+          <p className="text-sm text-locall-navy">
+            Google, Facebook, les deux, un, ou aucun : l’inscription reste
+            possible. Vous pourrez compléter ces liens plus tard dans votre
+            tableau de bord.
+          </p>
+          <div className="flex flex-wrap items-start gap-x-4 gap-y-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
             <label className="flex min-w-0 flex-1 cursor-pointer items-start gap-3 text-sm text-locall-navy">
               <input
                 type="checkbox"
@@ -227,10 +274,10 @@ export function InscriptionForm() {
                 className="mt-1 accent-locall-orange"
               />
               <span>
-                Activer maintenant (ou plus tard dans votre tableau de bord) la
-                réponse automatique SEO pour vos avis 4/5 et 5/5 Google et/ou
-                Facebook avec des mots-clés spécifiques à votre établissement
-                (Option offerte).
+                (option offerte) Activer maintenant (ou plus tard dans votre
+                tableau de bord) la réponse automatique SEO pour vos avis 4/5 et
+                5/5 Google et/ou Facebook avec des mots-clés spécifiques à votre
+                établissement
               </span>
             </label>
             <button
@@ -241,38 +288,6 @@ export function InscriptionForm() {
               En savoir plus
             </button>
           </div>
-          {seoEnabled ? (
-            <>
-              <div>
-                <label className="label-locall">
-                  URL de votre fiche Google Business / Google Maps (ou Lien
-                  d’avis Google)
-                  <input
-                    name="googlePlaceUrl"
-                    type="url"
-                    required={seoEnabled}
-                    placeholder="https://g.page/r/... ou https://maps.google.com/..."
-                    className="input-locall"
-                  />
-                </label>
-                <GoogleReviewLinkGuide />
-              </div>
-              <label className="label-locall">
-                URL de votre page avis Facebook (facultatif)
-                <input
-                  name="facebookReviewUrl"
-                  type="url"
-                  placeholder="https://www.facebook.com/…"
-                  className="input-locall"
-                />
-              </label>
-            </>
-          ) : null}
-          <p className="text-xs text-locall-navy">
-            Google, Facebook, les deux ou aucun : l’inscription reste possible.
-            Vous pourrez compléter ces liens plus tard dans votre tableau de
-            bord.
-          </p>
         </div>
 
         <div className="flex items-start gap-3 text-sm text-locall-navy">

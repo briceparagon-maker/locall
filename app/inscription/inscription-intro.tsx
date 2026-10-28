@@ -150,7 +150,7 @@ export function InscriptionIntro() {
               </div>
               <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                  Franchisés
+                  Franchisés / Succursales / Agences
                 </p>
                 <p className="mt-1 text-xl font-bold text-locall-navy">
                   20 € HT

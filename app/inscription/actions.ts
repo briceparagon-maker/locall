@@ -8,7 +8,7 @@ import { isEmail } from "@/lib/app-url";
 import { sendWelcomeEmail } from "@/lib/welcome-email";
 import { db } from "@/src/prisma/db";
 
-const STATUSES = new Set(["Franchiseur", "Franchisé", "Indépendant"]);
+const STATUSES = new Set(["Franchiseur", "Franchisé", "Indépendant", "Succursale", "Agence"]);
 
 function text(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
@@ -56,7 +56,9 @@ export async function registerTrial(formData: FormData) {
   if (!STATUSES.has(ownerStatus)) {
     return { ok: false as const, error: "Choisissez un statut (franchiseur, franchisé ou indépendant)." };
   }
-  if (!activity) return { ok: false as const, error: "Indiquez votre activité." };
+  if (!activity || activity === "Autres") {
+    return { ok: false as const, error: "Indiquez votre activité." };
+  }
   if (!ownerFirstName || !ownerLastName) {
     return { ok: false as const, error: "Indiquez votre prénom et votre nom." };
   }
@@ -75,6 +77,13 @@ export async function registerTrial(formData: FormData) {
     return {
       ok: false as const,
       error: "Veuillez accepter les CGU et la Politique de confidentialité.",
+    };
+  }
+  if (googlePlaceUrl && !isHttpUrl(googlePlaceUrl)) {
+    return {
+      ok: false as const,
+      error:
+        "Indiquez l’URL de votre fiche Google Business, Google Maps ou lien d’avis.",
     };
   }
   if (autoRespondGooglePositive && !isHttpUrl(googlePlaceUrl)) {
@@ -106,8 +115,8 @@ export async function registerTrial(formData: FormData) {
     ownerEmail: email,
     slug,
     autoRespondGooglePositive,
-    googlePlaceUrl: autoRespondGooglePositive ? googlePlaceUrl : null,
-    googleReviewUrl: autoRespondGooglePositive ? googlePlaceUrl : null,
+    googlePlaceUrl: isHttpUrl(googlePlaceUrl) ? googlePlaceUrl : null,
+    googleReviewUrl: isHttpUrl(googlePlaceUrl) ? googlePlaceUrl : null,
     facebookReviewUrl: facebookReviewUrl || null,
     ownerStatus,
     ownerFirstName,

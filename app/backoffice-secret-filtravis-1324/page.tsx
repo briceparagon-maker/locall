@@ -48,7 +48,9 @@ export default async function AdminPage() {
     (row) => row.subscriptionStatus === "active" && row.type === "Indépendant",
   ).length;
   const subscribers20 = directory.filter(
-    (row) => row.subscriptionStatus === "active" && row.type === "Franchisé",
+    (row) =>
+      row.subscriptionStatus === "active" &&
+      (row.type === "Franchisé" || row.type === "Succursale" || row.type === "Agence"),
   ).length;
 
   return (
@@ -73,5 +75,7 @@ function establishmentType(ownerStatus: string | null) {
   if (value.startsWith("independant")) return "Indépendant" as const;
   if (value.startsWith("franchiseur")) return "Franchiseur" as const;
   if (value.startsWith("franchise")) return "Franchisé" as const;
+  if (value.startsWith("succursale")) return "Succursale" as const;
+  if (value.startsWith("agence")) return "Agence" as const;
   return "—" as const;
 }
