@@ -186,6 +186,7 @@ export function DashboardClient({
   const [optionEnabled, setOptionEnabled] = useState(autoRespondGooglePositive);
   const [showOptionModal, setShowOptionModal] = useState(false);
   const [showInterceptInfo, setShowInterceptInfo] = useState(false);
+  const [showQrInfo, setShowQrInfo] = useState(false);
   const [optionError, setOptionError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [showPlaceSetup, setShowPlaceSetup] = useState(false);
@@ -491,8 +492,8 @@ export function DashboardClient({
             Votre Smart QR Code
           </h2>
 
-          <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-            <div className="card-locall flex flex-col p-5">
+          <div className="grid items-stretch gap-3 lg:grid-cols-3">
+            <div className="card-locall flex h-full flex-col p-5">
               <p className="text-center text-sm font-semibold text-locall-navy">
                 Votre QR code unique
               </p>
@@ -501,16 +502,13 @@ export function DashboardClient({
                 alt={`QR code vers ${reviewUrl}`}
                 className="mx-auto mt-3 h-52 w-52 bg-white p-2"
               />
-              <p className="mt-4 text-center text-sm leading-snug text-slate-700">
-                Votre QR Code reste actif à vie !
-              </p>
-              <p className="mt-3 text-center text-sm leading-snug text-slate-700">
-                Aucun frais supplémentaire ne vous
-                <br />
-                sera facturé en cas de changement
-                <br />
-                de QR Code à l’avenir.
-              </p>
+              <button
+                type="button"
+                onClick={() => setShowQrInfo(true)}
+                className="link-locall mx-auto mt-4 block text-center text-sm"
+              >
+                En savoir plus
+              </button>
               <button
                 type="button"
                 onClick={downloadQr}
@@ -520,226 +518,233 @@ export function DashboardClient({
               </button>
             </div>
 
-            <div className="flex flex-col gap-4">
-              <div className="card-locall p-5">
-                <p className="font-semibold text-locall-navy">
-                  Lien d’interception FILTRAVIS pour vos avis 1/5-2/5-3/5★
+            <div className="card-locall flex h-full min-h-0 flex-col overflow-hidden p-4">
+              <p className="text-center font-semibold text-locall-navy">
+                Lien d’interception FILTRAVIS
+              </p>
+              <p className="text-center font-semibold text-locall-navy">pour vos avis</p>
+              <p className="mt-3 text-center font-semibold text-locall-navy">1/5-2/5-3/5★</p>
+              <p className="mt-3 break-all rounded-xl bg-slate-50 px-3 py-2 text-sm text-locall-navy">
+                {reviewUrl}
+              </p>
+              <p className="mt-3 text-sm font-semibold text-locall-navy">
+                💡 Pour rappel :
+              </p>
+              <div className="mt-2 min-h-0 flex-1 space-y-2 overflow-hidden text-sm leading-5 text-slate-700">
+                <p>
+                  <strong className="text-locall-navy">Protection à 100 % :</strong>{" "}
+                  les avis 1/5, 2/5 et 3/5 sont interceptés dans votre
+                  établissement, avant d’atteindre votre fiche Google.
                 </p>
-                <p className="mt-2 break-all rounded-xl bg-slate-50 px-3 py-2 text-sm text-locall-navy">
-                  {reviewUrl}
+                <p>
+                  <strong className="text-locall-navy">Maximisez vos résultats :</strong>{" "}
+                  Plus vous disposez de présentoirs et de stickers QR codes
+                  (sur vos tables, au comptoir ou en vitrine), plus vos clients
+                  seront incités à vous donner leur avis dans votre
+                  établissement.
                 </p>
-                <button
-                  type="button"
-                  onClick={() => setShowInterceptInfo(true)}
-                  className="mt-3 text-sm font-semibold text-locall-link transition-colors hover:text-locall-orange active:text-locall-orange"
-                >
-                  💡 Pour rappel :
-                </button>
               </div>
-
-              <div>
-                <h2 className="text-lg font-semibold text-locall-navy">
-                  Supports PLV
-                </h2>
-                <section className="dashboard-banner mt-3 overflow-hidden rounded-2xl border border-locall-navy bg-white p-5 shadow-sm">
-                  <p className="font-semibold text-locall-navy">Commandez vos supports</p>
-                  <div className="mt-3 grid grid-cols-3 items-stretch gap-3">
-                    {PLV_ORDER_LINKS.map((link) =>
-                      link.active ? (
-                        <Link
-                          key={link.label}
-                          href={link.href}
-                          className="btn-locall-ghost w-full !justify-start px-3 py-2 text-left text-sm"
-                        >
-                          {link.label}
-                        </Link>
-                      ) : (
-                        <span
-                          key={link.label}
-                          aria-disabled="true"
-                          className="btn-locall-ghost pointer-events-none w-full cursor-default !justify-start px-3 py-2 text-left text-sm"
-                        >
-                          {link.label}
-                        </span>
-                      ),
-                    )}
-                  </div>
-                </section>
-                {status === "pending_activation" || status === "trialing" ? (
-                  <section
-                    id={status === "pending_activation" ? "abonnement" : undefined}
-                    className="card-locall mt-4 scroll-mt-24 p-5"
-                  >
-                    <p className="font-semibold text-locall-navy">
-                      Activation de l’essai
-                    </p>
-                    <p className="mt-1 text-sm text-slate-600">
-                      Vos 14 jours gratuits démarrent ici. Votre Smart QR
-                      s’active tout de suite.
-                    </p>
-                    <button
-                      type="button"
-                      disabled={pending || status === "trialing"}
-                      onClick={() => {
-                        if (status === "trialing") return;
-                        setActivateError(null);
-                        startTransition(async () => {
-                          const result = await activateTrial(restaurantId);
-                          if (!result.ok) {
-                            setActivateError(result.error);
-                            return;
-                          }
-                          setStatus(result.status);
-                          setDaysLeft(result.trialDaysLeft);
-                          router.refresh();
-                        });
-                      }}
-                      className={`mt-4 inline-flex w-full items-center justify-center rounded-full px-4 py-2.5 text-center text-sm font-extrabold tracking-wide text-white shadow-md transition-colors disabled:opacity-100 ${
-                        status === "trialing"
-                          ? "bg-green-600"
-                          : "bg-red-600 hover:bg-red-700"
-                      } ${pending ? "opacity-70" : ""}`}
-                    >
-                      {pending
-                        ? "Activation…"
-                        : "ACTIVER MES 14 JOURS D’ESSAI GRATUITS"}
-                    </button>
-                    {activateError ? (
-                      <p className="mt-2 text-sm text-red-600">{activateError}</p>
-                    ) : null}
-                  </section>
-                ) : null}
-              </div>
+              <button
+                type="button"
+                onClick={() => setShowInterceptInfo(true)}
+                className="link-locall mt-auto shrink-0 pt-3 text-left text-sm"
+              >
+                En savoir plus
+              </button>
             </div>
+
+            <section className="dashboard-banner flex h-full flex-col overflow-hidden rounded-2xl border border-locall-navy bg-white p-4 shadow-sm">
+              <p className="text-center font-semibold text-locall-navy">Supports PLV</p>
+              <p className="mt-1 text-center font-semibold text-locall-navy">Commandez vos supports</p>
+              <div className="mt-3 flex flex-col gap-2">
+                {PLV_ORDER_LINKS.map((link) =>
+                  link.active ? (
+                    <Link
+                      key={link.label}
+                      href={link.href}
+                      className="btn-locall-ghost w-full !justify-start px-3 py-2 text-left text-sm"
+                    >
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <span
+                      key={link.label}
+                      aria-disabled="true"
+                      className="btn-locall-ghost pointer-events-none w-full cursor-default !justify-start px-3 py-2 text-left text-sm"
+                    >
+                      {link.label}
+                    </span>
+                  ),
+                )}
+              </div>
+            </section>
           </div>
 
           <div className="card-locall p-5">
-                <p className="font-semibold text-locall-navy">
-                  Paramètres Google pour vos avis 4/5 et 5/5 Google (Option
-                  offerte)
-                </p>
-                <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
-                  <p className="font-medium text-slate-900">
-                    Réponse automatique SEO
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setShowOptionModal(true)}
-                    className="link-locall text-sm"
-                  >
-                    En savoir plus
-                  </button>
-                </div>
-                <div className="mt-2 flex items-center gap-4">
-                  <p className="text-sm text-slate-500">
-                    {optionEnabled
-                      ? "FILTRAVIS publiera des remerciements SEO sur vos avis Google 4★ et 5★."
-                      : "Option désactivée. Activez-la pour laisser l’IA répondre à vos avis positifs."}
-                  </p>
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={optionEnabled}
-                    aria-label="Réponse automatique SEO pour vos avis 4/5 et 5/5 Google"
-                    disabled={pending}
-                    onClick={onToggleOption}
-                    className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
-                      optionEnabled ? "bg-locall-success" : "bg-slate-300"
-                    } ${pending ? "opacity-60" : ""}`}
-                  >
-                    <span
-                      className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform ${
-                        optionEnabled ? "translate-x-5" : "translate-x-0.5"
-                      }`}
-                    />
-                  </button>
-                </div>
-                {optionError ? (
-                  <p className="mt-2 text-sm text-red-600">{optionError}</p>
-                ) : null}
-                <form
-                  className="mt-3 space-y-3"
-                  onSubmit={(event) => {
-                    event.preventDefault();
-                    setPositiveReviewError(null);
-                    setPositiveReviewSaved(false);
-                    startTransition(async () => {
-                      const result = await saveReviewDestinations(
-                        restaurantId,
-                        googleDestUrl,
-                        facebookDestUrl,
-                      );
-                      if (!result.ok) {
-                        setPositiveReviewError(result.error);
-                        return;
-                      }
-                      setSavedGooglePlaceUrl(result.googleUrl);
-                      setGoogleDestUrl(result.googleUrl);
-                      setFacebookDestUrl(result.facebookUrl);
-                      setSavedFacebookUrl(result.facebookUrl);
-                      setPositiveReviewSaved(true);
-                      window.setTimeout(
-                        () => setPositiveReviewSaved(false),
-                        2500,
-                      );
-                    });
-                  }}
-                >
-                  <p className="text-sm text-slate-600">
-                    Renseignez un lien, les deux, ou un seul. Si les deux sont
-                    remplis, le client verra deux boutons après une note 4/5
-                    ou 5/5. Le QR FILTRAVIS ne change pas.
-                  </p>
-                  <GoogleReviewLinkGuide />
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <label
-                      id="lien-google"
-                      className="label-locall scroll-mt-24"
-                    >
-                      Fiche Google Maps
-                      <input
-                        type="url"
-                        value={googleDestUrl}
-                        onChange={(event) => {
-                          setGoogleDestUrl(event.target.value);
-                          setPositiveReviewSaved(false);
-                        }}
-                        placeholder="https://g.page/… ou https://maps.google.com/…"
-                        className="input-locall"
-                      />
-                    </label>
-                    <label
-                      id="lien-facebook"
-                      className="label-locall scroll-mt-24"
-                    >
-                      Page avis Facebook
-                      <input
-                        type="url"
-                        value={facebookDestUrl}
-                        onChange={(event) => {
-                          setFacebookDestUrl(event.target.value);
-                          setPositiveReviewSaved(false);
-                        }}
-                        placeholder="https://www.facebook.com/…"
-                        className="input-locall"
-                      />
-                    </label>
-                  </div>
-                  {positiveReviewError ? (
-                    <p className="text-sm text-red-600">{positiveReviewError}</p>
-                  ) : null}
-                  {positiveReviewSaved ? (
-                    <p className="text-sm text-emerald-700">Liens enregistrés.</p>
-                  ) : null}
-                  <button
-                    type="submit"
-                    disabled={pending}
-                    className="btn-locall-cta w-full sm:w-auto"
-                  >
-                    {pending ? "Enregistrement…" : "Enregistrer ces liens"}
-                  </button>
-                </form>
+            <p className="font-semibold text-locall-navy">
+              Renseignez un lien, les deux, ou un seul. Si les deux sont
+              remplis, le client verra deux boutons après une note 4/5 ou 5/5.
+              Le QR FILTRAVIS ne change pas.
+            </p>
+            <form
+              className="mt-3 space-y-3"
+              onSubmit={(event) => {
+                event.preventDefault();
+                setPositiveReviewError(null);
+                setPositiveReviewSaved(false);
+                startTransition(async () => {
+                  const result = await saveReviewDestinations(
+                    restaurantId,
+                    googleDestUrl,
+                    facebookDestUrl,
+                  );
+                  if (!result.ok) {
+                    setPositiveReviewError(result.error);
+                    return;
+                  }
+                  setSavedGooglePlaceUrl(result.googleUrl);
+                  setGoogleDestUrl(result.googleUrl);
+                  setFacebookDestUrl(result.facebookUrl);
+                  setSavedFacebookUrl(result.facebookUrl);
+                  setPositiveReviewSaved(true);
+                  window.setTimeout(() => setPositiveReviewSaved(false), 2500);
+                });
+              }}
+            >
+              <GoogleReviewLinkGuide />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <label id="lien-google" className="label-locall scroll-mt-24">
+                  Fiche Google Maps
+                  <input
+                    type="url"
+                    value={googleDestUrl}
+                    onChange={(event) => {
+                      setGoogleDestUrl(event.target.value);
+                      setPositiveReviewSaved(false);
+                    }}
+                    placeholder="https://g.page/… ou https://maps.google.com/…"
+                    className="input-locall"
+                  />
+                </label>
+                <label id="lien-facebook" className="label-locall scroll-mt-24">
+                  Page avis Facebook
+                  <input
+                    type="url"
+                    value={facebookDestUrl}
+                    onChange={(event) => {
+                      setFacebookDestUrl(event.target.value);
+                      setPositiveReviewSaved(false);
+                    }}
+                    placeholder="https://www.facebook.com/…"
+                    className="input-locall"
+                  />
+                </label>
+              </div>
+              {positiveReviewError ? (
+                <p className="text-sm text-red-600">{positiveReviewError}</p>
+              ) : null}
+              {positiveReviewSaved ? (
+                <p className="text-sm text-emerald-700">Liens enregistrés.</p>
+              ) : null}
+              <button
+                type="submit"
+                disabled={pending}
+                className={`inline-flex w-full items-center justify-center rounded-full px-4 py-2.5 text-sm font-semibold text-white transition-colors sm:w-auto ${
+                  optionEnabled
+                    ? "bg-locall-success hover:bg-emerald-600"
+                    : "bg-red-600 hover:bg-red-700"
+                } ${pending ? "opacity-70" : ""}`}
+              >
+                {pending ? "Enregistrement…" : "Enregistrer mes liens"}
+              </button>
+            </form>
           </div>
+
+          <div className="card-locall p-5">
+            <p className="font-semibold text-locall-navy">
+              Paramètres Google pour vos avis 4/5 et 5/5 Google (Option offerte)
+            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
+              <p className="font-medium text-slate-900">Réponse automatique SEO</p>
+              <button
+                type="button"
+                onClick={() => setShowOptionModal(true)}
+                className="link-locall text-sm"
+              >
+                En savoir plus
+              </button>
+            </div>
+            <div className="mt-2 flex items-center gap-4">
+              <p className="text-sm text-slate-500">
+                {optionEnabled
+                  ? "FILTRAVIS publiera des remerciements SEO sur vos avis Google 4★ et 5★."
+                  : "Option désactivée. Activez-la pour laisser l’IA répondre à vos avis positifs."}
+              </p>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={optionEnabled}
+                aria-label="Réponse automatique SEO pour vos avis 4/5 et 5/5 Google"
+                disabled={pending}
+                onClick={onToggleOption}
+                className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${
+                  optionEnabled ? "bg-locall-success" : "bg-red-600"
+                } ${pending ? "opacity-60" : ""}`}
+              >
+                <span
+                  className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform ${
+                    optionEnabled ? "translate-x-5" : "translate-x-0.5"
+                  }`}
+                />
+              </button>
+            </div>
+            {optionError ? (
+              <p className="mt-2 text-sm text-red-600">{optionError}</p>
+            ) : null}
+          </div>
+
+          {status === "pending_activation" || status === "trialing" ? (
+            <section
+              id={status === "pending_activation" ? "abonnement" : undefined}
+              className="card-locall scroll-mt-24 p-5"
+            >
+              <p className="font-semibold text-locall-navy">Activation de l’essai</p>
+              <p className="mt-1 text-sm text-slate-600">
+                Vos 14 jours gratuits démarrent ici. Votre Smart QR s’active
+                tout de suite.
+              </p>
+              <button
+                type="button"
+                disabled={pending || status === "trialing"}
+                onClick={() => {
+                  if (status === "trialing") return;
+                  setActivateError(null);
+                  startTransition(async () => {
+                    const result = await activateTrial(restaurantId);
+                    if (!result.ok) {
+                      setActivateError(result.error);
+                      return;
+                    }
+                    setStatus(result.status);
+                    setDaysLeft(result.trialDaysLeft);
+                    router.refresh();
+                  });
+                }}
+                className={`mt-4 inline-flex w-full items-center justify-center rounded-full px-4 py-2.5 text-center text-sm font-extrabold tracking-wide text-white shadow-md transition-colors disabled:opacity-100 ${
+                  status === "trialing"
+                    ? "bg-green-600"
+                    : "bg-red-600 hover:bg-red-700"
+                } ${pending ? "opacity-70" : ""}`}
+              >
+                {pending
+                  ? "Activation…"
+                  : "ACTIVER MES 14 JOURS D’ESSAI GRATUITS"}
+              </button>
+              {activateError ? (
+                <p className="mt-2 text-sm text-red-600">{activateError}</p>
+              ) : null}
+            </section>
+          ) : null}
         </section>
 
         <section id="tarif" className="scroll-mt-24 space-y-4">
@@ -817,6 +822,39 @@ export function DashboardClient({
         open={showInterceptInfo}
         onClose={() => setShowInterceptInfo(false)}
       />
+
+      {showQrInfo ? (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center"
+          onClick={() => setShowQrInfo(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="qr-info-title"
+            className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h3
+              id="qr-info-title"
+              className="text-lg font-semibold text-locall-navy"
+            >
+              Votre QR Code reste actif à vie !
+            </h3>
+            <p className="mt-3 text-sm leading-6 text-slate-700">
+              Aucun frais supplémentaire ne vous sera facturé en cas de
+              changement de QR Code à l’avenir.
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowQrInfo(false)}
+              className="btn-locall-ghost mt-6"
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       {selected ? (
         <div

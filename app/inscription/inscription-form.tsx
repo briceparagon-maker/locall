@@ -239,7 +239,7 @@ export function InscriptionForm() {
           <div>
             <label className="label-locall">
               URL de votre fiche Google Business / Google Maps (ou Lien d’avis
-              Google) ( ou l’appliquer dans votre tableau de bord )
+              Google)
               <input
                 name="googlePlaceUrl"
                 type="url"
@@ -251,8 +251,7 @@ export function InscriptionForm() {
             <GoogleReviewLinkGuide />
           </div>
           <label className="label-locall">
-            URL de votre page avis Facebook (facultatif) ( ou l’appliquer dans
-            votre tableau de bord )
+            URL de votre page avis Facebook (facultatif)
             <input
               name="facebookReviewUrl"
               type="url"
@@ -261,12 +260,12 @@ export function InscriptionForm() {
             />
           </label>
           <p className="text-sm text-locall-navy">
-            Google, Facebook, les deux, un, ou aucun : l’inscription reste
-            possible. Vous pourrez compléter ces liens plus tard dans votre
-            tableau de bord.
+            <span aria-hidden="true">💡 </span>
+            Google, Facebook, l’un ou l’autre, ou aucun : vous pourrez compléter
+            ou modifier ces liens à tout moment dans votre tableau de bord.
           </p>
-          <div className="flex flex-wrap items-start gap-x-4 gap-y-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-            <label className="flex min-w-0 flex-1 cursor-pointer items-start gap-3 text-sm text-locall-navy">
+          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <label className="flex cursor-pointer items-start gap-3 text-sm text-locall-navy">
               <input
                 type="checkbox"
                 checked={seoEnabled}
@@ -274,16 +273,15 @@ export function InscriptionForm() {
                 className="mt-1 accent-locall-orange"
               />
               <span>
-                (option offerte) Activer maintenant (ou plus tard dans votre
-                tableau de bord) la réponse automatique SEO pour vos avis 4/5 et
-                5/5 Google et/ou Facebook avec des mots-clés spécifiques à votre
-                établissement
+                Activer maintenant (ou plus tard) la réponse automatique SEO
+                pour vos avis 4/5 et 5/5 Google et/ou Facebook avec des
+                mots-clés spécifiques à votre établissement (Option offerte).
               </span>
             </label>
             <button
               type="button"
               onClick={() => setShowSeoModal(true)}
-              className="link-locall shrink-0 text-sm underline"
+              className="link-locall ml-7 mt-1 block text-sm underline"
             >
               En savoir plus
             </button>

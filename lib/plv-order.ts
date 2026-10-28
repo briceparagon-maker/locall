@@ -8,8 +8,8 @@ export const PLV_ORDER_LINKS = [
   },
   {
     href: "/contact",
-    label: "📦 Auprès d'autres fournisseurs",
+    label: "📦 voir nos supports",
     external: false,
-    active: true,
+    active: false,
   },
 ] as const;
