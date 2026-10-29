@@ -26,6 +26,7 @@ ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS "postalCode" TEXT;
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS department TEXT;
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS phone TEXT;
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS "passwordHash" TEXT;
+ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS password_reset_nonce TEXT;
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS "trialEndsAt" TIMESTAMPTZ;
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS subscription_status TEXT NOT NULL DEFAULT 'pending_activation';
 ALTER TABLE "Restaurant" ADD COLUMN IF NOT EXISTS stripe_customer_id TEXT;
@@ -63,58 +64,20 @@ ALTER TABLE "Review" ADD COLUMN IF NOT EXISTS "ownerNotified" BOOLEAN NOT NULL D
 
 CREATE INDEX IF NOT EXISTS "Review_restaurantId_idx" ON "Review" ("restaurantId");
 
--- RLS Restaurant + Review. service_role et le table owner (Prisma via
--- DIRECT_URL) contournent la RLS — pas de FORCE ROW LEVEL SECURITY.
+-- RLS : refus par défaut pour anon et authenticated.
+-- Le propriétaire de table utilisé par Prisma n'est pas modifié.
+-- FORCE ROW LEVEL SECURITY n'est pas activé.
 ALTER TABLE public."Restaurant" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public."Review" ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Accès Établissement réservé aux propriétaires" ON public."Restaurant";
 DROP POLICY IF EXISTS "Accès Établissement réservé au propriétaire" ON public."Restaurant";
-CREATE POLICY "Accès Établissement réservé au propriétaire"
-  ON public."Restaurant"
-  FOR ALL
-  TO authenticated
-  USING (auth.uid() = "userId")
-  WITH CHECK (auth.uid() = "userId");
-
-ALTER TABLE public."Review" ENABLE ROW LEVEL SECURITY;
-
 DROP POLICY IF EXISTS "Autoriser l'insertion anonyme d'avis" ON public."Review";
 DROP POLICY IF EXISTS "Autoriser la création d'avis avec restaurantId" ON public."Review";
-CREATE POLICY "Autoriser la création d'avis avec restaurantId"
-  ON public."Review"
-  FOR INSERT
-  TO anon, authenticated
-  WITH CHECK ("restaurantId" IS NOT NULL);
-
 DROP POLICY IF EXISTS "Lecture des avis réservée aux commerçants" ON public."Review";
-CREATE POLICY "Lecture des avis réservée aux commerçants"
-  ON public."Review"
-  FOR SELECT
-  TO authenticated
-  USING (true);
-
 DROP POLICY IF EXISTS "Lecture des avis pour les utilisateurs connectés" ON public."Review";
-
 DROP POLICY IF EXISTS "Modification des avis pour les utilisateurs connectés" ON public."Review";
 DROP POLICY IF EXISTS "Modification des avis réservée au propriétaire" ON public."Review";
-CREATE POLICY "Modification des avis réservée au propriétaire"
-  ON public."Review"
-  FOR UPDATE
-  TO authenticated
-  USING (
-    EXISTS (
-      SELECT 1 FROM public."Restaurant" r
-      WHERE r.id = "Review"."restaurantId"
-        AND r."userId" = auth.uid()
-    )
-  )
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM public."Restaurant" r
-      WHERE r.id = "Review"."restaurantId"
-        AND r."userId" = auth.uid()
-    )
-  );
 
 INSERT INTO "Restaurant" (name, address, city, category, activity, slug, "googlePlaceId", "googleReviewUrl")
 SELECT

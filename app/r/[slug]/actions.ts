@@ -67,7 +67,7 @@ export async function submitManagerFeedback(formData: FormData) {
   });
 
   if (created?.id) {
-    await autoRespondToReview(created.id);
+    await autoRespondToReview(created.id, restaurantId);
   }
 
   return { ok: true as const };

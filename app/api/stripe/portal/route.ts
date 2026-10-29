@@ -1,15 +1,20 @@
 import { connection } from "next/server";
 import { appUrl } from "@/lib/app-url";
-import { getOwnerRestaurantId } from "@/lib/session";
+import { isSameOriginPost } from "@/lib/same-origin";
+import { requireOwnerSession } from "@/lib/session";
 import { getStripe } from "@/lib/stripe";
 import { db } from "@/src/prisma/db";
 
-export async function POST() {
+export async function POST(request: Request) {
   await connection();
-  const restaurantId = await getOwnerRestaurantId();
-  if (!restaurantId) {
+  if (!isSameOriginPost(request)) {
+    return Response.json({ ok: false, error: "Requête refusée." }, { status: 403 });
+  }
+  const session = await requireOwnerSession();
+  if (!session) {
     return Response.json({ ok: false, error: "Connexion requise." }, { status: 401 });
   }
+  const restaurantId = session.restaurantId;
 
   const stripe = getStripe();
   if (!stripe) {

@@ -3,11 +3,13 @@
 import { redirect } from "next/navigation";
 import { hashPassword } from "@/lib/password";
 import { verifyResetToken } from "@/lib/password-reset";
+import { clearOwnerSession } from "@/lib/session";
 import { db } from "@/src/prisma/db";
 
 export async function resetPassword(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const exp = String(formData.get("exp") ?? "");
+  const nonce = String(formData.get("nonce") ?? "");
   const sig = String(formData.get("sig") ?? "");
   const password = String(formData.get("password") ?? "");
   const passwordConfirm = String(formData.get("passwordConfirm") ?? "");
@@ -19,14 +21,22 @@ export async function resetPassword(formData: FormData) {
     return { ok: false as const, error: "Les mots de passe ne correspondent pas." };
   }
 
-  const checked = await verifyResetToken(email, exp, sig);
+  const checked = await verifyResetToken(email, exp, nonce, sig);
   if (!checked.ok) {
     return { ok: false as const, error: "Ce lien n’est plus valide. Refaites une demande." };
   }
 
-  await db.orm.public.Restaurant.where({ id: checked.restaurant.id }).update({
+  const updated = await db.orm.public.Restaurant.where({
+    id: checked.restaurant.id,
+    passwordResetNonce: checked.nonceHash,
+  }).update({
     passwordHash: hashPassword(password),
+    passwordResetNonce: null,
   });
+  if (!updated) {
+    return { ok: false as const, error: "Ce lien n’est plus valide. Refaites une demande." };
+  }
 
+  await clearOwnerSession();
   redirect("/connexion");
 }

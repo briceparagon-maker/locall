@@ -20,6 +20,9 @@ export async function loginOwner(formData: FormData) {
     return { ok: false as const, error: "E-mail ou mot de passe incorrect." };
   }
 
-  await setOwnerSession(restaurant.id, email, restaurant.passwordHash);
+  const opened = await setOwnerSession(restaurant.id, email, restaurant.passwordHash);
+  if (!opened) {
+    return { ok: false as const, error: "La connexion est temporairement indisponible." };
+  }
   redirect(isBackofficeOwner(email) ? "/backoffice-secret-filtravis-1324" : "/dashboard");
 }

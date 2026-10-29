@@ -7,12 +7,12 @@ import {
   trialDaysLeft,
   trialEndsInFourteenDays,
 } from "@/lib/billing";
-import { getOwnerRestaurantId } from "@/lib/session";
+import { requireOwnerSession } from "@/lib/session";
 import { db } from "@/src/prisma/db";
 
 async function requireOwnedRestaurant(restaurantId: number) {
-  const sessionId = await getOwnerRestaurantId();
-  if (!sessionId || sessionId !== restaurantId) {
+  const session = await requireOwnerSession();
+  if (!session || session.restaurantId !== restaurantId) {
     return { ok: false as const, error: "Établissement introuvable." };
   }
   return { ok: true as const };

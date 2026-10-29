@@ -10,14 +10,15 @@ export const instant = false;
 export default async function ReinitialiserMotDePassePage({
   searchParams,
 }: {
-  searchParams: Promise<{ email?: string; exp?: string; sig?: string }>;
+  searchParams: Promise<{ email?: string; exp?: string; nonce?: string; sig?: string }>;
 }) {
   await connection();
   const params = await searchParams;
   const email = (params.email ?? "").trim().toLowerCase();
   const exp = params.exp ?? "";
+  const nonce = params.nonce ?? "";
   const sig = params.sig ?? "";
-  const checked = await verifyResetToken(email, exp, sig);
+  const checked = await verifyResetToken(email, exp, nonce, sig);
 
   return (
     <div className="flex min-h-dvh flex-col bg-background text-foreground">
@@ -30,7 +31,7 @@ export default async function ReinitialiserMotDePassePage({
               <p className="mt-2 text-sm text-slate-500">
                 Choisissez un mot de passe d’au moins 8 caractères.
               </p>
-              <ResetForm email={email} exp={exp} sig={sig} />
+              <ResetForm email={email} exp={exp} nonce={nonce} sig={sig} />
             </>
           ) : (
             <p className="mt-4 text-sm text-slate-600">

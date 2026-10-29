@@ -21,6 +21,7 @@ model Restaurant {
   department      String?
   phone           String?
   passwordHash    String?
+  passwordResetNonce String? @map("password_reset_nonce")
   trialEndsAt     TimestamptzString?
   subscriptionStatus String @default("pending_activation") @map("subscription_status")
   stripeCustomerId String? @map("stripe_customer_id")

@@ -6,10 +6,12 @@ import { resetPassword } from "./actions";
 export function ResetForm({
   email,
   exp,
+  nonce,
   sig,
 }: {
   email: string;
   exp: string;
+  nonce: string;
   sig: string;
 }) {
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +32,7 @@ export function ResetForm({
     <form className="mt-6 space-y-4" onSubmit={onSubmit}>
       <input type="hidden" name="email" value={email} />
       <input type="hidden" name="exp" value={exp} />
+      <input type="hidden" name="nonce" value={nonce} />
       <input type="hidden" name="sig" value={sig} />
       <label className="label-locall">
         Nouveau mot de passe

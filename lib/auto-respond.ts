@@ -1,7 +1,12 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Resend } from "resend";
-import { db } from "@/src/prisma/db";
 import { appUrl, escapeHtml, isEmail } from "@/lib/app-url";
+import {
+  autoRespondAlreadySent,
+  isInterceptedRating,
+  reviewBelongsToRestaurant,
+} from "@/lib/review-access";
+import { db } from "@/src/prisma/db";
 
 export type AutoRespondResult = {
   ok: boolean;
@@ -10,6 +15,16 @@ export type AutoRespondResult = {
   ownerNotified: boolean;
   autoReplyText: string | null;
 };
+
+function refused(error: string): AutoRespondResult {
+  return {
+    ok: false,
+    error,
+    clientEmailed: false,
+    ownerNotified: false,
+    autoReplyText: null,
+  };
+}
 
 function starsLine(rating: number) {
   return `${rating}/5 ★`;
@@ -228,30 +243,24 @@ function clientEmailScheduledAt() {
 
 export async function autoRespondToReview(
   reviewId: number,
+  callerRestaurantId: number,
 ): Promise<AutoRespondResult> {
-  if (!Number.isInteger(reviewId) || reviewId <= 0) {
-    return {
-      ok: false,
-      error: "Avis introuvable.",
-      clientEmailed: false,
-      ownerNotified: false,
-      autoReplyText: null,
-    };
+  if (
+    !Number.isInteger(reviewId) ||
+    reviewId <= 0 ||
+    !Number.isInteger(callerRestaurantId) ||
+    callerRestaurantId <= 0
+  ) {
+    return refused("Avis introuvable.");
   }
 
   const review = await db.orm.public.Review.where({ id: reviewId }).first();
 
-  if (!review) {
-    return {
-      ok: false,
-      error: "Avis introuvable.",
-      clientEmailed: false,
-      ownerNotified: false,
-      autoReplyText: null,
-    };
+  if (!review || !reviewBelongsToRestaurant(review.restaurantId, callerRestaurantId)) {
+    return refused("Avis introuvable.");
   }
 
-  if (![1, 2, 3].includes(review.rating)) {
+  if (!isInterceptedRating(review.rating)) {
     return {
       ok: true,
       clientEmailed: false,
@@ -260,18 +269,21 @@ export async function autoRespondToReview(
     };
   }
 
+  if (autoRespondAlreadySent(review)) {
+    return {
+      ok: true,
+      clientEmailed: review.clientEmailed,
+      ownerNotified: review.ownerNotified,
+      autoReplyText: review.autoReplyText,
+    };
+  }
+
   const restaurant = await db.orm.public.Restaurant.where({
     id: review.restaurantId,
   }).first();
 
-  if (!restaurant) {
-    return {
-      ok: false,
-      error: "Établissement introuvable.",
-      clientEmailed: false,
-      ownerNotified: false,
-      autoReplyText: null,
-    };
+  if (!restaurant || restaurant.id !== callerRestaurantId) {
+    return refused("Établissement introuvable.");
   }
   const autoReplyText = await generateCalmingReply({
     establishmentName: restaurant.name,

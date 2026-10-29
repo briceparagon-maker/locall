@@ -18,7 +18,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'0a9bcb39008aeb3449b418969cee31039be578025907612ba839e722d8faf13c'>;
+  StorageHashBase<'e7dad5cbc3598e868b9cf54c7b8c6bcdafb37079a940f6855b2212ed7df3c1a0'>;
 export type ExecutionHash =
   ExecutionHashBase<'2046b9d7f16a7106ed3c5927fb0a859fff391d0a89d6457dbfef0d79818965bb'>;
 export type ProfileHash =
@@ -253,6 +253,7 @@ export type FieldOutputTypes = {
       readonly ownerLastName: CodecTypes['pg/text@1']['output'] | null;
       readonly ownerStatus: CodecTypes['pg/text@1']['output'] | null;
       readonly passwordHash: CodecTypes['pg/text@1']['output'] | null;
+      readonly passwordResetNonce: CodecTypes['pg/text@1']['output'] | null;
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
       readonly postalCode: CodecTypes['pg/text@1']['output'] | null;
       readonly role: CodecTypes['pg/text@1']['output'];
@@ -306,6 +307,7 @@ export type FieldInputTypes = {
       readonly ownerLastName: CodecTypes['pg/text@1']['input'] | null;
       readonly ownerStatus: CodecTypes['pg/text@1']['input'] | null;
       readonly passwordHash: CodecTypes['pg/text@1']['input'] | null;
+      readonly passwordResetNonce: CodecTypes['pg/text@1']['input'] | null;
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
       readonly postalCode: CodecTypes['pg/text@1']['input'] | null;
       readonly role: CodecTypes['pg/text@1']['input'];
@@ -358,6 +360,7 @@ export type StorageColumnTypes = {
       readonly ownerFirstName: CodecTypes['pg/text@1']['output'] | null;
       readonly ownerLastName: CodecTypes['pg/text@1']['output'] | null;
       readonly ownerStatus: CodecTypes['pg/text@1']['output'] | null;
+      readonly password_reset_nonce: CodecTypes['pg/text@1']['output'] | null;
       readonly passwordHash: CodecTypes['pg/text@1']['output'] | null;
       readonly phone: CodecTypes['pg/text@1']['output'] | null;
       readonly postalCode: CodecTypes['pg/text@1']['output'] | null;
@@ -411,6 +414,7 @@ export type StorageColumnInputTypes = {
       readonly ownerFirstName: CodecTypes['pg/text@1']['input'] | null;
       readonly ownerLastName: CodecTypes['pg/text@1']['input'] | null;
       readonly ownerStatus: CodecTypes['pg/text@1']['input'] | null;
+      readonly password_reset_nonce: CodecTypes['pg/text@1']['input'] | null;
       readonly passwordHash: CodecTypes['pg/text@1']['input'] | null;
       readonly phone: CodecTypes['pg/text@1']['input'] | null;
       readonly postalCode: CodecTypes['pg/text@1']['input'] | null;
@@ -465,6 +469,7 @@ export namespace Models {
     ownerLastName: CodecTypes['pg/text@1']['output'] | null;
     ownerStatus: CodecTypes['pg/text@1']['output'] | null;
     passwordHash: CodecTypes['pg/text@1']['output'] | null;
+    passwordResetNonce: CodecTypes['pg/text@1']['output'] | null;
     phone: CodecTypes['pg/text@1']['output'] | null;
     postalCode: CodecTypes['pg/text@1']['output'] | null;
     role: CodecTypes['pg/text@1']['output'];
@@ -653,6 +658,12 @@ type ContractBase = Omit<
                   readonly nullable: true;
                   readonly many: false;
                 };
+                readonly password_reset_nonce: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly phone: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -699,7 +710,7 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly default: {
                     readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/text@1', 'trial'>;
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'pending_activation'>;
                   };
                   readonly many: false;
                 };
@@ -975,6 +986,10 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly passwordResetNonce: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly phone: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -1062,6 +1077,7 @@ type ContractBase = Omit<
                 readonly ownerLastName: { readonly column: 'ownerLastName' };
                 readonly ownerStatus: { readonly column: 'ownerStatus' };
                 readonly passwordHash: { readonly column: 'passwordHash' };
+                readonly passwordResetNonce: { readonly column: 'password_reset_nonce' };
                 readonly phone: { readonly column: 'phone' };
                 readonly postalCode: { readonly column: 'postalCode' };
                 readonly role: { readonly column: 'role' };

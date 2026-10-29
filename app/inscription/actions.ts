@@ -144,6 +144,12 @@ export async function registerTrial(formData: FormData) {
     console.error("welcome email:", error);
   }
 
-  await setOwnerSession(created.id, email, passwordHash);
+  const opened = await setOwnerSession(created.id, email, passwordHash);
+  if (!opened) {
+    return {
+      ok: false as const,
+      error: "Compte créé. La connexion est temporairement indisponible.",
+    };
+  }
   redirect("/dashboard");
 }

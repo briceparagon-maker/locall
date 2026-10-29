@@ -1,7 +1,6 @@
 import { appUrl } from "@/lib/app-url";
 import { buildPlvPdf, isPlvTemplate, plvFilename } from "@/lib/plv-pdf";
-import { getOwnerRestaurantId } from "@/lib/session";
-import { db } from "@/src/prisma/db";
+import { requireOwnerSession } from "@/lib/session";
 
 export async function GET(
   _request: Request,
@@ -12,14 +11,12 @@ export async function GET(
     return new Response("Modele introuvable.", { status: 404 });
   }
 
-  const restaurantId = await getOwnerRestaurantId();
-  if (!restaurantId) {
+  const session = await requireOwnerSession();
+  if (!session) {
     return new Response("Connexion requise.", { status: 401 });
   }
 
-  const restaurant = await db.orm.public.Restaurant.where({
-    id: restaurantId,
-  }).first();
+  const restaurant = session.restaurant;
 
   if (!restaurant) {
     return new Response("Aucun etablissement.", { status: 404 });

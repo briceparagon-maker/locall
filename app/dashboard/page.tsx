@@ -4,7 +4,7 @@ import { isBackofficeOwner } from "@/lib/admin";
 import { appUrl } from "@/lib/app-url";
 import { normalizeSubscriptionStatus, trialDaysLeft } from "@/lib/billing";
 import { qrPngDataUrl } from "@/lib/qr";
-import { getOwnerEmail, getOwnerRestaurantId } from "@/lib/session";
+import { requireOwnerSession } from "@/lib/session";
 import { db } from "@/src/prisma/db";
 import { DashboardClient, type ComplaintRow } from "./dashboard-client";
 
@@ -18,12 +18,10 @@ export default async function DashboardPage({
   await connection();
   const params = await searchParams;
 
-  const sessionRestaurantId = await getOwnerRestaurantId();
-  if (!sessionRestaurantId) redirect("/connexion");
+  const session = await requireOwnerSession();
+  if (!session) redirect("/connexion");
 
-  const restaurant = await db.orm.public.Restaurant.where({
-    id: sessionRestaurantId,
-  }).first();
+  const restaurant = session.restaurant;
 
   if (!restaurant) {
     return (
@@ -92,7 +90,7 @@ export default async function DashboardPage({
       googlePlaceUrl={restaurant.googlePlaceUrl?.trim() || ""}
       facebookReviewUrl={restaurant.facebookReviewUrl?.trim() || ""}
       autoRespondGooglePositive={Boolean(restaurant.autoRespondGooglePositive)}
-      isAdmin={isBackofficeOwner(restaurant.ownerEmail) && isBackofficeOwner(await getOwnerEmail())}
+      isAdmin={isBackofficeOwner(restaurant.ownerEmail) && isBackofficeOwner(session.email)}
       subscriptionStatus={subscriptionStatus}
       trialDaysLeft={
         subscriptionStatus === "pending_activation"

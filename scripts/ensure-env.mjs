@@ -14,6 +14,8 @@ const add = [
   ["NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY", ""],
   ["STRIPE_WEBHOOK_SECRET", ""],
   ["STRIPE_PRICE_ID", ""],
+  ["PASSWORD_RESET_SECRET", ""],
+  ["SESSION_SECRET", ""],
 ];
 
 for (const [key, value] of add) {
