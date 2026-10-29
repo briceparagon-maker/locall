@@ -5,6 +5,7 @@ const FOOTER_LINKS = [
   { href: "/cgu", label: "CGU" },
   { href: "/cgv", label: "CGV" },
   { href: "/confidentialite", label: "Confidentialité" },
+  { href: "/propriete-intellectuelle", label: "Propriété intellectuelle" },
   { href: "/contact", label: "Contactez-nous" },
   { href: "/a-propos", label: "À propos" },
   { href: "/faq", label: "FAQ" },
