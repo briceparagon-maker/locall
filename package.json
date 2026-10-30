@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --test tests/owner-session.test.ts tests/password-reset-token.test.ts tests/review-access.test.ts tests/same-origin.test.ts",
+    "test": "node --experimental-strip-types --import ./tests/register.mjs --test tests/owner-session.test.ts tests/password-reset-token.test.ts tests/review-access.test.ts tests/same-origin.test.ts tests/auto-respond-lock.test.ts tests/trial-ending-email.test.ts tests/qr-slug.test.ts",
     "postinstall": "prisma skills sync || exit 0",
     "contract:emit": "prisma contract emit"
   },
@@ -16,7 +16,7 @@
     "@prisma/client": "^7.10.0",
     "@prisma/orm-postgres": "^8.0.0-rc.17",
     "dotenv": "^18.0.6",
-    "next": "16.4.0",
+    "next": "16.4.3",
     "pdf-lib": "^1.17.1",
     "qrcode": "^1.5.4",
     "react": "19.3.0",
@@ -32,7 +32,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.4.0",
+    "eslint-config-next": "16.4.3",
     "prisma": "^8.0.0-rc.21",
     "tailwindcss": "^4",
     "typescript": "^5"

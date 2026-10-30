@@ -1,6 +1,7 @@
 "use server";
 
 import { autoRespondToReview } from "@/lib/auto-respond";
+import { resolveQrRestaurant } from "@/lib/qr-slug";
 import { db } from "@/src/prisma/db";
 
 function optionalRating(value: FormDataEntryValue | null) {
@@ -9,7 +10,13 @@ function optionalRating(value: FormDataEntryValue | null) {
 }
 
 export async function submitManagerFeedback(formData: FormData) {
-  const restaurantId = Number(formData.get("restaurantId"));
+  const resolved = await resolveQrRestaurant(
+    formData.get("slug"),
+    formData.get("restaurantId"),
+  );
+  if (!resolved.ok) return resolved;
+  const restaurantId = resolved.restaurant.id;
+
   const rating = Number(formData.get("rating"));
   const comment = String(formData.get("comment") ?? "").trim();
   const authorName = String(formData.get("authorName") ?? "").trim() || null;
@@ -19,10 +26,6 @@ export async function submitManagerFeedback(formData: FormData) {
   const cuisineRating = optionalRating(formData.get("cuisineRating"));
   const serviceRating = optionalRating(formData.get("serviceRating"));
   const ambianceRating = optionalRating(formData.get("ambianceRating"));
-
-  if (!Number.isInteger(restaurantId) || restaurantId <= 0) {
-    return { ok: false as const, error: "Établissement introuvable." };
-  }
 
   if (![1, 2, 3].includes(rating)) {
     return { ok: false as const, error: "Note interne invalide." };
@@ -73,16 +76,19 @@ export async function submitManagerFeedback(formData: FormData) {
   return { ok: true as const };
 }
 
-export async function trackGooglePublish(restaurantId: number, rating: number) {
-  if (!Number.isInteger(restaurantId) || restaurantId <= 0) {
-    return { ok: false as const };
-  }
+export async function trackGooglePublish(
+  slug: string,
+  rating: number,
+  declaredRestaurantId?: number,
+) {
+  const resolved = await resolveQrRestaurant(slug, declaredRestaurantId);
+  if (!resolved.ok) return { ok: false as const };
   if (![4, 5].includes(rating)) {
     return { ok: false as const };
   }
 
   await db.orm.public.Review.create({
-    restaurantId,
+    restaurantId: resolved.restaurant.id,
     rating,
     comment: null,
     authorName: "Client",

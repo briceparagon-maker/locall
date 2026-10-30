@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-  autoRespondAlreadySent,
+  channelsToSend,
+  deliveryComplete,
   isInterceptedRating,
   reviewBelongsToRestaurant,
+  statusAfterDelivery,
 } from "../lib/review-access.ts";
 
 test("l'établissement A ne traite pas l'avis de B", () => {
@@ -21,19 +23,84 @@ test("les notes 1 à 3 restent interceptées et les notes 4 et 5 non", () => {
 
 test("un avis déjà notifié n'est pas renvoyé", () => {
   assert.equal(
-    autoRespondAlreadySent({
+    deliveryComplete({
       status: "RESOLVED_AUTO",
+      clientRequired: true,
+      ownerRequired: true,
       clientEmailed: true,
-      ownerNotified: false,
+      ownerNotified: true,
     }),
     true,
   );
   assert.equal(
-    autoRespondAlreadySent({
+    deliveryComplete({
       status: "INTERCEPTED",
+      clientRequired: true,
+      ownerRequired: true,
       clientEmailed: false,
       ownerNotified: false,
     }),
     false,
+  );
+});
+
+test("une notification partielle reste à reprendre, sans renvoyer le canal déjà accepté", () => {
+  assert.deepEqual(
+    channelsToSend({
+      clientRequired: true,
+      ownerRequired: true,
+      clientEmailed: true,
+      ownerNotified: false,
+    }),
+    { sendClient: false, sendOwner: true },
+  );
+  assert.equal(
+    deliveryComplete({
+      status: "RESOLVED_AUTO",
+      clientRequired: true,
+      ownerRequired: true,
+      clientEmailed: true,
+      ownerNotified: false,
+    }),
+    false,
+  );
+});
+
+test("un échec d'envoi rend l'avis intercepté et un succès complet le clôt", () => {
+  assert.deepEqual(
+    statusAfterDelivery({
+      clientRequired: true,
+      ownerRequired: true,
+      clientEmailed: false,
+      ownerNotified: false,
+    }),
+    { complete: false, status: "INTERCEPTED" },
+  );
+  assert.deepEqual(
+    statusAfterDelivery({
+      clientRequired: true,
+      ownerRequired: true,
+      clientEmailed: true,
+      ownerNotified: false,
+    }),
+    { complete: false, status: "INTERCEPTED" },
+  );
+  assert.deepEqual(
+    statusAfterDelivery({
+      clientRequired: true,
+      ownerRequired: true,
+      clientEmailed: true,
+      ownerNotified: true,
+    }),
+    { complete: true, status: "RESOLVED_AUTO" },
+  );
+  assert.deepEqual(
+    statusAfterDelivery({
+      clientRequired: false,
+      ownerRequired: false,
+      clientEmailed: false,
+      ownerNotified: false,
+    }),
+    { complete: true, status: "RESOLVED_AUTO" },
   );
 });

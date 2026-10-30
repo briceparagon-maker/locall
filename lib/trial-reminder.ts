@@ -1,6 +1,5 @@
-import { renderToStaticMarkup } from "react-dom/server";
-import { TrialEndingEmail } from "@/app/emails/TrialEndingEmail";
 import { appUrl, isEmail } from "@/lib/app-url";
+import { trialEndingEmailHtml } from "@/lib/trial-ending-email";
 import { getResend, resendFrom } from "@/lib/resend-client";
 import { db } from "@/src/prisma/db";
 
@@ -41,14 +40,12 @@ export async function sendTrialReminders() {
       from: resendFrom(),
       to: email,
       subject: TRIAL_REMINDER_SUBJECT(restaurant.name),
-      html: renderToStaticMarkup(
-        TrialEndingEmail({
-          clientName: restaurant.ownerFirstName?.trim() || "commerçant",
-          establishmentName: restaurant.name,
-          daysLeft: 2,
-          subscribeUrl,
-        }),
-      ),
+      html: trialEndingEmailHtml({
+        clientName: restaurant.ownerFirstName?.trim() || "commerçant",
+        establishmentName: restaurant.name,
+        daysLeft: 2,
+        subscribeUrl,
+      }),
     });
     if (result.error) {
       console.error("trial reminder Resend:", result.error);

@@ -7,6 +7,7 @@ import { reviewerInitials, showsDetailRatings } from "./reviewer";
 type ReviewFormProps = {
   restaurant: {
     id: number;
+    slug: string;
     name: string;
     address: string | null;
     category: string;
@@ -244,7 +245,7 @@ export function ReviewForm({
           }}
           className="mt-6 flex flex-1 flex-col"
         >
-            <input type="hidden" name="restaurantId" value={restaurant.id} />
+            <input type="hidden" name="slug" value={restaurant.slug} />
             <input type="hidden" name="rating" value={rating} />
             <input type="hidden" name="authorName" value={reviewerName} />
             <input type="hidden" name="cuisineRating" value={cuisineRating || ""} />
@@ -378,7 +379,7 @@ export function ReviewForm({
                     rel="noopener noreferrer"
                     className={publishButtonClass.replace("mt-6 ", "")}
                     onClick={() => {
-                      void trackGooglePublish(restaurant.id, rating);
+                      void trackGooglePublish(restaurant.slug, rating);
                     }}
                   >
                     Publier sur Google
@@ -389,7 +390,7 @@ export function ReviewForm({
                     rel="noopener noreferrer"
                     className="flex min-h-12 w-full items-center justify-center rounded-full bg-[#1877f2] px-6 text-base font-medium text-white shadow-sm hover:bg-[#166fe5] disabled:opacity-60"
                     onClick={() => {
-                      void trackGooglePublish(restaurant.id, rating);
+                      void trackGooglePublish(restaurant.slug, rating);
                     }}
                   >
                     Publier sur Facebook
@@ -402,7 +403,7 @@ export function ReviewForm({
                   rel="noopener noreferrer"
                   className={publishButtonClass}
                   onClick={() => {
-                    void trackGooglePublish(restaurant.id, rating);
+                    void trackGooglePublish(restaurant.slug, rating);
                   }}
                 >
                   {hasFacebookDest && !hasGoogleDest

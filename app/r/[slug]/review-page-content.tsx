@@ -1,7 +1,7 @@
 import { io } from "next/cache";
 import { notFound } from "next/navigation";
 import { normalizeSubscriptionStatus } from "@/lib/billing";
-import { db } from "@/src/prisma/db";
+import { restaurantFromQrSlug } from "@/lib/qr-slug";
 import { ComingSoonPage } from "./coming-soon";
 import { ReviewForm } from "./review-form";
 
@@ -12,7 +12,7 @@ export async function ReviewPageContent({
 }) {
   const { slug } = await params;
   await io();
-  const restaurant = await db.orm.public.Restaurant.where({ slug }).first();
+  const restaurant = await restaurantFromQrSlug(slug);
 
   if (!restaurant) {
     notFound();
@@ -31,6 +31,7 @@ export async function ReviewPageContent({
     <ReviewForm
       restaurant={{
         id: restaurant.id,
+        slug: restaurant.slug?.trim() || slug,
         name: restaurant.name,
         address: restaurant.address,
         category: restaurant.category,

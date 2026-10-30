@@ -2,9 +2,12 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Resend } from "resend";
 import { appUrl, escapeHtml, isEmail } from "@/lib/app-url";
 import {
-  autoRespondAlreadySent,
+  AUTO_SENDING_STATUS,
+  channelsToSend,
+  deliveryComplete,
   isInterceptedRating,
   reviewBelongsToRestaurant,
+  statusAfterDelivery,
 } from "@/lib/review-access";
 import { db } from "@/src/prisma/db";
 
@@ -241,6 +244,68 @@ function clientEmailScheduledAt() {
   return new Date(Date.now() + delayInMinutes * 60 * 1000).toISOString();
 }
 
+const SEND_ATTEMPTS = 3;
+const SEND_LEASE_MS = 120_000;
+
+function claimAccepted(result: unknown) {
+  if (result == null || result === false) return false;
+  if (typeof result === "number") return result > 0;
+  if (Array.isArray(result)) return result.length > 0;
+  return true;
+}
+
+async function claimAutoSend(reviewId: number, restaurantId: number) {
+  const fresh = await db.orm.public.Review.where({
+    id: reviewId,
+    restaurantId,
+    status: "INTERCEPTED",
+  }).update({ status: AUTO_SENDING_STATUS });
+  if (claimAccepted(fresh)) return true;
+
+  const ownerMissing = await db.orm.public.Review.where({
+    id: reviewId,
+    restaurantId,
+    status: "RESOLVED_AUTO",
+    ownerNotified: false,
+  }).update({ status: AUTO_SENDING_STATUS });
+  if (claimAccepted(ownerMissing)) return true;
+
+  const clientMissing = await db.orm.public.Review.where({
+    id: reviewId,
+    restaurantId,
+    status: "RESOLVED_AUTO",
+    clientEmailed: false,
+  }).update({ status: AUTO_SENDING_STATUS });
+  if (claimAccepted(clientMissing)) return true;
+
+  const staleBefore = new Date(Date.now() - SEND_LEASE_MS).toISOString();
+  const stale = await db.orm.public.Review.where({
+    id: reviewId,
+    restaurantId,
+    status: AUTO_SENDING_STATUS,
+  })
+    .where((row) => row.updatedAt.lt(staleBefore))
+    .update({
+      status: AUTO_SENDING_STATUS,
+      updatedAt: new Date().toISOString(),
+    });
+  return claimAccepted(stale);
+}
+
+async function sendWithRetry(
+  send: () => Promise<{ error?: unknown } | null | undefined>,
+) {
+  for (let attempt = 0; attempt < SEND_ATTEMPTS; attempt += 1) {
+    try {
+      const sent = await send();
+      if (!sent?.error) return true;
+    } catch {
+      // L'essai suivant réutilise la même clé d'idempotence.
+    }
+  }
+  return false;
+}
+
 export async function autoRespondToReview(
   reviewId: number,
   callerRestaurantId: number,
@@ -269,7 +334,38 @@ export async function autoRespondToReview(
     };
   }
 
-  if (autoRespondAlreadySent(review)) {
+  const restaurant = await db.orm.public.Restaurant.where({
+    id: review.restaurantId,
+  }).first();
+
+  if (!restaurant || restaurant.id !== callerRestaurantId) {
+    return refused("Établissement introuvable.");
+  }
+
+  const resendKey = process.env.RESEND_API_KEY?.trim() ?? "";
+  const from =
+    process.env.RESEND_FROM?.trim() || "FILTRAVIS <onboarding@resend.dev>";
+  const dashboardUrl = `${appUrl()}/dashboard`;
+  const ownerEmail =
+    restaurant.ownerEmail?.trim() || process.env.OWNER_EMAIL?.trim() || "";
+  const contact = review.contact?.trim() || "";
+  const clientEmail = isEmail(contact) ? contact : "";
+  const ownerEmailOk = isEmail(ownerEmail) ? ownerEmail : "";
+  const hasRecipient = Boolean(clientEmail || ownerEmailOk);
+  const targets = {
+    clientRequired: Boolean(resendKey && clientEmail),
+    ownerRequired: Boolean(resendKey && ownerEmailOk),
+  };
+
+  if (
+    deliveryComplete({
+      status: review.status,
+      clientRequired: targets.clientRequired,
+      ownerRequired: targets.ownerRequired,
+      clientEmailed: review.clientEmailed,
+      ownerNotified: review.ownerNotified,
+    })
+  ) {
     return {
       ok: true,
       clientEmailed: review.clientEmailed,
@@ -278,80 +374,162 @@ export async function autoRespondToReview(
     };
   }
 
-  const restaurant = await db.orm.public.Restaurant.where({
-    id: review.restaurantId,
-  }).first();
-
-  if (!restaurant || restaurant.id !== callerRestaurantId) {
-    return refused("Établissement introuvable.");
+  const claimed = await claimAutoSend(reviewId, callerRestaurantId);
+  if (!claimed) {
+    const current = await db.orm.public.Review.where({ id: reviewId }).first();
+    return {
+      ok: true,
+      clientEmailed: Boolean(current?.clientEmailed),
+      ownerNotified: Boolean(current?.ownerNotified),
+      autoReplyText: current?.autoReplyText ?? null,
+    };
   }
-  const autoReplyText = await generateCalmingReply({
-    establishmentName: restaurant.name,
-    activity: activityLabel(restaurant.activity, restaurant.category),
-    city: cityLabel(restaurant.city, restaurant.address),
-    rating: review.rating,
-    comment: review.comment,
-    authorName: review.authorName,
-    cuisineRating: review.cuisineRating,
-    serviceRating: review.serviceRating,
-    ambianceRating: review.ambianceRating,
-  });
 
-  const resendKey = process.env.RESEND_API_KEY?.trim();
-  const from =
-    process.env.RESEND_FROM?.trim() || "FILTRAVIS <onboarding@resend.dev>";
-  const dashboardUrl = `${appUrl()}/dashboard`;
-  const ownerEmail =
-    restaurant.ownerEmail?.trim() || process.env.OWNER_EMAIL?.trim() || "";
-  const contact = review.contact?.trim() || "";
-  const clientEmail = isEmail(contact) ? contact : "";
+  let clientEmailed = Boolean(review.clientEmailed);
+  let ownerNotified = Boolean(review.ownerNotified);
+  let autoReplyText = review.autoReplyText?.trim() ? review.autoReplyText : "";
+  let settled = false;
 
-  let clientEmailed = false;
-  let ownerNotified = false;
+  const remember = async () => {
+    await db.orm.public.Review.where({
+      id: reviewId,
+      restaurantId: callerRestaurantId,
+      status: AUTO_SENDING_STATUS,
+    }).update({
+      autoReplyText,
+      clientEmailed,
+      ownerNotified,
+    });
+  };
 
-  if (resendKey) {
-    const resend = new Resend(resendKey);
-
-    if (clientEmail) {
-      const sent = await resend.emails.send({
-        from,
-        to: clientEmail,
-        replyTo: ownerEmail || undefined,
-        subject: `Un mot de ${restaurant.name}`,
-        html: clientMailHtml(autoReplyText),
-        scheduledAt: clientEmailScheduledAt(),
+  try {
+    if (!autoReplyText) {
+      autoReplyText = await generateCalmingReply({
+        establishmentName: restaurant.name,
+        activity: activityLabel(restaurant.activity, restaurant.category),
+        city: cityLabel(restaurant.city, restaurant.address),
+        rating: review.rating,
+        comment: review.comment,
+        authorName: review.authorName,
+        cuisineRating: review.cuisineRating,
+        serviceRating: review.serviceRating,
+        ambianceRating: review.ambianceRating,
       });
-      clientEmailed = !sent.error;
+    }
+    await remember();
+
+    if (!resendKey && hasRecipient) {
+      console.error("auto-respond: RESEND_API_KEY manquant");
+      return {
+        ok: true,
+        clientEmailed,
+        ownerNotified,
+        autoReplyText,
+      };
     }
 
-    if (ownerEmail && isEmail(ownerEmail)) {
-      const sent = await resend.emails.send({
-        from,
-        to: ownerEmail,
-        subject: `🛡️ [FILTRAVIS Protection] Mauvais avis intercepté pour ${restaurant.name} !`,
-        html: ownerAlertHtml({
-          restaurantName: restaurant.name,
-          activity: activityLabel(restaurant.activity, restaurant.category),
-          category: restaurant.category,
-          rating: review.rating,
-          comment: review.comment,
-          cuisineRating: review.cuisineRating,
-          serviceRating: review.serviceRating,
-          ambianceRating: review.ambianceRating,
+    if (resendKey) {
+      const resend = new Resend(resendKey);
+      const pending = channelsToSend({
+        clientRequired: targets.clientRequired,
+        ownerRequired: targets.ownerRequired,
+        clientEmailed,
+        ownerNotified,
+      });
+      const scheduledAt = clientEmailScheduledAt();
+
+      if (pending.sendClient) {
+        clientEmailed = await sendWithRetry(() =>
+          resend.emails.send(
+            {
+              from,
+              to: clientEmail,
+              replyTo: ownerEmailOk || undefined,
+              subject: `Un mot de ${restaurant.name}`,
+              html: clientMailHtml(autoReplyText),
+              scheduledAt,
+            },
+            { idempotencyKey: `filtravis-review-${reviewId}-client` },
+          ),
+        );
+        if (clientEmailed) await remember();
+      }
+
+      if (pending.sendOwner) {
+        ownerNotified = await sendWithRetry(() =>
+          resend.emails.send(
+            {
+              from,
+              to: ownerEmailOk,
+              subject: `🛡️ [FILTRAVIS Protection] Mauvais avis intercepté pour ${restaurant.name} !`,
+              html: ownerAlertHtml({
+                restaurantName: restaurant.name,
+                activity: activityLabel(restaurant.activity, restaurant.category),
+                category: restaurant.category,
+                rating: review.rating,
+                comment: review.comment,
+                cuisineRating: review.cuisineRating,
+                serviceRating: review.serviceRating,
+                ambianceRating: review.ambianceRating,
+                clientEmailed,
+                dashboardUrl,
+              }),
+            },
+            { idempotencyKey: `filtravis-review-${reviewId}-owner` },
+          ),
+        );
+        if (ownerNotified) await remember();
+      }
+    }
+
+    const outcome = statusAfterDelivery({
+      clientRequired: targets.clientRequired,
+      ownerRequired: targets.ownerRequired,
+      clientEmailed,
+      ownerNotified,
+    });
+    if (outcome.complete) {
+      const saved = await db.orm.public.Review.where({
+        id: reviewId,
+        restaurantId: callerRestaurantId,
+        status: AUTO_SENDING_STATUS,
+      }).update({
+        autoReplyText,
+        status: "RESOLVED_AUTO",
+        clientEmailed,
+        ownerNotified,
+      });
+      settled = true;
+      if (!saved) {
+        const current = await db.orm.public.Review.where({ id: reviewId }).first();
+        return {
+          ok: true,
+          clientEmailed: Boolean(current?.clientEmailed),
+          ownerNotified: Boolean(current?.ownerNotified),
+          autoReplyText: current?.autoReplyText ?? autoReplyText,
+        };
+      }
+    } else {
+      console.error("auto-respond: notification incomplète", reviewId);
+    }
+
+    return { ok: true, clientEmailed, ownerNotified, autoReplyText };
+  } finally {
+    if (!settled) {
+      try {
+        await db.orm.public.Review.where({
+          id: reviewId,
+          restaurantId: callerRestaurantId,
+          status: AUTO_SENDING_STATUS,
+        }).update({
+          status: "INTERCEPTED",
+          autoReplyText,
           clientEmailed,
-          dashboardUrl,
-        }),
-      });
-      ownerNotified = !sent.error;
+          ownerNotified,
+        });
+      } catch {
+        console.error("auto-respond: libération du verrou refusée", reviewId);
+      }
     }
   }
-
-  await db.orm.public.Review.where({ id: reviewId }).update({
-    autoReplyText,
-    status: "RESOLVED_AUTO",
-    clientEmailed,
-    ownerNotified,
-  });
-
-  return { ok: true, clientEmailed, ownerNotified, autoReplyText };
 }
