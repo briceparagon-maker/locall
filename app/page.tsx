@@ -7,7 +7,7 @@ export default function Home() {
     <div className="flex min-h-dvh flex-col bg-locall-navy text-foreground">
       <SiteHeader />
 
-      <main className="w-full bg-locall-navy leading-none">
+      <main className="w-full bg-locall-navy pb-10 leading-none sm:pb-14">
         <LandingHero />
       </main>
 
