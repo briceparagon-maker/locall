@@ -8,18 +8,18 @@ export function LandingHero() {
     <div className="filtravis-shell leading-none">
       <div className="relative">
         <img
-          src="/page-accueil-filtravis.png?v=16"
-          alt="FILTRAVIS — Chaque avis compte. Votre réputation surtout. Stop aux mauvais avis. Sans engagement, sans CB, installation en deux minutes."
+          src="/page-accueil-filtravis.jpg?v=17"
+          alt="FILTRAVIS — Vos mauvaises notes, on en fait une force ! Des clients satisfaits, une réputation protégée. Activer mes 14 jours d'essai gratuits. Sans engagement, sans CB, installation en deux minutes."
           className="block h-auto w-full"
         />
         <Link
           href="/inscription"
-          aria-label="Stop aux mauvais avis*"
+          aria-label="Activer mes 14 jours d'essai gratuits"
           className={ctaClassName}
           style={{
-            left: "38%",
-            top: "74.5%",
-            width: "31.5%",
+            left: "32.5%",
+            top: "74%",
+            width: "39.5%",
             height: "12%",
           }}
         />
